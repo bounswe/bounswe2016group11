@@ -1,4 +1,4 @@
-# Project CCMD: Collaborative Concept Mapping and Discovery
+## Project CCMD: Collaborative Concept Mapping and Discovery
 
 Hello and welcome,
 
