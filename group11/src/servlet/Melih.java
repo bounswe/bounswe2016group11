@@ -23,7 +23,7 @@ public class Melih extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
-		out.println("Hi, this is Melih's page. Yes.");
-	}
+		out.println("Hi, this is Melih's page. Yes. 2.");
+	} 
 
 }
