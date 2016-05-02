@@ -52,10 +52,27 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
+	   public static boolean addData(Melih_Data data){
+		   initialize();		   
+		   String sql = "INSERT INTO melih_data (country,capital,isSelected) VALUES (?,?,?)";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.setString(1, String.valueOf(data.country));
+			   ps.setString(2, data.capital);
+			   ps.setBoolean(3, data.isSelected);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
 	   
 	   public static ArrayList<Melih_User> getUsers() {
 		   initialize();
-		   String sql = "SELECT * FROM users";
+		   String sql = "SELECT * FROM melih_users";
 		   ResultSet rs;
 		   ArrayList<Melih_User> users = new ArrayList<Melih_User>();
 		   try {
@@ -68,5 +85,21 @@ public class Melih_DatabaseConnection {
 			   e.printStackTrace();
 		   }  
 		   return users;
+	   }
+	   public static ArrayList<Melih_Data> getData() {
+		   initialize();
+		   String sql = "SELECT * FROM melih_data";
+		   ResultSet rs;
+		   ArrayList<Melih_Data> data = new ArrayList<Melih_Data>();
+		   try {
+			   rs = stmt.executeQuery(sql);
+			   while(rs.next())
+				   data.add(new Melih_Data(rs.getString("country"), rs.getString("capital"), rs.getBoolean("isSelected")));
+			   rs.close();
+		   } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			   e.printStackTrace();
+		   }  
+		   return data;
 	   }
 	}
