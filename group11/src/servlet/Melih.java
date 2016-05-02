@@ -48,7 +48,16 @@ public class Melih extends HttpServlet {
 //			out.println("</tr>");
 //		}
 //		out.println("</table>");
-		out.println("<form action='https://query.wikidata.org/sparql?query=SELECT ?countryLabel ?capitalLabel WHERE {?country wdt:P31 wd:Q3624078. ?capital wdt:P1376 ?country. SERVICE wikibase:label{bd:serviceParam wikibase:language 'en'. }}' method='get'> Click below to send your query:<input type='submit' value='Submit'></form>");
+		String my_input ="";
+		try {
+			my_input = Melih_Wikidata.getHtml();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		out.println(my_input);
+		out.println("Hello.");
+		//out.println("<form action='https://query.wikidata.org/sparql?query=SELECT ?countryLabel ?capitalLabel WHERE {?country wdt:P31 wd:Q3624078. ?capital wdt:P1376 ?country. SERVICE wikibase:label{bd:serviceParam wikibase:language 'en'. }}' method='get'> Click below to send your query:<input type='submit' value='Submit'></form>");
 		//out.println("<br>");
 		//out.println("<form action='Melih' method='get'> Please click here to flush and reinitialize the database: <input type='submit' value='Click'></form>");
 		out.println("</body>");
