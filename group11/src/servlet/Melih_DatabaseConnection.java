@@ -36,6 +36,66 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   
+	   public static boolean dropDatabase(){
+		   initialize();		   
+		   String sql = "DROP DATABASE melih_database";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
+	   public static boolean createDatabase(){
+		   initialize();		   
+		   String sql = "CREATE DATABASE melih_database";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   	      
+	   public static boolean useDatabase(){
+		   initialize();		   
+		   String sql = "USE DATABASE melih_database";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
+	   public static boolean createTable(){
+		   initialize();		   
+		   String sql = "CREATE TABLE melih_data (emperor varchar(30), date integer, isSelected boolean);";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
 	   public static boolean addUser(Melih_User user){
 		   initialize();		   
 		   String sql = "INSERT INTO melih_users (user_id, user_name) VALUES (?,?)";
@@ -52,15 +112,15 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
-	   public static boolean addData(Melih_Data data){
+	   public static boolean addData(Melih_Data myData){
 		   initialize();		   
-		   String sql = "INSERT INTO melih_data (country,capital,isSelected) VALUES (?,?,?)";
+		   String sql = "INSERT INTO melih_data (emperor,date,isSelected) VALUES (?,?,?)";
 		   System.out.println(sql);
 		   try {
 			   PreparedStatement ps = conn.prepareStatement(sql);
-			   ps.setString(1, String.valueOf(data.country));
-			   ps.setString(2, data.capital);
-			   ps.setBoolean(3, data.isSelected);
+			   ps.setString(1, String.valueOf(myData.emperor));
+			   ps.setInt(2, myData.date);
+			   ps.setBoolean(3, myData.isSelected);
 			   ps.execute();
 			   return true;
 		} catch (SQLException e) {
@@ -94,7 +154,7 @@ public class Melih_DatabaseConnection {
 		   try {
 			   rs = stmt.executeQuery(sql);
 			   while(rs.next())
-				   data.add(new Melih_Data(rs.getString("country"), rs.getString("capital"), rs.getBoolean("isSelected")));
+				   data.add(new Melih_Data(rs.getString("emperor"), rs.getInt("date"), rs.getBoolean("isSelected")));
 			   rs.close();
 		   } catch (SQLException e) {
 			// TODO Auto-generated catch block

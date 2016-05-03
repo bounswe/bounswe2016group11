@@ -31,19 +31,48 @@ public class Melih extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		String my_query = request.getParameter("menu");
+		String selection = request.getParameter("menu");
 		out.println("<html>");
 		out.println("<body>");
-		if(my_query == null){
-			out.println("<form action='Melih' method='get'> Please enter a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");
-			out.println("<p><><></p>");
+		if(selection == null || selection.equals("main")){
+			out.println("<p><a href=Melih?menu=makequery>Make a query<a></p>");
+			out.println("<p><a href=Melih?menu=flush>Flush the database and refurbish it from the Wikidat<a></p>");
+			out.println("<p><a href=Melih?menu=database>Show contents of the database<a></p>");
+		} else if (selection.equals("makequery")){
+			out.println("<form action='Melih' method='get'>Make a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");
+			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
+		} else if (selection.equals("flush")){
+			Melih_DatabaseConnection.dropDatabase();
+			Melih_DatabaseConnection.createDatabase();
+			//Melih_DatabaseConnection.useDatabase();
+			Melih_DatabaseConnection.createTable();
+			JSONArray myJSONarray = new JSONArray();
+			String query = "SELECT%20?emperorLabel%20?dateLabel%20WHERE%20{%20?emperor%20wdt:P31%20wd:Q5%20.%20?emperor%20p:P39%20?position_held_statement%20.%20?position_held_statement%20ps:P39%20wd:Q842606.%20?position_held_statement%20pq:P580%20?date%20.%20SERVICE%20wikibase:label%20{%20bd:serviceParam%20wikibase:language%20%27en%27%20.%20}%20}%20ORDER%20BY%20?date&format=json";
+			String my_input ="";
+			try {
+				myJSONarray = Melih_Wikidata.getHtml(query);
+				
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			for(int i = 0; i<myJSONarray.length();i++){
+				JSONObject tempRecord = myJSONarray.getJSONObject(i);
+				String tempEmperor = tempRecord.getJSONObject("emperorLabel").getString("value");
+				String tempDate = tempRecord.getJSONObject("dateLabel").getString("value");
+				Integer intDate = Integer.parseInt(tempDate.substring(0,4));
+				Melih_DatabaseConnection.addData(new Melih_Data(tempEmperor,intDate));
+			}
+			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
+		} else if (selection.equals("database")){
+			ArrayList<Melih_Data> myData = Melih_DatabaseConnection.getData();
+			
+			out.println(myData.get(3).emperor);
+			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		}
 		//else{out.println("<a href = Melih?menu=whatever>Click here?</a>");}	
-		//out.println("<form action='Melih' method='get'> Please enter a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");
-		//out.println("<form action='Melih' method='get'> Please enter a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");
-		//else{out.println("<p>" + my_query + "</p>");}
-		//out.println("<br>");
-		//Melih_DatabaseConnection.addUser(new Melih_User(1, "root"));
+		
 //		out.println("<p style='font-color:red'>User got.</p>");
 //		ArrayList<Melih_User> myUsers = Melih_DatabaseConnection.getUsers();
 //		out.println("<table>");
@@ -57,19 +86,6 @@ public class Melih extends HttpServlet {
 //			out.println("</tr>");
 //		}
 //		out.println("</table>");
-		JSONArray myJSONa = new JSONArray();
-		String my_input ="";
-		try {
-			myJSONa = Melih_Wikidata.getHtml();
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		JSONObject rec = myJSONa.getJSONObject(10);
-	    String dene = rec.getJSONObject("countryLabel").getString("value");
-		System.out.println(dene);
 		//out.println("son");
 		//System.out.println(my_input);
 		
@@ -80,3 +96,7 @@ public class Melih extends HttpServlet {
 		out.println("</html>");
 	}	
 }
+
+//JSONObject tempRecord = myJSONarray.getJSONObject(10);
+//String dene = tempRecord.getJSONObject("emperorLabel").getString("value");
+//System.out.println(dene);

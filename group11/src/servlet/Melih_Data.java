@@ -1,13 +1,19 @@
 package net.codejva;
 
 public class Melih_Data {
-	String country;
-	String capital;
+	String emperor;
+	Integer date;
 	boolean isSelected;
 	
-	public Melih_Data(String c_country, String c_capital, boolean c_isSelected){
-		country = c_country;
-		capital = c_capital;
+	public Melih_Data(String c_emperor, Integer c_date, boolean c_isSelected){
+		emperor = c_emperor;
+		date = c_date;
 		isSelected = c_isSelected;
+	}
+	
+	public Melih_Data(String c_emperor, Integer c_date){
+		emperor = c_emperor;
+		date = c_date;
+		isSelected = false;
 	}
 }
