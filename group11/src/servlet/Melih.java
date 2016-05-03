@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 /**
  * Servlet implementation class Melih
  */
@@ -28,10 +31,16 @@ public class Melih extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		String my_query = request.getParameter("my_query");
+		String my_query = request.getParameter("menu");
 		out.println("<html>");
 		out.println("<body>");
-		//if (my_query == null){out.println("<form action='Melih' method='get'> Please enter a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");}
+		if(my_query == null){
+			out.println("<form action='Melih' method='get'> Please enter a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");
+			out.println("<p><><></p>");
+		}
+		//else{out.println("<a href = Melih?menu=whatever>Click here?</a>");}	
+		//out.println("<form action='Melih' method='get'> Please enter a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");
+		//out.println("<form action='Melih' method='get'> Please enter a query:<br><input type='text' name='my_query'><br><br><input type='submit' value='Submit'></form>");
 		//else{out.println("<p>" + my_query + "</p>");}
 		//out.println("<br>");
 		//Melih_DatabaseConnection.addUser(new Melih_User(1, "root"));
@@ -48,15 +57,22 @@ public class Melih extends HttpServlet {
 //			out.println("</tr>");
 //		}
 //		out.println("</table>");
+		JSONArray myJSONa = new JSONArray();
 		String my_input ="";
 		try {
-			my_input = Melih_Wikidata.getHtml();
+			myJSONa = Melih_Wikidata.getHtml();
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		out.println(my_input);
-		out.println("Hello.");
+		
+		JSONObject rec = myJSONa.getJSONObject(10);
+	    String dene = rec.getJSONObject("countryLabel").getString("value");
+		System.out.println(dene);
+		//out.println("son");
+		//System.out.println(my_input);
+		
 		//out.println("<form action='https://query.wikidata.org/sparql?query=SELECT ?countryLabel ?capitalLabel WHERE {?country wdt:P31 wd:Q3624078. ?capital wdt:P1376 ?country. SERVICE wikibase:label{bd:serviceParam wikibase:language 'en'. }}' method='get'> Click below to send your query:<input type='submit' value='Submit'></form>");
 		//out.println("<br>");
 		//out.println("<form action='Melih' method='get'> Please click here to flush and reinitialize the database: <input type='submit' value='Click'></form>");
