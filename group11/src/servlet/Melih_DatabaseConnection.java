@@ -40,7 +40,8 @@ public class Melih_DatabaseConnection {
 		   initialize();		   
 		   String sql = "DROP DATABASE melih_database";
 		   System.out.println(sql);
-		   try {
+		   
+		  try {
 			   PreparedStatement ps = conn.prepareStatement(sql);
 			   ps.execute();
 			   return true;
@@ -68,7 +69,7 @@ public class Melih_DatabaseConnection {
 	   	      
 	   public static boolean useDatabase(){
 		   initialize();		   
-		   String sql = "USE DATABASE melih_database";
+		   String sql = "USE melih_database";
 		   System.out.println(sql);
 		   try {
 			   PreparedStatement ps = conn.prepareStatement(sql);
@@ -83,7 +84,7 @@ public class Melih_DatabaseConnection {
 	   
 	   public static boolean createTable(){
 		   initialize();		   
-		   String sql = "CREATE TABLE melih_data (emperor varchar(30), date integer, isSelected boolean);";
+		   String sql = "CREATE TABLE melih_data (emperor varchar(30) PRIMARY KEY, date integer, isSelected boolean)";
 		   System.out.println(sql);
 		   try {
 			   PreparedStatement ps = conn.prepareStatement(sql);
@@ -96,14 +97,12 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   
-	   public static boolean addUser(Melih_User user){
+	   public static boolean orderTable(){
 		   initialize();		   
-		   String sql = "INSERT INTO melih_users (user_id, user_name) VALUES (?,?)";
+		   String sql = "SELECT * FROM melih_data ORDER BY date";
 		   System.out.println(sql);
 		   try {
 			   PreparedStatement ps = conn.prepareStatement(sql);
-			   ps.setString(1, String.valueOf(user.user_id));
-			   ps.setString(2, user.user_name);
 			   ps.execute();
 			   return true;
 		} catch (SQLException e) {
@@ -112,6 +111,41 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
+	   
+	   public static boolean saveData(Melih_Data myData){
+		   initialize();		   
+		   String sql = "UPDATE melih_data SET isSelected=true WHERE emperor = ?";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.setString(1, String.valueOf(myData.emperor));
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
+
+	   public static ArrayList<Melih_Data> makeQuery(Integer queriedYear) {
+		   initialize();
+		   String sql = "SELECT * FROM melih_data WHERE date = " + queriedYear;
+		   ResultSet rs;
+		   ArrayList<Melih_Data> data = new ArrayList<Melih_Data>();
+		   try {
+			   rs = stmt.executeQuery(sql);
+			   while(rs.next())
+				   data.add(new Melih_Data(rs.getString("emperor"), rs.getInt("date"), rs.getBoolean("isSelected")));
+			   rs.close();
+		   } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			   e.printStackTrace();
+		   }  
+		   return data;
+	   }
+	   
 	   public static boolean addData(Melih_Data myData){
 		   initialize();		   
 		   String sql = "INSERT INTO melih_data (emperor,date,isSelected) VALUES (?,?,?)";
@@ -130,22 +164,7 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   
-	   public static ArrayList<Melih_User> getUsers() {
-		   initialize();
-		   String sql = "SELECT * FROM melih_users";
-		   ResultSet rs;
-		   ArrayList<Melih_User> users = new ArrayList<Melih_User>();
-		   try {
-			   rs = stmt.executeQuery(sql);
-			   while(rs.next())
-				   users.add(new Melih_User(rs.getInt("user_id"), rs.getString("user_name")));
-			   rs.close();
-		   } catch (SQLException e) {
-			// TODO Auto-generated catch block
-			   e.printStackTrace();
-		   }  
-		   return users;
-	   }
+
 	   public static ArrayList<Melih_Data> getData() {
 		   initialize();
 		   String sql = "SELECT * FROM melih_data";
