@@ -10,20 +10,20 @@ import org.json.JSONObject;
 public class Ozgur_HtmlToJson {
 	
 	final private  String base = "https://query.wikidata.org/sparql?query=";
-	final String queryActor = "SELECT ?film ?filmLabel WHERE { "
-			+ "?film wdt:P31 wd:Q11424. "
-			+ "?item wdt:P106 wd:Q33999 ."
-			+ " ?film wdt:P161 ?item. "
-			+ "?item rdfs:label  \"theActor\"@en. "
+	final String queryActor = "SELECT ?itemLabel WHERE { "
+			+ "?item wdt:P31 wd:Q11424. "
+			+ "?actor wdt:P106 wd:Q33999 ."
+			+ " ?item wdt:P161 ?actor. "
+			+ "?actor rdfs:label  \"theActor\"@en. "
 			+ "SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }}";
-	final String queryActorYear = "SELECT ?item ?itemLabel WHERE "
+	final String queryActorYear = "SELECT ?itemLabel WHERE "
 			+ "{ ?item wdt:P577 ?date FILTER( ?date "
 			+ "= \"theYear-01-01T00:00:00Z\"^^xsd:dateTime). ?item wdt:P31 wd:Q11424 . "
 			+ "?item wdt:P161 ?person."
 			+ " ?person wdt:P31 wd:Q5. "
 			+ "?person rdfs:label  ?name filter(?name = \"theActor\"@en). "
 			+ "SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }}";
-	final String queryFilm = "SELECT %3Fitem %3FitemLabel "
+	final String queryFilm = "SELECT %3FitemLabel "
 			+ "WHERE { %3Ffilm wdt%3AP31 wd%3AQ11424. "
 			+ "%3Ffilm rdfs%3Alabel  %3Fname filter(%3Fname %3D \"theFilm\"%40en). "
 			+ "%3Ffilm wdt%3AP161 %3Fitem. "

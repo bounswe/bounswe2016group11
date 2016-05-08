@@ -2,6 +2,7 @@
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -18,31 +19,31 @@ import org.json.JSONArray;
 public class Ozgur extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	public Ozgur_HtmlToJson wikiQ;
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Ozgur() {
-        super();
-        System.out.println();
-        wikiQ = new Ozgur_HtmlToJson();
-        
-    }
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public Ozgur() {
+		super();
+		System.out.println();
+		wikiQ = new Ozgur_HtmlToJson();
+
+	}
 
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter theo = response.getWriter();
-		theo.println("My name is Özgür.");
+
+		theo.println("My name is Özgür");
 		String[] thestr = new String[2];
-		thestr[0] = "2010";
-		thestr[0] = "Christian Bale";
-		JSONArray theaArr = queryWiki(1,thestr);
-		//String thefour = theaArr.getJSONObject(4).getJSONObject("countryLabel").getString("value");
-		
-		theo.append(indexPage());
-		theo.append(theaArr.toString());
-	
+		thestr[0] = "Natalie Portman";
+		int typeOfQuery;
+
+		//JSONArray theaArr = queryWiki(1,thestr);
+
+		//theo.append(theaArr.toString());
+		checkAndAction(theo, request);
 	}
 
 	/**
@@ -52,15 +53,120 @@ public class Ozgur extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
-	
-	protected String indexPage(){
-		String result = " <form>\nEnter Actor to search:<br>\n"+
-				"<input type=\"text\" name=\"firstname\"><br>\n"+
-				"<input type=\"submit\" name=\"submit <br>\">"+
-				"</form> ";
-		return result;
+
+	/*
+	 * Checks the query type that the user has selected and puts the 
+	 * appropriate results into the screen
+	 * 
+	 * @theo the response to the HttpServlet
+	 * @request the information about the page to check its state and get action accordingly 
+	 * */
+	protected void checkAndAction(PrintWriter theo, HttpServletRequest request){
+		int type=0;
+		String queryType = request.getParameter("type");
+		String gotValue = request.getParameter("gotValue");
+		ArrayList<String> theResult = null;
+		if(queryType == null || queryType.equals("def")){//if default or not set
+			theo.println(pageContent(0));
+			return;
+		}
+		else if(gotValue != null ){
+			if(gotValue.equals("yes")){
+				theResult = new ArrayList<String>();
+			}
+			
+		}
+
+
+		if(queryType.equals("actor")){// if it is actor type
+			theo.println(pageContent(1));
+		}
+		else if(queryType.equals("film")){// query by film
+			theo.println(pageContent(2));
+			theo.println();theo.println();theo.println();
+			
+		}
+		else if(queryType.equals("actorYear")){//query by actor and year
+			theo.println(pageContent(3));
+		}
+		JSONArray jsonArr = new JSONArray();
+		String[] data = new String[2];
+		if(theResult != null){
+			String toWord = "";
+			switch (type) {
+			case 1:
+				String actor = request.getParameter("actor");
+				data[0] = actor;
+				toWord = "The films that " + actor+ "played are:<br><br><br>";
+				jsonArr =  queryWiki(1,data);
+				break;
+			case 2:
+				String film = request.getParameter("filmName");
+				data[0] = film;
+				toWord = "The actors played in  the movie " + film + " are:<br><br><br>";
+				jsonArr =  queryWiki(2,data);
+				break;
+			case 3:
+				actor = request.getParameter("actorName");
+				String year = request.getParameter("year");
+				data[0] = year;
+				data[1] = actor;
+				toWord = "The films that " + actor + " played in year: " +year + " are:<br><br><br>";
+				jsonArr =  queryWiki(3,data);
+				break;
+
+			default:
+				break;
+			}
+			theo.println(toWord);
+			
+		}
 	}
-	
+	/*
+	 * Returns the needed form as output according to input @typeOfQuery
+	 * If @typeOfQuery -> 0 , form includes buttons to choose which type of query does the user want to have 
+	 * If @typeOfQuery -> 1 , form includes just a field to get actor name
+	 * If @typeOfQuery -> 2 , form includes just a field to get film name
+	 * If @typeOfQuery -> 3 , form includes two fields to get the year of film
+	 * and the name of the film.
+	 * 
+	 * @typeOfQuery the type of form to be returned
+	 * */
+	protected String pageContent(int typeOfQuery){
+		if(typeOfQuery == 0){
+			String result = "<p><a href=Ozgur?type=actor>Query with actor name to see all the movies played by the actor!<a></p><br>";
+			result += "<p><a href=Ozgur?type=film>Query with movie name to see actors played in that movie!<a></p><br>";
+			result += "<p><a href=Ozgur?type=actorYear>Query with actor name and year to see all the movies played by the actor in that year<a></p><br>";
+			return result;
+		}
+		else if(typeOfQuery ==1){
+			String result = " <form>\nEnter Actor to search:<br>\n"+
+					"<input type=\"text\" name=\"actorName\"><br>\n"+
+					"<input type=\"submit\" name=\"gotValue value=\"yes\" <br>"+
+					"</form> <br><br><br>"
+					+ "<p><a href=Ozgur?type=def>Go Back To Main Page<a></p><br>";
+			return result;
+		}
+		else if(typeOfQuery ==2){
+			String result = " <form>\nEnter Actor to search:<br>\n"+
+					"<input type=\"text\" name=\"filmName\"><br>\n"+
+					"<input type=\"submit\" name=\"gotValue value=\"yes\" <br>"+
+					"</form> <br><br><br>"
+					+ "<p><a href=Ozgur?type=def>Go Back To Main Page<a></p><br>";
+			return result;
+		}
+		else if(typeOfQuery ==3){
+			String result = " <form>\nEnter Actor to search:<br>\n"+
+					"<input type=\"text\" name=\"actorName\"><br>\n"+
+					"<input type=\"text\" name=\"year\"><br>\n"+
+					"<input type=\"submit\" name=\"gotValue value=\"yes\" <br>"+
+					"</form> <br><br><br>"
+					+ "<p><a href=Ozgur?type=def>Go Back To Main Page<a></p><br>";
+			return result;
+		}
+		return "";
+	}
+
 	/*
 	 * Used to query wikidata, by using Ozgur_HtmlToJson class
 	 * @typeOfQuery if 1 -> Query the films that the actor specified in the @data[0] played in.
@@ -68,7 +174,7 @@ public class Ozgur extends HttpServlet {
 	 * if 3 -> Query the films in year @data[0] played by actor @data[1]
 	 * */
 	protected JSONArray queryWiki(int typeOfQuery, String[] data) {
-		
+
 		if(typeOfQuery == 1){
 			return wikiQ.queryWithActor(data[0]);
 		}
@@ -80,5 +186,16 @@ public class Ozgur extends HttpServlet {
 		}
 		return null;
 	}
-
+	
+	/*
+	 * Converts the JSONArray taken from wikidata into arraylist.
+	 * 
+	 * @jsonArr the JSONArray to be converted into ArrayList<String>
+	 * 
+	 * */
+	protected ArrayList<String> parseJSONarray(JSONArray jsonArr){
+		ArrayList<String> result = new ArrayList<String>();
+		
+		return result;
+	}
 }
