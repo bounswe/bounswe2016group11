@@ -60,8 +60,15 @@ public class Deniz_DatabaseConnection{
 	public static boolean createTable(Boolean isWiki){
 		initializeDB();
 		String sql = "";
-		if(true){
+		if(isWiki){
 			sql = "CREATE TABLE IF NOT EXISTS deniz_wiki_data ("
+					   + "id BIGINT NOT NULL AUTO_INCREMENT,"
+					   + "team varchar(255) NOT NULL, "
+					   + "year INTEGER,"
+					   + "PRIMARY KEY (id)"
+					   + ")";
+		} else {
+			sql = "CREATE TABLE IF NOT EXISTS deniz_user_data ("
 					   + "id BIGINT NOT NULL AUTO_INCREMENT,"
 					   + "team varchar(255) NOT NULL, "
 					   + "year INTEGER,"
@@ -74,24 +81,30 @@ public class Deniz_DatabaseConnection{
 	public static boolean dropTable(Boolean isWiki){
 		initializeDB();
 		String sql = "";
-		if(true){
+		if(isWiki){
 			sql = "DROP TABLE IF EXISTS deniz_wiki_data";
+		} else {
+			sql = "DROP TABLE IF EXISTS deniz_user_data";
 		}
 		return executeSQLStatement(sql);
 	}
 	public static boolean orderTable(Boolean isWiki){
 		initializeDB();
 		String sql = "";
-		if(true){
+		if(isWiki){
 			sql = "SELECT * FROM deniz_wiki_data ORDER BY year";
+		} else {
+			sql = "SELECT * FROM deniz_user_data ORDER BY year";
 		}
 		return executeSQLStatement(sql);
 	}
 	public static ArrayList<Deniz_Data> getData(Boolean isWiki){
 		initializeDB();
 		String sql = "";
-		if(true){
+		if(isWiki){
 			sql = "SELECT * FROM deniz_wiki_data";
+		} else{
+			sql = "SELECT * FROM deniz_user_data";
 		}
 		ResultSet res;
 		ArrayList<Deniz_Data> results = new ArrayList<Deniz_Data>();
@@ -104,12 +117,17 @@ public class Deniz_DatabaseConnection{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return results;
 	}
 	
-	public static boolean addWikiData(Deniz_Data data){
+	public static boolean addData(Deniz_Data data, Boolean isWiki){
 		initializeDB();
-		String sql = "INSERT INTO deniz_wiki_data (team,year) VALUES (?,?)";
+		String sql = "";
+		if(isWiki){
+			sql = "INSERT INTO deniz_wiki_data (team,year) VALUES (?,?)";
+		} else {
+			sql = "INSERT INTO deniz_user_data (team,year) VALUES (?,?)";
+		}
 		try {
 			PreparedStatement ps = con.prepareStatement(sql);
 			ps.setString(1, data.getTeam());
@@ -121,22 +139,9 @@ public class Deniz_DatabaseConnection{
 		}
 		return false;
 	}
-	public static boolean addUserData(Deniz_Data data){
-		initializeDB();
-		String sql = "INSERT INTO deniz_user_data (team,year) VALUES (?,?)";
-		try {
-			PreparedStatement ps = con.prepareStatement(sql);
-			ps.setString(1, data.getTeam());
-			ps.setInt(2, data.getYear());
-			ps.execute();
-			return true;
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
+	
 	public static boolean saveData(Deniz_Data data){
-		addUserData(data);
+		addData(data,false);
 		return false;
 	}
 	public static ArrayList<Deniz_Data> queryData(int year, Boolean isWiki){
@@ -144,8 +149,10 @@ public class Deniz_DatabaseConnection{
 		String sql = "";
 		ResultSet res;
 		ArrayList<Deniz_Data> results = new ArrayList<Deniz_Data>();
-		if(true){
+		if(isWiki){
 			sql = "SELECT * FROM deniz_wiki_data WHERE year = " + Integer.toString(year);
+		} else {
+			sql = "SELECT * FROM deniz_user_data WHERE year = " + Integer.toString(year);
 		}
 		try {
 			res = smt.executeQuery(sql);
@@ -156,7 +163,7 @@ public class Deniz_DatabaseConnection{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return results;
 	}
 
 }
