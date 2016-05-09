@@ -38,7 +38,7 @@ public class Melih_DatabaseConnection {
 	   
 	   public static boolean dropDatabase(){
 		   initialize();		   
-		   String sql = "DROP DATABASE melih_database";
+		   String sql = "DROP DATABASE IF EXISTS melih_database";
 		   System.out.println(sql);
 		   
 		  try {
