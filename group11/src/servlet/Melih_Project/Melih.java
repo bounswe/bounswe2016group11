@@ -28,7 +28,6 @@ public class Melih extends HttpServlet {
        
     public Melih() {
         super();
-        // TODO Auto-generated constructor stub
     }
     
     String printTable(ArrayList<Melih_Data> allData){
