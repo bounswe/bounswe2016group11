@@ -38,7 +38,7 @@ public class Melih_DatabaseConnection {
 	   
 	   public static boolean dropDatabase(){
 		   initialize();		   
-		   String sql = "DROP DATABASE melih_database";
+		   String sql = "DROP DATABASE IF EXISTS melih_database";
 		   System.out.println(sql);
 		   
 		  try {
@@ -123,6 +123,20 @@ public class Melih_DatabaseConnection {
 			   return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
+	   public static boolean unsaveSaved(){
+		   initialize();		   
+		   String sql = "UPDATE melih_data SET isSelected=false";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
