@@ -169,30 +169,10 @@ public class Melih extends HttpServlet {
 		} else if(selection.equals("save")){
 			String queriedYear = request.getParameter("input");
 			Integer intQuery = Integer.parseInt(queriedYear);
-			ArrayList<Melih_Data> allData =  Melih_DatabaseConnection.getData();
-			Integer minIndex = 0;
-			Integer minValue = Math.abs(allData.get(0).date - intQuery);
-			for(int i = 1; i<allData.size(); i++){
-				if (Math.abs(allData.get(i).date - intQuery)<minValue) {
-						minIndex = i;
-						minValue =Math.abs(allData.get(i).date - intQuery); 	
-					}
-			}
-			ArrayList<Melih_Data> editData = allData;
-			ArrayList<Melih_Data> resultData = new ArrayList<Melih_Data>();
-			resultData.add(editData.get(minIndex));
-						
-			for(int i = 0; i< 9; i++){
-				if(Math.abs(editData.get(minIndex-1).date - intQuery)<Math.abs(editData.get(minIndex+1).date - intQuery)){
-					resultData.add(editData.get(minIndex-1));
-					editData.remove(minIndex-1);
-					minIndex--;
-				} else {
-					resultData.add(editData.get(minIndex+1));
-					editData.remove(minIndex+1);
-				}
-			}
 			
+			ArrayList<Melih_Data> resultData = getQueryResults(intQuery);
+			
+
 			for (int i = 0; i<resultData.size();i++){
 				if(request.getParameter("checkbox_"+i)!=null){
 					String whetherChecked = request.getParameter("checkbox_"+i);
@@ -302,3 +282,28 @@ for(int i = 0; i< 9; i++){
 		editData.remove(minIndex+1);
 	}
 }*/
+
+/*ArrayList<Melih_Data> allData =  Melih_DatabaseConnection.getData();
+Integer minIndex = 0;
+Integer minValue = Math.abs(allData.get(0).date - intQuery);
+for(int i = 1; i<allData.size(); i++){
+	if (Math.abs(allData.get(i).date - intQuery)<minValue) {
+			minIndex = i;
+			minValue =Math.abs(allData.get(i).date - intQuery); 	
+		}
+}
+ArrayList<Melih_Data> editData = allData;
+ArrayList<Melih_Data> resultData = new ArrayList<Melih_Data>();
+resultData.add(editData.get(minIndex));
+			
+for(int i = 0; i< 9; i++){
+	if(Math.abs(editData.get(minIndex-1).date - intQuery)<Math.abs(editData.get(minIndex+1).date - intQuery)){
+		resultData.add(editData.get(minIndex-1));
+		editData.remove(minIndex-1);
+		minIndex--;
+	} else {
+		resultData.add(editData.get(minIndex+1));
+		editData.remove(minIndex+1);
+	}
+}*/
+
