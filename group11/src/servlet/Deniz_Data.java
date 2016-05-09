@@ -1,11 +1,9 @@
-public class Deniz_Data{
+public class Deniz_Data implements Comparable<Deniz_Data>{
 	private String team;
 	private int year;
-	private String country;
-	public Deniz_Data(String inputTeam, int inputYear, String inputCountry){
+	public Deniz_Data(String inputTeam, int inputYear){
 		this.team = inputTeam;
 		this.year = inputYear;
-		this.country = inputCountry;
 	}
 	public String getTeam() {
 		return team;
@@ -19,11 +17,9 @@ public class Deniz_Data{
 	public void setYear(int year) {
 		this.year = year;
 	}
-	public String getCountry() {
-		return country;
+	@Override
+	public int compareTo(Deniz_Data o) {
+		// TODO Auto-generated method stub
+		return Integer.valueOf(o.year).compareTo(Integer.valueOf(this.year));
 	}
-	public void setCountry(String country) {
-		this.country = country;
-	}
-	
 }
