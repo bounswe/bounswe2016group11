@@ -35,10 +35,6 @@ public class Ozgur extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter theo = response.getWriter();
-
-		theo.println("My name is Özgür");
-		String[] thestr = new String[2];
-		thestr[0] = "Natalie Portman";
 		int typeOfQuery;
 
 		//JSONArray theaArr = queryWiki(1,thestr);
@@ -68,6 +64,9 @@ public class Ozgur extends HttpServlet {
 		String gotValue = request.getParameter("gotValue");
 		ArrayList<String> theResult = null;
 		if(queryType == null || queryType.equals("def")){//if default or not set
+			theo.println("<h1>Welcome To Özgür's Project</h1><br>");
+			theo.println("<p>In this project you can search about films and actors</p><br>");
+			theo.println("<p><b>Here are your choices:</b></p><br>");
 			theo.println(pageContent(0));
 			return;
 		}
