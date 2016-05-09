@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * Servlet implementation class Ozgur
@@ -74,30 +75,33 @@ public class Ozgur extends HttpServlet {
 			if(gotValue.equals("yes")){
 				theResult = new ArrayList<String>();
 			}
-			
+
 		}
 
 
 		if(queryType.equals("actor")){// if it is actor type
 			theo.println(pageContent(1));
+			type = 1;
 		}
 		else if(queryType.equals("film")){// query by film
 			theo.println(pageContent(2));
 			theo.println();theo.println();theo.println();
-			
+			type = 2;
 		}
 		else if(queryType.equals("actorYear")){//query by actor and year
 			theo.println(pageContent(3));
+			type = 3;
 		}
 		JSONArray jsonArr = new JSONArray();
 		String[] data = new String[2];
 		if(theResult != null){
+			System.out.println("Here  " + type);
 			String toWord = "";
 			switch (type) {
 			case 1:
-				String actor = request.getParameter("actor");
+				String actor = request.getParameter("actorName");
 				data[0] = actor;
-				toWord = "The films that " + actor+ "played are:<br><br><br>";
+				toWord = "The films that " + actor+ " played are:<br><br><br>";
 				jsonArr =  queryWiki(1,data);
 				break;
 			case 2:
@@ -117,9 +121,17 @@ public class Ozgur extends HttpServlet {
 
 			default:
 				break;
-			}
-			theo.println(toWord);
 			
+			
+
+			}
+
+			System.out.println(toWord);
+			theo.println(toWord);
+			theResult = parseJSONarray(jsonArr);
+			for(int i=0; i< theResult.size(); i++){
+				theo.println(theResult.get(i) + "<br>");
+			}
 		}
 	}
 	/*
@@ -142,15 +154,17 @@ public class Ozgur extends HttpServlet {
 		else if(typeOfQuery ==1){
 			String result = " <form>\nEnter Actor to search:<br>\n"+
 					"<input type=\"text\" name=\"actorName\"><br>\n"+
-					"<input type=\"submit\" name=\"gotValue value=\"yes\" <br>"+
+					"<input type=\"submit\" name=\"gotValue\" value=\"yes\" <br>"
+					+ "<input type=\"hidden\" name=\"type\" value=\"actor\">"+
 					"</form> <br><br><br>"
 					+ "<p><a href=Ozgur?type=def>Go Back To Main Page<a></p><br>";
 			return result;
 		}
 		else if(typeOfQuery ==2){
-			String result = " <form>\nEnter Actor to search:<br>\n"+
+			String result = " <form>\nEnter Film to search:<br>\n"+
 					"<input type=\"text\" name=\"filmName\"><br>\n"+
-					"<input type=\"submit\" name=\"gotValue value=\"yes\" <br>"+
+					"<input type=\"submit\" name=\"gotValue\" value=\"yes\"<br>"
+					+ "<input type=\"hidden\" name=\"type\" value=\"film\">"+
 					"</form> <br><br><br>"
 					+ "<p><a href=Ozgur?type=def>Go Back To Main Page<a></p><br>";
 			return result;
@@ -159,7 +173,8 @@ public class Ozgur extends HttpServlet {
 			String result = " <form>\nEnter Actor to search:<br>\n"+
 					"<input type=\"text\" name=\"actorName\"><br>\n"+
 					"<input type=\"text\" name=\"year\"><br>\n"+
-					"<input type=\"submit\" name=\"gotValue value=\"yes\" <br>"+
+					"<input type=\"submit\" name=\"gotValue\" value=\"yes\" <br>"+
+					"<input type=\"hidden\" name=\"type\" value=\"actorYear\">"+
 					"</form> <br><br><br>"
 					+ "<p><a href=Ozgur?type=def>Go Back To Main Page<a></p><br>";
 			return result;
@@ -186,16 +201,21 @@ public class Ozgur extends HttpServlet {
 		}
 		return null;
 	}
-	
+
 	/*
 	 * Converts the JSONArray taken from wikidata into arraylist.
 	 * 
 	 * @jsonArr the JSONArray to be converted into ArrayList<String>
-	 * 
+	 *
 	 * */
 	protected ArrayList<String> parseJSONarray(JSONArray jsonArr){
 		ArrayList<String> result = new ArrayList<String>();
-		
+		for(int i=0 ; i<jsonArr.length(); i++){
+			JSONObject theobj = jsonArr.getJSONObject(i).getJSONObject("itemLabel");
+			String res = theobj.getString("value");
+			System.out.println(res);
+			result.add(res);
+		}
 		return result;
 	}
 }
