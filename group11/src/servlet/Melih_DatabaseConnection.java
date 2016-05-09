@@ -128,6 +128,20 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   
+	   public static boolean unsaveSaved(){
+		   initialize();		   
+		   String sql = "UPDATE melih_data SET isSelected=false";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
 
 	   public static ArrayList<Melih_Data> makeQuery(Integer queriedYear) {
 		   initialize();
