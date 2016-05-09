@@ -84,7 +84,7 @@ public class Melih_DatabaseConnection {
 	   
 	   public static boolean createTable(){
 		   initialize();		   
-		   String sql = "CREATE TABLE melih_data (emperor varchar(30) PRIMARY KEY, date integer, isSelected boolean)";
+		   String sql = "CREATE TABLE melih_data (emperor varchar(30), date integer, isSelected boolean)";
 		   System.out.println(sql);
 		   try {
 			   PreparedStatement ps = conn.prepareStatement(sql);
@@ -154,7 +154,6 @@ public class Melih_DatabaseConnection {
 				   data.add(new Melih_Data(rs.getString("emperor"), rs.getInt("date"), rs.getBoolean("isSelected")));
 			   rs.close();
 		   } catch (SQLException e) {
-			// TODO Auto-generated catch block
 			   e.printStackTrace();
 		   }  
 		   return data;
