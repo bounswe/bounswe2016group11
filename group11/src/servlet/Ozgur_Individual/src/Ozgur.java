@@ -27,7 +27,6 @@ public class Ozgur extends HttpServlet {
 		super();
 		System.out.println();
 		wikiQ = new Ozgur_HtmlToJson();
-
 	}
 
 	/**
