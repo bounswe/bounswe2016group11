@@ -109,7 +109,7 @@ public class Melih_DatabaseConnection {
 	    *  This table holds the data obtained from Wikidata.org.
 	    */
 	 	   	      
-	   public static boolean createTable(){
+	   public static boolean createDataTable(){
 		   initialize();		   
 		   String sql = "CREATE TABLE melih_data (emperor varchar(30) PRIMARY KEY, date integer, isSelected boolean)";
 		   System.out.println(sql);
@@ -119,6 +119,35 @@ public class Melih_DatabaseConnection {
 			   return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
+	   public static boolean createSaveTable(){
+		   initialize();		   
+		   String sql = "CREATE TABLE melih_save (save_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, savedEmperors VARCHAR(300))";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
+	   
+	   public static boolean clearSaveHistory(){
+		   initialize();		   
+		   String sql = "DELETE FROM melih_save";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -232,6 +261,22 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
+	   
+	   public static boolean addSave(String mySavedEmperors){
+		   initialize();		   
+		   String sql = "INSERT INTO melih_save (savedEmperors) VALUES (?)";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.setString(1, String.valueOf(mySavedEmperors));
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+	   }
 	   /**
 	    *  When called with a Melih_Data object containing all emperor names, 
 	    *  ascension years, and marking information are returned to the 
@@ -255,5 +300,22 @@ public class Melih_DatabaseConnection {
 			   e.printStackTrace();
 		   }  
 		   return data;
+	   }
+	   
+	   public static ArrayList<String> getSave() {
+		   initialize();
+		   String sql = "SELECT savedEmperors FROM melih_save";
+		   ResultSet rs;
+		   ArrayList<String> myEmperors = new ArrayList<String>();
+		   try {
+			   rs = stmt.executeQuery(sql);
+			   while(rs.next())
+				   myEmperors.add(rs.getString("savedEmperors"));
+			   rs.close();
+		   } catch (SQLException e) {
+			// TODO Auto-generated catch block
+			   e.printStackTrace();
+		   }  
+		   return myEmperors;
 	   }
 	}
