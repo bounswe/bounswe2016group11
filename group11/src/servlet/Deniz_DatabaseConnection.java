@@ -127,8 +127,8 @@ public class Deniz_DatabaseConnection{
 					   + "id BIGINT NOT NULL AUTO_INCREMENT,"
 					   + "team varchar(255) NOT NULL, "
 					   + "year INTEGER,"
-					   + "PRIMARY KEY (team)"
-					   //+ "PRIMARY KEY (id)"
+					   //+ "PRIMARY KEY (team)"
+					   + "PRIMARY KEY (id)"
 					   + ")";
 		}
 		return executeSQLStatement(sql);
