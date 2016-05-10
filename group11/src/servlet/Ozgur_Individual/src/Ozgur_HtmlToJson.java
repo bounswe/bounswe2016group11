@@ -25,24 +25,32 @@ public class Ozgur_HtmlToJson {
 			+ "SERVICE wikibase:label { bd:serviceParam wikibase:language \"en\" }}";
 	final String queryFilm = "SELECT %3FitemLabel "
 			+ "WHERE { %3Ffilm wdt%3AP31 wd%3AQ11424. "
-			+ "%3Ffilm rdfs%3Alabel  %3Fname filter(%3Fname %3D \"theFilm\"%40en). "
+			+ "%3Ffilm rdfs%3Alabel  \"theFilm\"%40en. "
 			+ "%3Ffilm wdt%3AP161 %3Fitem. "
 			+ "%3Fitem wdt%3AP106 wd%3AQ33999 .  "
 			+ "SERVICE wikibase%3Alabel { bd%3AserviceParam wikibase%3Alanguage \"en\" } }";
+	
+	/*
+	 * @theQuery query for wikidata starting with a SELECT ... statement.
+	 * To make it consistent with a web link, some characters in it are changed 
+	 * accordingly i.e. : --> %3A
+	 *  				= --> %3D
+	 *  				....
+	 *  
+	 *   please the function for the res
+	 * */
 	private JSONArray getJSONResponseForQuery(String theQuery){
 		theQuery = theQuery.replace(":", "%3A");
 		theQuery = theQuery.replace("=", "%3D");
 		theQuery = theQuery.replace("@", "%40");
 		theQuery = theQuery.replace("?", "%3F");
-		//theQuery = theQuery.replace("\"", "'");
 		theQuery = theQuery.replace(" ", "%20");
-		//theQuery = theQuery.replace("'", "%22");
 		System.out.println(base + theQuery);
 		return getJSONResponseURL(base + theQuery + "%20&format=json");
 	}
 	
 	/*
-	 * Queris the wikidata database for the films in which the actor named @actor played, and 
+	 * Queries the wikidata database for the films in which the actor named @actor played, and 
 	 * the publication data of the film is equal to @year
 	 * 
 	 * @year The publication of the films queried
@@ -76,6 +84,16 @@ public class Ozgur_HtmlToJson {
 		return getJSONResponseForQuery(theQuery);
 	}
 	
+	/*
+	 * Returns the JSONArray which is got from the @url URL.
+	 * However, because it is known that the query is asked to wikidata
+	 * and in the response the value is in the JSONArray of "bindings" 
+	 * which is in the JSONObject named "results", the JSONArray is the 
+	 * JSONArray of "bindings"
+	 * 
+	 * @url the URL to fetch the json file
+	 * 
+	 * */
 	public static JSONArray getJSONResponseURL(String url) {
         
         String inputLine,myString;
