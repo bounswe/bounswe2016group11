@@ -251,13 +251,18 @@ public String printSaveHistory(ArrayList<String> allSaves){
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		} else if (selection.equals("query")){		//When the user submits their query, they are directed here, where the query results are displayed.
 			String queriedYear = request.getParameter("input");
-			Integer intQuery = Integer.parseInt(queriedYear);
-			Melih_DatabaseConnection.useDatabase();
-			ArrayList<Melih_Data> myData = Melih_DatabaseConnection.makeQuery(intQuery);
-			ArrayList<Melih_Data> resultData = getQueryResults(intQuery); 		//The query results are prepared by the getQueryResults method described above.
-			String print = printOutputTable(myData, resultData, queriedYear);	//The table printout is prepared by the printOutputTable method described above. 		
-			out.println(print);
-			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
+			if(queriedYear.equals("")){
+				out.println("Please enter a valid query!");
+				out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
+			}else{
+				Integer intQuery = Integer.parseInt(queriedYear);
+				Melih_DatabaseConnection.useDatabase();
+				ArrayList<Melih_Data> myData = Melih_DatabaseConnection.makeQuery(intQuery);
+				ArrayList<Melih_Data> resultData = getQueryResults(intQuery); 		//The query results are prepared by the getQueryResults method described above.
+				String print = printOutputTable(myData, resultData, queriedYear);	//The table printout is prepared by the printOutputTable method described above. 		
+				out.println(print);
+				out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
+			}
 		} else if (selection.equals("flush")){
 			flushDatabase();	//If the user chooses to do so, the database is renewed through the flushDatabase method described above. 
 			out.println("<p>Database is renewed!</p>");
