@@ -1,5 +1,3 @@
-
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -16,16 +14,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
-* This servlet is the main file for the individual implementation project Roman 
+* This servlet is the main class for the individual implementation project Roman 
 * Emperors and their Years of Ascension. 
 *
 * @author  Melih Barsbey
 * @version 1.0
 * @since   2016-05-10 
 */
+
 @WebServlet("/Melih")
-
-
 
 public class Melih extends HttpServlet {
 	
@@ -115,7 +112,7 @@ public class Melih extends HttpServlet {
 	   * of {@link Melih_Wikidata#getHtml(String query) [getHtml]} method of {@link Melih_Wikidata [Melih_Wikidata]} class,
 	   * demanding the relevant data in JSON format. After the
 	   * data is received, it is parsed into a MelihData object and sent to the 
-	   * Database to be inserted using the {@link Melih_DatabaseConnection#addData() [addData]} method of {@link Melih_DatabaseConnection [Melih_DatabaseConnection]} 
+	   * Database to be inserted using the {@link Melih_DatabaseConnection#addData(Melih_Data myData) [addData]} method of {@link Melih_DatabaseConnection [Melih_DatabaseConnection]} 
 	   * class.
 	   */
     
@@ -126,13 +123,13 @@ public class Melih extends HttpServlet {
 		Melih_DatabaseConnection.useDatabase();
 		Melih_DatabaseConnection.createTable();
 		JSONArray myJSONarray = new JSONArray();
-		String query = "SELECT%20?emperorLabel%20?dateLabel%20WHERE%20{%20?emperor%20wdt:P31%20wd:Q5%20.%20?emperor%20p:P39%20?position_held_statement%20.%20?position_held_statement%20ps:P39%20wd:Q842606.%20?position_held_statement%20pq:P580%20?date%20.%20SERVICE%20wikibase:label%20{%20bd:serviceParam%20wikibase:language%20%27en%27%20.%20}%20}%20ORDER%20BY%20?date&format=json";
+		String query = "https://query.wikidata.org/sparql?query=SELECT%20?emperorLabel%20?dateLabel%20WHERE%20{%20?emperor%20wdt:P31%20wd:Q5%20.%20?emperor%20p:P39%20?position_held_statement%20.%20?position_held_statement%20ps:P39%20wd:Q842606.%20?position_held_statement%20pq:P580%20?date%20.%20SERVICE%20wikibase:label%20{%20bd:serviceParam%20wikibase:language%20%27en%27%20.%20}%20}%20ORDER%20BY%20?date&format=json";
 		try {
 			myJSONarray = Melih_Wikidata.getHtml(query);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		Melih_DatabaseConnection.useDatabase();
 		for(int i = 0; i<myJSONarray.length();i++){
 			JSONObject tempRecord = myJSONarray.getJSONObject(i);
 			String tempEmperor = tempRecord.getJSONObject("emperorLabel").getString("value");
@@ -154,6 +151,7 @@ public class Melih extends HttpServlet {
 	   * @return resultData The ten emperors with ascension dates closest to the entered year.
 	   */
     public ArrayList<Melih_Data> getQueryResults(int intQuery){
+    	Melih_DatabaseConnection.useDatabase();
     	ArrayList<Melih_Data> allData =  Melih_DatabaseConnection.getData();
 		
 		Collections.sort(allData, new Comparator<Melih_Data>() {
@@ -223,6 +221,7 @@ public class Melih extends HttpServlet {
 		} else if (selection.equals("query")){
 			String queriedYear = request.getParameter("input");
 			Integer intQuery = Integer.parseInt(queriedYear);
+			Melih_DatabaseConnection.useDatabase();
 			ArrayList<Melih_Data> myData = Melih_DatabaseConnection.makeQuery(intQuery);
 			ArrayList<Melih_Data> resultData = getQueryResults(intQuery);
 			String print = printOutputTable(myData, resultData, queriedYear);		
@@ -245,6 +244,7 @@ public class Melih extends HttpServlet {
 			out.println("Your requests have been saved!");
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		}else if(selection.equals("seeSaved")){
+			Melih_DatabaseConnection.useDatabase();
 			ArrayList<Melih_Data> allData = Melih_DatabaseConnection.getData();
 			boolean isPresent = false;
 			for(int i = 0; i < allData.size();i++){
@@ -264,6 +264,7 @@ public class Melih extends HttpServlet {
 			}else{
 				String queriedYear = request.getParameter("queriedYear");
 				Integer intYear =Integer.parseInt(queriedYear);
+				Melih_DatabaseConnection.useDatabase();
 				boolean addedSuccessfully = Melih_DatabaseConnection.addData(new Melih_Data(emperorName, intYear));
 				Melih_DatabaseConnection.orderTable();
 				if(addedSuccessfully){
@@ -274,6 +275,7 @@ public class Melih extends HttpServlet {
 			}
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		}else if(selection.equals("unsave")){
+			Melih_DatabaseConnection.useDatabase();
 			Melih_DatabaseConnection.unsaveSaved();
 			out.println("<html>");
 			out.println("<body>");
