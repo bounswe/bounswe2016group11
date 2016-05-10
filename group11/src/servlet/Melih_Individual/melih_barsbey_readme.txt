@@ -20,4 +20,19 @@ WHERE {
 
 ORDER BY ?date
 
-The query was conducted through HTML GET method. The server was asked for a JSON file, which included the array of results that the query asked for. Then, the application parses the input and stores the query in a relational database. When the user makes a query with a year, the algorithm calculates the 10 emperors who are closest to that date in terms of the year they assumed the Roman Empire's throne. For example, assuming that the user entered "250" as query, the database returns 
+The query was conducted through HTML GET method. The server was asked for a JSON file, which included the array of results that the query asked for. Then, the application parses the input and stores the query in a relational database. When the user makes a query with a year, the algorithm calculates the 10 emperors who are closest to that date in terms of the year they assumed the Roman Empire's throne. For example, assuming that the user entered "250" as query, the application returns:
+
+	249	Decius
+	251	Herennius Etruscus
+	251	Hostilian
+	251	Trebonianus Gallus
+	253	Aemilianus
+	253	Valerian
+	244	Philip the Arab
+	260	Gallienus
+	238	Pupienus
+	238	Gordian III
+
+Of course, the user is presented with options to save a subset of results for later review, or add a new year - emperor pair to the database.
+
+Visit the application for more details: http://ec2-54-201-255-149.us-west-2.compute.amazonaws.com:8080/Melih/Melih
