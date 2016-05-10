@@ -188,7 +188,6 @@ public class Ozgur extends HttpServlet {
 				+ "<input type=\"hidden\" name =\"type\" value=\""+type+ "\"><br>"
 				+"</form><br>";
 		
-		System.out.println(result);
 		return result;
 	}
 	/*

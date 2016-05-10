@@ -45,6 +45,7 @@ public class Ozgur_HtmlToJson {
 		theQuery = theQuery.replace("@", "%40");
 		theQuery = theQuery.replace("?", "%3F");
 		theQuery = theQuery.replace(" ", "%20");
+		
 		System.out.println(base + theQuery);
 		return getJSONResponseURL(base + theQuery + "%20&format=json");
 	}
