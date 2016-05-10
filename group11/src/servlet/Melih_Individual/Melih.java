@@ -1,5 +1,5 @@
-package net.codejva;
-//
+
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -16,8 +16,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
- * Servlet implementation class Melih
- */
+* This servlet is the main file for the individual implementation project Roman 
+* Emperors and their Years of Ascension. 
+*
+* @author  Melih Barsbey
+* @version 1.0
+* @since   2016-05-10 
+*/
 @WebServlet("/Melih")
 
 
@@ -30,27 +35,48 @@ public class Melih extends HttpServlet {
         super();
     }
     
-    String printTable(ArrayList<Melih_Data> allData){
-
-    	String myTableout = "";
-    	myTableout+="Here are your saved entries:";
-    	myTableout+="<table>";
-    	myTableout+="<tr>";
-    		myTableout+="<th><strong>Year of Ascension</strong></th>";
-    		myTableout+="<th><strong>Name of the Emperor</strong></th>";
-    	myTableout+="</tr>";
+    /**
+	   * This method takes an array of data from the servlet {@link #doGet [doGet]} method 
+	   * which contains the entities the user wanted to save. This method creates 
+	   * and returns the html code required to print these entities out. 
+	   * 
+	   * @param allData The array includes the saved records from the doGet method.
+	   * @return myTableOut This string includes the html code to be printed.
+	   */
+    public String printTable(ArrayList<Melih_Data> allData){
+       
+    	
+    	String myTableOut = "";
+    	myTableOut+="Here are your saved entries:";
+    	myTableOut+="<table>";
+    	myTableOut+="<tr>";
+    		myTableOut+="<th><strong>Year of Ascension</strong></th>";
+    		myTableOut+="<th><strong>Name of the Emperor</strong></th>";
+    	myTableOut+="</tr>";
 		for(int i = 0; i < allData.size();i++){
 			if(allData.get(i).isSelected){
-				myTableout+="<tr>";
-				myTableout+="<td align='center'>"+ allData.get(i).date +"</td>";
-				myTableout+="<td align='center'>"+ allData.get(i).emperor +"</td>";
-				myTableout+="</tr>";
+				myTableOut+="<tr>";
+				myTableOut+="<td align='center'>"+ allData.get(i).date +"</td>";
+				myTableOut+="<td align='center'>"+ allData.get(i).emperor +"</td>";
+				myTableOut+="</tr>";
 			}
 		}
-		return myTableout;
+		return myTableOut;
     }
-    
-    String printOutputTable(ArrayList<Melih_Data> myData, ArrayList<Melih_Data> resultData, String queriedYear){
+
+   /**
+   * This method takes two arrays of data from inside the servlet {@link #doGet [doGet]} method, 
+   * one which contains the entities in the database, and the other is the  
+   * result user's query. The method returns the query table to be printed out. 
+   * 
+   * @param myData The array includes all the entities in the database table.
+   * @param resultData The array includes the ten entites chosen to be as a result of the query.
+   * @param queriedYear This is the string, containing the year the user entered .
+   * @return outputString This string includes the html code to be printed.
+   */
+ 	
+    public String printOutputTable(ArrayList<Melih_Data> myData, ArrayList<Melih_Data> resultData, String queriedYear){
+
     	Integer intQuery = Integer.parseInt(queriedYear);
     	String outputString = "";
 		if (myData.size()>0){
@@ -58,7 +84,7 @@ public class Melih extends HttpServlet {
 		}else{
 			outputString+="There were no emperors that ascended to the throne at that year! See below for emperors that ascended closest to that year.";	
 		}
-		outputString+="<br>You can save any of the emperors in the database by checking on the checkboxes and clicking the 'Save' button.";
+		outputString+="<br>You can save any of the emperors in the database for later review by checking on the checkboxes and clicking the 'Save' button.";
 		
 		outputString+="<form action='Melih' method='get'>";
 		outputString+="<table>";
@@ -76,12 +102,25 @@ public class Melih extends HttpServlet {
 		}
 	outputString+="</table>";
 	outputString+="<input type='hidden' name='input' value='"+queriedYear+"'/><input type='hidden' name='menu' value='save'/><input type='submit' value='Save'></form>";
+	outputString+="<p style='color:red'>Do you want to add a new emperor?</p>";
 	outputString+="Would you like to add an(other) emperor that ascended to the throne at year "+intQuery+"?<br>If yes, please enter the name below and click 'Add Emperor' button. Remember: The name of your emperor cannot be the same with that of an already existing one!";
 	outputString+="<form action='Melih' method='get'><input type='hidden' name='queriedYear' value='"+queriedYear+"'/><input type='hidden' name='menu' value='addNewEmperor'/><input type='text' name='input'><br><br><input type='submit' value='Add Emperor'></form>";
 	return outputString;
     }
 
-    void flushDatabase(){
+    /**
+	   * This method takes no parameters and returns no values. The primary funciton of this method is to
+	   * to delete the database, and recreate it and the necessary table within it.
+	   * Then, the predetermined query is sent to Wikidata.org using the 
+	   * of {@link Melih_Wikidata#getHtml(String query) [getHtml]} method of {@link Melih_Wikidata [Melih_Wikidata]} class,
+	   * demanding the relevant data in JSON format. After the
+	   * data is received, it is parsed into a MelihData object and sent to the 
+	   * Database to be inserted using the {@link Melih_DatabaseConnection#addData() [addData]} method of {@link Melih_DatabaseConnection [Melih_DatabaseConnection]} 
+	   * class.
+	   */
+    
+    public void flushDatabase(){
+
     	Melih_DatabaseConnection.dropDatabase();
 		Melih_DatabaseConnection.createDatabase();
 		Melih_DatabaseConnection.useDatabase();
@@ -91,7 +130,6 @@ public class Melih extends HttpServlet {
 		try {
 			myJSONarray = Melih_Wikidata.getHtml(query);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -104,7 +142,18 @@ public class Melih extends HttpServlet {
 		}
     }
 
-    ArrayList<Melih_Data> getQueryResults(int intQuery){
+    /**
+	   * This method takes an integer parameter (year the user entered) and
+	   * finds the emperors that ascended to the throne the closest to that year.
+	   * It first obtains the data from the database using the {@link Melih_DatabaseConnection#getData() [getData]}
+	   * method of {@link Melih_DatabaseConnection [Melih_DatabaseConnection]}.
+	   * Then it finds the 10 emperors that ascended closest to that date.
+	   * Then the method returns this list.  
+	   * 
+	   * @param intQuery The year that the user entered
+	   * @return resultData The ten emperors with ascension dates closest to the entered year.
+	   */
+    public ArrayList<Melih_Data> getQueryResults(int intQuery){
     	ArrayList<Melih_Data> allData =  Melih_DatabaseConnection.getData();
 		
 		Collections.sort(allData, new Comparator<Melih_Data>() {
@@ -145,21 +194,31 @@ public class Melih extends HttpServlet {
 		}
 		return resultData;
     }
-    
+    /**
+	   * The doGet method is the main method of this servlet: this is where the requests
+	   * to the application is handled. The navigation inside the application is handled through
+	   * the parameters of the get request. Depending on the parameter supplied, the server
+	   * directs the user to different screens and conducts the operations demanded by the user
+	   * using the methdos of this class and other classes.
+	   * 
+	   * @param request The html request is obtained as a parameter.
+	   * @param response The response to the request is also a parameter.
+	   */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		String selection = request.getParameter("menu");
 		out.println("<html>");
 		out.println("<body>");
 		if(selection == null || selection.equals("main")){
-			out.println("<h3>Roman Emperors and their Years of Ascension</h3>");
-			out.println("<p>Welcome. This is a page created by Melih Barsbey. Please choose one of the options below. This page allows you to enter a year to see which emperors ascended to Roman Empire's throne that year, or years close by. </p>");
-			out.println("<p><a href=Melih?menu=makequery>Make a query<a></p>");
-			out.println("<p><a href=Melih?menu=flush>Initialize (or reset) the database from wikidata.org<a></p>");
-			out.println("<p><a href=Melih?menu=seeSaved>See your saved entries<a></p>");
-			out.println("<p><a href=Melih?menu=unsave>Unsave your saved entries<a></p>");
+			out.println("<h3 style='color:blue; text-align:center'>Roman Emperors and their Years of Ascension</h3>");
+			out.println("<p style='text-align:center'>Welcome. This is a page created by Melih Barsbey. Please choose one of the options below. This application allows you to enter a year to see which emperors ascended to Roman Empire's throne that year, or years close by. After you made a query, you can save some emperors for later review, or add a new emperor to the database.</p>");
+			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=makequery>Make a query<a></p>");
+			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=seeSaved>See your saved entries<a></p>");
+			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=unsave>Unsave your saved entries<a></p>");
+			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=flush>Reset the database from wikidata.org<a></p>");
 		} else if (selection.equals("makequery")){
-			out.println("<form action='Melih' method='get'>Please enter a year to see the Roman emperor or emperors that have ascended to the throne that year (or years close by):<br><input type='hidden' name='menu' value='query'/><input type='text' name='input'><br><br><input type='submit' value='Submit'></form>");
+			out.println("<p>Please enter a year to see the Roman emperor or emperors that have ascended to the throne that year (or years close by).<br></p>");
+			out.println("<form action='Melih' method='get' style='color:red'>Enter a year:<br><input type='hidden' name='menu' value='query'/><input type='text' name='input'><br><br><input type='submit' value='Submit'></form>");
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		} else if (selection.equals("query")){
 			String queriedYear = request.getParameter("input");
@@ -200,17 +259,25 @@ public class Melih extends HttpServlet {
 		}
 		else if(selection.equals("addNewEmperor")){
 			String emperorName = request.getParameter("input");
-			String queriedYear = request.getParameter("queriedYear");
-			Integer intYear =Integer.parseInt(queriedYear);
-			Melih_DatabaseConnection.addData(new Melih_Data(emperorName, intYear));
-			Melih_DatabaseConnection.orderTable();
-			out.println("<p>Your request has been added!</p>");
+			if(emperorName.isEmpty()){
+				out.println("<p>Please enter a valid emperor name!</p>");
+			}else{
+				String queriedYear = request.getParameter("queriedYear");
+				Integer intYear =Integer.parseInt(queriedYear);
+				boolean addedSuccessfully = Melih_DatabaseConnection.addData(new Melih_Data(emperorName, intYear));
+				Melih_DatabaseConnection.orderTable();
+				if(addedSuccessfully){
+					out.println("<p>Your request has been added!</p>");
+				}else{
+					out.println("<p>You tried to add a replicate emperor! Please enter a valid (unique) emperor name.</p>");
+				}
+			}
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		}else if(selection.equals("unsave")){
 			Melih_DatabaseConnection.unsaveSaved();
 			out.println("<html>");
 			out.println("<body>");
-			out.println("<p>Your saved entries are deleted.</p>");
+			out.println("<p>Your saved entries are unsaved.</p>");
 			out.println("</html>");
 			out.println("</body>");
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
@@ -220,134 +287,3 @@ public class Melih extends HttpServlet {
 		out.println("</html>");
 	}	
 }
-
-//JSONObject tempRecord = myJSONarray.getJSONObject(10);
-//String dene = tempRecord.getJSONObject("emperorLabel").getString("value");
-//System.out.println(dene);
-
-/*Melih_DatabaseConnection.dropDatabase();
-Melih_DatabaseConnection.createDatabase();
-Melih_DatabaseConnection.useDatabase();
-Melih_DatabaseConnection.createTable();
-JSONArray myJSONarray = new JSONArray();
-String query = "SELECT%20?emperorLabel%20?dateLabel%20WHERE%20{%20?emperor%20wdt:P31%20wd:Q5%20.%20?emperor%20p:P39%20?position_held_statement%20.%20?position_held_statement%20ps:P39%20wd:Q842606.%20?position_held_statement%20pq:P580%20?date%20.%20SERVICE%20wikibase:label%20{%20bd:serviceParam%20wikibase:language%20%27en%27%20.%20}%20}%20ORDER%20BY%20?date&format=json";
-String my_input ="";
-try {
-	myJSONarray = Melih_Wikidata.getHtml(query);
-	
-} catch (Exception e) {
-	// TODO Auto-generated catch block
-	e.printStackTrace();
-}
-
-for(int i = 0; i<myJSONarray.length();i++){
-	JSONObject tempRecord = myJSONarray.getJSONObject(i);
-	String tempEmperor = tempRecord.getJSONObject("emperorLabel").getString("value");
-	String tempDate = tempRecord.getJSONObject("dateLabel").getString("value");
-	Integer intDate = Integer.parseInt(tempDate.substring(0,4));
-	Melih_DatabaseConnection.addData(new Melih_Data(tempEmperor,intDate));
-}*/
-
-/*out.println("<table>");
-out.println("<tr>");
-	out.println("<th><strong>Year of Ascension</strong></th>");
-	out.println("<th><strong>Name of the Emperor</strong></th>");
-out.println("</tr>");
-for(int i = 0; i < allData.size();i++){
-	if(allData.get(i).isSelected){
-		out.println("<tr>");
-		out.println("<td align='center'>"+ allData.get(i).date +"</td>");
-		out.println("<td align='center'>"+ allData.get(i).emperor +"</td>");
-		out.println("</tr>");
-	}
-}*/
-
-/*ArrayList<Melih_Data> allData =  Melih_DatabaseConnection.getData();
-
-Collections.sort(allData, new Comparator<Melih_Data>() {
-@Override
-	public int compare(Melih_Data o1, Melih_Data o2) {
-		return o1.date.compareTo(o2.date);
-	}
-});
-
-Integer minIndex = 0;
-Integer minValue = Math.abs(allData.get(0).date - intQuery);
-for(int i = 1; i<allData.size(); i++){
-	if (Math.abs(allData.get(i).date - intQuery)<minValue) {
-			minIndex = i;
-			minValue =Math.abs(allData.get(i).date - intQuery); 	
-		}
-}
-ArrayList<Melih_Data> editData = allData;
-ArrayList<Melih_Data> resultData = new ArrayList<Melih_Data>();
-resultData.add(editData.get(minIndex));
-
-for(int i = 0; i< 9; i++){
-	if(minIndex == (editData.size()-1)){
-		resultData.add(editData.get(minIndex-1));
-		editData.remove(minIndex-1);
-		minIndex--;
-	}else if(minIndex == 0){
-		resultData.add(editData.get(minIndex+1));
-		editData.remove(minIndex+1);
-	}else if(Math.abs(editData.get(minIndex-1).date - intQuery)<Math.abs(editData.get(minIndex+1).date - intQuery)){
-		resultData.add(editData.get(minIndex-1));
-		editData.remove(minIndex-1);
-		minIndex--;
-	}else {
-		resultData.add(editData.get(minIndex+1));
-		editData.remove(minIndex+1);
-	}
-}*/
-
-/*ArrayList<Melih_Data> allData =  Melih_DatabaseConnection.getData();
-Integer minIndex = 0;
-Integer minValue = Math.abs(allData.get(0).date - intQuery);
-for(int i = 1; i<allData.size(); i++){
-	if (Math.abs(allData.get(i).date - intQuery)<minValue) {
-			minIndex = i;
-			minValue =Math.abs(allData.get(i).date - intQuery); 	
-		}
-}
-ArrayList<Melih_Data> editData = allData;
-ArrayList<Melih_Data> resultData = new ArrayList<Melih_Data>();
-resultData.add(editData.get(minIndex));
-			
-for(int i = 0; i< 9; i++){
-	if(Math.abs(editData.get(minIndex-1).date - intQuery)<Math.abs(editData.get(minIndex+1).date - intQuery)){
-		resultData.add(editData.get(minIndex-1));
-		editData.remove(minIndex-1);
-		minIndex--;
-	} else {
-		resultData.add(editData.get(minIndex+1));
-		editData.remove(minIndex+1);
-	}
-}*/
-
-/*if (myData.size()>0){
-out.println("There exist(s) emperor(s) who ascended to the throne at that year. See below for these emperor or emperors. Listed further below are those that ascended in years that are closest.");
-}else{
-out.println("There were no emperors that ascended to the throne at that year! See below for emperors that ascended closest to that year.");	
-}
-out.println("<br>You can save any of the emperors in the database by checking on the checkboxes and clicking the 'Save' button.");
-
-out.println("<form action='Melih' method='get'>");
-out.println("<table>");
-out.println("<tr>");
-out.println("<th><strong>Save</strong></th>");
-out.println("<th><strong>Year of Ascension</strong></th>");
-out.println("<th><strong>Name of the Emperor</strong></th>");
-out.println("</tr>");
-for(int i = 0; i < resultData.size();i++){
-out.println("<tr>");
-out.println("<td><input type='checkbox' name='checkbox_" + i + "' value='checked' /></td>");
-out.println("<td align='center'>"+ resultData.get(i).date +"</td>");
-out.println("<td align='center'>"+ resultData.get(i).emperor +"</td>");
-out.println("</tr>");
-}
-out.println("</table>");
-out.println("<input type='hidden' name='input' value='"+queriedYear+"'/><input type='hidden' name='menu' value='save'/><input type='submit' value='Save'></form>");
-out.println("Would you like to add an(other) emperor that ascended to the throne at year "+intQuery+"?<br>If yes, please enter the name below and click 'Add Emperor' button. Remember: The name of your emperor cannot be the same with that of an already existing one!");
-out.println("<form action='Melih' method='get'><input type='hidden' name='queriedYear' value='"+queriedYear+"'/><input type='hidden' name='menu' value='addNewEmperor'/><input type='text' name='input'><br><br><input type='submit' value='Add Emperor'></form>");*/
-

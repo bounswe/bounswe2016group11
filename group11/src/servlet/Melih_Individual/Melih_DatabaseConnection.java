@@ -1,5 +1,5 @@
-package net.codejva;
-//
+
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -84,7 +84,7 @@ public class Melih_DatabaseConnection {
 	   
 	   public static boolean createTable(){
 		   initialize();		   
-		   String sql = "CREATE TABLE melih_data (emperor varchar(30), date integer, isSelected boolean)";
+		   String sql = "CREATE TABLE melih_data (emperor varchar(30) PRIMARY KEY, date integer, isSelected boolean)";
 		   System.out.println(sql);
 		   try {
 			   PreparedStatement ps = conn.prepareStatement(sql);

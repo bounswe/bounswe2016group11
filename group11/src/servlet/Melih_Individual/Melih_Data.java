@@ -1,5 +1,5 @@
-package net.codejva;
-//
+
+
 public class Melih_Data {
 	String emperor;
 	Integer date;
