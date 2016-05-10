@@ -108,7 +108,7 @@ public class Ozgur_DB {
 			sql = "SELECT value FROM ozgurtable WHERE query = '" + query[0] + "' AND  type = " + type;
 		}
 		else{
-			sql = "SELECT value FROM ozgurtable WHERE query = '" + query[1] + "' AND  type = " + type + " year = " + query[0];
+			sql = "SELECT value FROM ozgurtable WHERE query = '" + query[1] + "' AND  type = " + type + " AND year = " + query[0];
 		}
 		ResultSet rs;
 		ArrayList<String> data = new ArrayList<String>();
