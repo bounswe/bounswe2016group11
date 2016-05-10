@@ -38,7 +38,9 @@ public class Ozgur extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter theo = response.getWriter();
 		Ozgur_DB.useDatabase();
+		theo.println(htmlStartCode());
 		checkAndAction(theo, request);
+		theo.println(htmlEndCode());
 	}
 
 	/**
@@ -185,7 +187,7 @@ public class Ozgur extends HttpServlet {
 				+ "<input type=\"submit\" name =\"Save\" value=\"yes\"><br>"
 				+ "<input type=\"hidden\" name =\"type\" value=\""+type+ "\"><br>"
 				+"</form><br>";
-
+		
 		return result;
 	}
 	/*
@@ -274,5 +276,18 @@ public class Ozgur extends HttpServlet {
 			result.add(res);
 		}
 		return result;
+	}
+	protected String htmlStartCode(){
+		String s = " <!DOCTYPE html>"
+				+ "<html>"
+				+ "<body>";
+		
+		return s;
+	}
+	protected String htmlEndCode(){
+		String s = "</body>"
+				+ "</html>";
+		
+		return s;
 	}
 }

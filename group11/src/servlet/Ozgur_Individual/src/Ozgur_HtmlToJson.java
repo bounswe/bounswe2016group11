@@ -45,6 +45,7 @@ public class Ozgur_HtmlToJson {
 		theQuery = theQuery.replace("@", "%40");
 		theQuery = theQuery.replace("?", "%3F");
 		theQuery = theQuery.replace(" ", "%20");
+		
 		System.out.println(base + theQuery);
 		return getJSONResponseURL(base + theQuery + "%20&format=json");
 	}
@@ -90,6 +91,10 @@ public class Ozgur_HtmlToJson {
 	 * and in the response the value is in the JSONArray of "bindings" 
 	 * which is in the JSONObject named "results", the JSONArray is the 
 	 * JSONArray of "bindings"
+	 * 
+	 * 
+	 * Also Main structure of the connection to wikidata 
+	 * page was taken from https://docs.oracle.com/javase/tutorial/networking/urls/readingURL.html 
 	 * 
 	 * @url the URL to fetch the json file
 	 * 

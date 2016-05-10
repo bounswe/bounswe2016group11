@@ -9,6 +9,9 @@ import java.sql.Types;
 import java.util.ArrayList;
 
 public class Ozgur_DB {
+	
+	
+	
 	// JDBC driver name and database URL
 	static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";  
 	static final String DB_URL = "jdbc:mysql://localhost:3306/";
@@ -20,7 +23,11 @@ public class Ozgur_DB {
 	//  Necessary for connection to database
 	static Connection conn = null;
 	static Statement stmt = null;
-
+	/*
+	 * Main structure of the connection code is got from
+	 *  http://www.tutorialspoint.com/jdbc/jdbc-sample-code.htm
+	 *  
+	 * */
 	private static void initialize(){
 		if(stmt != null && conn != null) return;
 		try {
@@ -108,7 +115,7 @@ public class Ozgur_DB {
 			sql = "SELECT value FROM ozgurtable WHERE query = '" + query[0] + "' AND  type = " + type;
 		}
 		else{
-			sql = "SELECT value FROM ozgurtable WHERE query = '" + query[1] + "' AND  type = " + type + " year = " + query[0];
+			sql = "SELECT value FROM ozgurtable WHERE query = '" + query[1] + "' AND  type = " + type + " AND year = " + query[0];
 		}
 		ResultSet rs;
 		ArrayList<String> data = new ArrayList<String>();
