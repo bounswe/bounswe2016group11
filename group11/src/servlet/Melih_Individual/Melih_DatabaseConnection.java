@@ -1,5 +1,3 @@
-package net.codejva;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -7,6 +5,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+/**
+* This class facilitates database operations. The methods in it 
+* are called by the {@link Melih [Melih]} class and serve to access and update
+* the database. 
+* 
+* In creation of this class, codes and instruction in 
+* the following link have been partially utilized: 
+* http://www.tutorialspoint.com/jdbc/jdbc-sample-code.htm
+*
+* @author  Melih Barsbey
+* @version 1.0
+* @since   2016-05-10 
+*/
 
 public class Melih_DatabaseConnection {
 	// JDBC driver name and database URL
@@ -19,7 +31,12 @@ public class Melih_DatabaseConnection {
 	   
 	   //  Necessary for connection to database
 	   static Connection conn = null;
-	   static Statement stmt = null;
+	   static Statement stmt = null; 
+
+	/**
+	 *  This method initializes the connection with the database if it
+	 *  is not already established.
+	 */
 	   
 	   private static void initialize(){
 		   if(stmt != null && conn != null) return;
@@ -28,17 +45,17 @@ public class Melih_DatabaseConnection {
 			conn = DriverManager.getConnection(DB_URL,USER,PASS);
 			stmt = conn.createStatement();	
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	   }
-	   
+		/**
+		 *  When called, this method drops the database if it already exists.
+		 */
 	   public static boolean dropDatabase(){
 		   initialize();		   
-		   String sql = "DROP DATABASE melih_database";
+		   String sql = "DROP DATABASE IF EXISTS melih_database";
 		   System.out.println(sql);
 		   
 		  try {
@@ -51,7 +68,9 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
-	   
+	   /**
+		 *  When called, this method creates a database called 'melih_database' when called.
+		 */
 	   public static boolean createDatabase(){
 		   initialize();		   
 		   String sql = "CREATE DATABASE melih_database";
@@ -66,6 +85,10 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
+	   
+	   /**
+		 *  When called, this method selects the database 'melih_database' to be used.
+		 */
 	   	      
 	   public static boolean useDatabase(){
 		   initialize();		   
@@ -81,7 +104,11 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
-	   
+	   /**
+	    *  When called, this method creates the table 'melih_data' with three columns.
+	    *  This table holds the data obtained from Wikidata.org.
+	    */
+	 	   	      
 	   public static boolean createTable(){
 		   initialize();		   
 		   String sql = "CREATE TABLE melih_data (emperor varchar(30) PRIMARY KEY, date integer, isSelected boolean)";
@@ -97,6 +124,10 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   
+	   /**
+	    *  When called, this method orders the table according to the data of ascension
+	    */
+	   
 	   public static boolean orderTable(){
 		   initialize();		   
 		   String sql = "SELECT * FROM melih_data ORDER BY date";
@@ -111,7 +142,13 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
-	   
+	   /**
+	    *  When called, this method marks the emperor held in the myData object
+	    *  as saved.
+	    *  
+	    *  @param myData This parameter holds the name of the emperor and his date of
+	    *  ascension to be marked as saved.
+	    */
 	   public static boolean saveData(Melih_Data myData){
 		   initialize();		   
 		   String sql = "UPDATE melih_data SET isSelected=true WHERE emperor = ?";
@@ -127,7 +164,29 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
+	   /**
+	    *  When called, this method lifts the marks of all emperors, marking them all as unsaved.
+	    */
+	   public static boolean unsaveSaved(){
+		   initialize();		   
+		   String sql = "UPDATE melih_data SET isSelected=false";
+		   System.out.println(sql);
+		   try {
+			   PreparedStatement ps = conn.prepareStatement(sql);
+			   ps.execute();
+			   return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	   }
 	   
+	   /**
+	    *  When called with a year, this method checks if there are any emperors
+	    *  who ascended at that given year and returns their name(s) if there are any.
+	    *  
+	    *  @param queriedYear This is the year 
+	    */
 
 	   public static ArrayList<Melih_Data> makeQuery(Integer queriedYear) {
 		   initialize();
@@ -140,7 +199,6 @@ public class Melih_DatabaseConnection {
 				   data.add(new Melih_Data(rs.getString("emperor"), rs.getInt("date"), rs.getBoolean("isSelected")));
 			   rs.close();
 		   } catch (SQLException e) {
-			// TODO Auto-generated catch block
 			   e.printStackTrace();
 		   }  
 		   return data;
