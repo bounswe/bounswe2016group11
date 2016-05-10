@@ -2,6 +2,8 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 
 public class OzgurTest {
@@ -41,17 +43,40 @@ public class OzgurTest {
 
 	@Test
 	public void testParseJSONarray() {
-		fail("Not yet implemented");
+		JSONObject jsonObj = new JSONObject();
+		JSONObject jsonObj2 = new JSONObject();
+		JSONArray theArr = new JSONArray();
+		ArrayList<String> expected = new ArrayList<String>();
+		expected.add("Ozgur");
+		expected.add("Akyazi");
+		expected.add("2012400");
+		expected.add("Ready?");
+		expected.add("yet");
+		for(int i=0; i< 5; i++){
+			jsonObj = new JSONObject();
+			jsonObj2 = new JSONObject();
+			
+			jsonObj2.accumulate("value", expected.get(i));
+			jsonObj.accumulate("itemLabel", jsonObj2);
+			theArr.put(jsonObj);
+		}
+		
+		Ozgur oscar = new Ozgur();
+		assertEquals(expected, oscar.parseJSONarray(theArr));
 	}
 
 	@Test
 	public void testHtmlStartCode() {
-		fail("Not yet implemented");
+		String expected = " <!DOCTYPE html><html><body>";
+		Ozgur oscar = new Ozgur();
+		assertEquals(expected, oscar.htmlStartCode());
 	}
 
 	@Test
 	public void testHtmlEndCode() {
-		fail("Not yet implemented");
+		String expected = "</body></html>";
+		Ozgur oscar = new Ozgur();
+		assertEquals(expected, oscar.htmlEndCode());
 	}
 
 }
