@@ -44,8 +44,10 @@ public class Melih extends HttpServlet {
        
     	
     	String myTableOut = "";
-    	myTableOut+="Here are your saved entries:";
     	myTableOut+="<table>";
+    	myTableOut+="<tr>";
+			myTableOut+="<th colspan='2'><strong>Here are your saved entries:</strong></th>";
+		myTableOut+="</tr>";
     	myTableOut+="<tr>";
     		myTableOut+="<th><strong>Year of Ascension</strong></th>";
     		myTableOut+="<th><strong>Name of the Emperor</strong></th>";
@@ -60,7 +62,28 @@ public class Melih extends HttpServlet {
 		}
 		return myTableOut;
     }
-
+    
+public String printSaveHistory(ArrayList<String> allSaves){
+    	String myTableOut = "";
+    	myTableOut+="<br>";
+    	myTableOut+="<table>";
+    	myTableOut+="<tr>";
+			myTableOut+="<th colspan='2'><strong>Here is your save history:</strong></th>";
+		myTableOut+="</tr>";
+    	myTableOut+="<tr>";
+    		myTableOut+="<th><strong>Save #</strong></th>";
+    		myTableOut+="<th><strong>Emperors Saved</strong></th>";
+    	myTableOut+="</tr>";
+		for(int i = 0; i < allSaves.size();i++){
+				int number = i+1;
+				myTableOut+="<tr>";
+				myTableOut+="<td align='left'>"+ number +"</td>";
+				myTableOut+="<td align='left'>"+ allSaves.get(i) +"</td>";
+				myTableOut+="</tr>";
+		}
+		return myTableOut;
+    }
+    
    /**
    * This method takes two arrays of data from inside the servlet {@link #doGet [doGet]} method, 
    * one which contains the entities in the database, and the other is the  
@@ -121,7 +144,8 @@ public class Melih extends HttpServlet {
     	Melih_DatabaseConnection.dropDatabase();
 		Melih_DatabaseConnection.createDatabase();
 		Melih_DatabaseConnection.useDatabase();
-		Melih_DatabaseConnection.createTable();
+		Melih_DatabaseConnection.createDataTable();
+		Melih_DatabaseConnection.createSaveTable();
 		JSONArray myJSONarray = new JSONArray();
 		String query = "https://query.wikidata.org/sparql?query=SELECT%20?emperorLabel%20?dateLabel%20WHERE%20{%20?emperor%20wdt:P31%20wd:Q5%20.%20?emperor%20p:P39%20?position_held_statement%20.%20?position_held_statement%20ps:P39%20wd:Q842606.%20?position_held_statement%20pq:P580%20?date%20.%20SERVICE%20wikibase:label%20{%20bd:serviceParam%20wikibase:language%20%27en%27%20.%20}%20}%20ORDER%20BY%20?date&format=json";
 		try {
@@ -158,6 +182,7 @@ public class Melih extends HttpServlet {
 		@Override
 			public int compare(Melih_Data o1, Melih_Data o2) {
 				return o1.date.compareTo(o2.date);
+
 			}
     	});
 		
@@ -211,7 +236,7 @@ public class Melih extends HttpServlet {
 			out.println("<h3 style='color:blue; text-align:center'>Roman Emperors and their Years of Ascension</h3>");
 			out.println("<p style='text-align:center'>Welcome. This is a page created by Melih Barsbey. Please choose one of the options below. This application allows you to enter a year to see which emperors ascended to Roman Empire's throne that year, or years close by. After you made a query, you can save some emperors for later review, or add a new emperor to the database.</p>");
 			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=makequery>Make a query<a></p>");
-			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=seeSaved>See your saved entries<a></p>");
+			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=seeSaved>See your saved entries and save history<a></p>");
 			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=unsave>Unsave your saved entries<a></p>");
 			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=flush>Reset the database from wikidata.org<a></p>");
 		} else if (selection.equals("makequery")){
@@ -235,17 +260,23 @@ public class Melih extends HttpServlet {
 			String queriedYear = request.getParameter("input");
 			Integer intQuery = Integer.parseInt(queriedYear);
 			ArrayList<Melih_Data> resultData = getQueryResults(intQuery);
+			String saveTableData = "";
 			for (int i = 0; i<resultData.size();i++){
 				if(request.getParameter("checkbox_"+i)!=null){
 					String whetherChecked = request.getParameter("checkbox_"+i);
-					if (whetherChecked.equals("checked")) Melih_DatabaseConnection.saveData(resultData.get(i));
+					if (whetherChecked.equals("checked")){
+						saveTableData += resultData.get(i).emperor + "; ";
+						Melih_DatabaseConnection.saveData(resultData.get(i));
+					}
 				}
 			}
+			Melih_DatabaseConnection.addSave(saveTableData);
 			out.println("Your requests have been saved!");
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		}else if(selection.equals("seeSaved")){
 			Melih_DatabaseConnection.useDatabase();
 			ArrayList<Melih_Data> allData = Melih_DatabaseConnection.getData();
+			ArrayList<String> allSaves = Melih_DatabaseConnection.getSave();
 			boolean isPresent = false;
 			for(int i = 0; i < allData.size();i++){
 				if(allData.get(i).isSelected){
@@ -254,6 +285,7 @@ public class Melih extends HttpServlet {
 					break;
 				}	
 			}
+			if(isPresent==true)out.println(printSaveHistory(allSaves));		
 			if(isPresent==false)out.println("You have no saved entries! Please make a query and save same entries.");
 			out.println("<p><a href=Melih?menu=main>Go to main menu<a></p>");
 		}
@@ -277,6 +309,7 @@ public class Melih extends HttpServlet {
 		}else if(selection.equals("unsave")){
 			Melih_DatabaseConnection.useDatabase();
 			Melih_DatabaseConnection.unsaveSaved();
+			Melih_DatabaseConnection.clearSaveHistory();
 			out.println("<html>");
 			out.println("<body>");
 			out.println("<p>Your saved entries are unsaved.</p>");
