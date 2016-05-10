@@ -6,8 +6,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 /**
-* This servlet is the Wikidata communication file for the project Roman 
-* Emperors and their Years of Ascension. 
+* This class implements the query made to Wikidata, and its initial parsing 
+* for the project Roman Emperors and their Years of Ascension. 
 *
 * In creation of this class, codes and instruction in the following link
 * have been utilized with modifications and additions: 
