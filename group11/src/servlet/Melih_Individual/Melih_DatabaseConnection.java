@@ -185,7 +185,8 @@ public class Melih_DatabaseConnection {
 	    *  When called with a year, this method checks if there are any emperors
 	    *  who ascended at that given year and returns their name(s) if there are any.
 	    *  
-	    *  @param queriedYear This is the year 
+	    *  @param queriedYear This is the year the user queried.
+	    *  @return data The emperors whose year of ascension matches the user's query year are in this array 
 	    */
 
 	   public static ArrayList<Melih_Data> makeQuery(Integer queriedYear) {
@@ -204,6 +205,16 @@ public class Melih_DatabaseConnection {
 		   return data;
 	   }
 	   
+	   /**
+	    *  When called with a Melih_Data object containing emperor name and year,
+	    *  this method attempts to add this to the database. It returns true 
+	    *  if it successfully does so. It returns false if it has not 
+	    *  succeeded doing so (e.g. because of a replicate emperor name)
+	    *  
+	    *  @param myData This is the Melih_Data object holding a name, year, and information about whether the emperor is marked for later review
+	    *  @return boolean Whether the action succeeded or not. 
+	    */
+	   
 	   public static boolean addData(Melih_Data myData){
 		   initialize();		   
 		   String sql = "INSERT INTO melih_data (emperor,date,isSelected) VALUES (?,?,?)";
@@ -221,7 +232,13 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
-	   
+	   /**
+	    *  When called with a Melih_Data object containing all emperor names, 
+	    *  ascension years, and marking information are returned to the 
+	    *  user in an array.
+	    *  
+	    *  @return data This Melih_Data array includes all the emperor information. 
+	    */
 
 	   public static ArrayList<Melih_Data> getData() {
 		   initialize();

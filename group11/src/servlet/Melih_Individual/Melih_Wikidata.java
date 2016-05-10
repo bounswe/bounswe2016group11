@@ -19,9 +19,6 @@ import org.json.JSONObject;
 */
 
 public class Melih_Wikidata {
-	
-	//final static String base = "https://query.wikidata.org/sparql?query=";
-	
 	/**
 	* This method makes a request to wikidata server, using the query provided
 	* by the caller method. The request is in JSON format, thus, the response
@@ -33,7 +30,6 @@ public class Melih_Wikidata {
 	*/
 	
 	public static JSONArray getHtml(String query) throws Exception {
-		//String url = base + query;
         URL oracle = new URL(query);
         BufferedReader in = new BufferedReader(
         new InputStreamReader(oracle.openStream()));
