@@ -40,9 +40,9 @@ public class Mustafa_Input extends HttpServlet {
 			Integer myQuery = Integer.parseInt(request.getParameter("input"));
 			ArrayList<Mustafa_Data> queryData = Mustafa_DatabaseConnection.makeQuery(myQuery);
 			if (queryData.size()>0){
-				out.println("There exists countries whose population is exactly your query. ");
+				out.println("<p>There exists countries whose population is exactly your query.</p> ");
 			}else{
-				out.println("There is no country whose population is exactly your query.");	
+				out.println("<p>There is no country whose population is exactly your query.</p>");	
 			}
 			Integer minIdx = 0;
 			Integer minVal = Integer.MAX_VALUE;
@@ -125,7 +125,7 @@ public class Mustafa_Input extends HttpServlet {
 						Mustafa_DatabaseConnection.saveData(results.get(i));
 				}
 			}
-			out.println("Saved");
+			out.println("<p>Saved</p>");
 			out.println("<p><a href=Mustafa>Go back!<a></p>");
 		}
 	}
