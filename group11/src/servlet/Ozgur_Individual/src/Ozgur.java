@@ -19,7 +19,10 @@ import org.json.JSONObject;
 @WebServlet("/Ozgur")
 public class Ozgur extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	public ArrayList<String> lastFetched = new ArrayList<String>();
 	public Ozgur_HtmlToJson wikiQ;
+	public String[] lastQuery = new String[2];
+	public int lastQueryType;
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -34,11 +37,7 @@ public class Ozgur extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter theo = response.getWriter();
-		int typeOfQuery;
-
-		//JSONArray theaArr = queryWiki(1,thestr);
-
-		//theo.append(theaArr.toString());
+		Ozgur_DB.useDatabase();
 		checkAndAction(theo, request);
 	}
 
@@ -66,11 +65,11 @@ public class Ozgur extends HttpServlet {
 			theo.println("<h1>Welcome To Özgür's Project</h1><br>");
 			theo.println("<p>In this project you can search about films and actors</p><br>");
 			theo.println("<p><b>Here are your choices:</b></p><br>");
-			theo.println(pageContent(0));
+			theo.println(pageHeadAndInput(0));
 			return;
 		}
 		else if(gotValue != null ){
-			if(gotValue.equals("yes")){
+			if(gotValue.equals("yes")){//if we have an input to query then initialize theResult
 				theResult = new ArrayList<String>();
 			}
 
@@ -78,18 +77,19 @@ public class Ozgur extends HttpServlet {
 
 
 		if(queryType.equals("actor")){// if it is actor type
-			theo.println(pageContent(1));
+			theo.println(pageHeadAndInput(1));
 			type = 1;
 		}
 		else if(queryType.equals("film")){// query by film
-			theo.println(pageContent(2));
+			theo.println(pageHeadAndInput(2));
 			theo.println();theo.println();theo.println();
 			type = 2;
 		}
 		else if(queryType.equals("actorYear")){//query by actor and year
-			theo.println(pageContent(3));
+			theo.println(pageHeadAndInput(3));
 			type = 3;
 		}
+		lastQueryType = type;
 		JSONArray jsonArr = new JSONArray();
 		String[] data = new String[2];
 		if(theResult != null){
@@ -119,18 +119,74 @@ public class Ozgur extends HttpServlet {
 
 			default:
 				break;
-			
-			
 
 			}
-
-			System.out.println(toWord);
+			
+			lastQuery = data;
 			theo.println(toWord);
 			theResult = parseJSONarray(jsonArr);
-			for(int i=0; i< theResult.size(); i++){
-				theo.println(theResult.get(i) + "<br>");
+			lastFetched = theResult;
+			theo.println(valueTable(data, theResult, queryType,type));
+		}
+		else if(request.getParameter("Save") != null){
+			
+			if(request.getParameter("Save").equals("yes")){
+				ArrayList<String> toInsert = new ArrayList<String>();
+
+				for(int i=0; i<lastFetched.size(); i++){
+					if(request.getParameter(("check"+i)) != null){
+						if(request.getParameter(("check" + i)).equals("yes")){
+							toInsert.add(lastFetched.get(i));
+						}
+					}
+				}
+
+				Ozgur_DB.addData(toInsert, lastQueryType, lastQuery);
 			}
 		}
+	}
+	/*
+	 * Returns the result of the query with a table format in HTML.
+	 * @query query[0] is actor name or film name if @type="actor" or "film".
+	 *  if @type="actorYear" @query[0] is year and @query[1] is actor name
+	 *  
+	 *  @type  type of the query in string format
+	 *  @intType type of the query in integer form
+	 *  @value the results for the query COMING FROM wikidata, not the internal data
+	 * 
+	 * */
+	protected String valueTable(String[] query, ArrayList<String> value,String type, int intType){
+		if(value.size() == 0){
+			return "";
+		}
+		String result = "<form><br>\n"
+				+ "<table>\n"
+				+ "<tr>\n"
+				+ "<th>    Result   </th>"
+				+ "<th><b></b></th>\n";
+		ArrayList<String> prevSaved = Ozgur_DB.makeQuery(query, intType);
+		value.removeAll(prevSaved);
+		lastFetched = value;
+		for(int i= 0 ; i<prevSaved.size(); i++){
+			result += "<tr>"
+					+ "<td><input type=\"checkbox\" name=\"checkPrev" + i +"\" value=\"yes\" checked></td>"
+					+ "<td>" + prevSaved.get(i)+ "</td>"
+					+ "</tr>";
+
+		}
+		for(int i= 0 ; i<value.size(); i++){
+			result += "<tr>"
+					+ "<td><input type=\"checkbox\" name=\"check" + i +"\" value=\"yes\"></td>"
+					+ "<td>" + value.get(i)+ "</td>"
+					+ "</tr>";
+
+		}
+		result +="</table>\n"
+				+ "<input type=\"submit\" name =\"Save\" value=\"yes\"><br>"
+				+ "<input type=\"hidden\" name =\"type\" value=\""+type+ "\"><br>"
+				+"</form><br>";
+
+		return result;
 	}
 	/*
 	 * Returns the needed form as output according to input @typeOfQuery
@@ -142,11 +198,14 @@ public class Ozgur extends HttpServlet {
 	 * 
 	 * @typeOfQuery the type of form to be returned
 	 * */
-	protected String pageContent(int typeOfQuery){
+	protected String pageHeadAndInput(int typeOfQuery){
 		if(typeOfQuery == 0){
 			String result = "<p><a href=Ozgur?type=actor>Query with actor name to see all the movies played by the actor!<a></p><br>";
 			result += "<p><a href=Ozgur?type=film>Query with movie name to see actors played in that movie!<a></p><br>";
-			result += "<p><a href=Ozgur?type=actorYear>Query with actor name and year to see all the movies played by the actor in that year<a></p><br>";
+			result += "<p><a href=Ozgur?type=actorYear>Query with actor name and year to see all the movies played by the actor in that year<a></p><br>"
+					+ "<p><b>Please note that you can see the previously saved choices when follow exactly same path<br>"
+					+ "For example Query by actor name with Leonardo DiCaprio and save Shutter Island. <br>Then "
+					+ "again, the query by actor name and Leonardo DiCaprio should be used as input.</b></p>";
 			return result;
 		}
 		else if(typeOfQuery ==1){
