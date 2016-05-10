@@ -4,6 +4,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.*;
 
+/**
+* This is a JUnit class which tests the function that obtains
+* query results from the semantic database Wikidata.org  
+*
+* @author  Melih Barsbey
+* @version 1.0
+* @since   2016-05-10
+*/
+
 public class Melih_WikidataTest {
 
 	@Test

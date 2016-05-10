@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 /**
 * This servlet is the main class for the individual implementation project Roman 
-* Emperors and their Years of Ascension. 
+* Emperors and their Years of Ascension.
 *
 * @author  Melih Barsbey
 * @version 1.0
@@ -41,9 +41,8 @@ public class Melih extends HttpServlet {
 	   * @return myTableOut This string includes the html code to be printed.
 	   */
     public String printTable(ArrayList<Melih_Data> allData){
-       
-    	
-    	String myTableOut = "";
+    	//The method receives all database data as its input parameter.
+    	String myTableOut = "";	//The method will return this string including html code, which the doGet method will print out 
     	myTableOut+="<table>";
     	myTableOut+="<tr>";
 			myTableOut+="<th colspan='2'><strong>Here are your saved entries:</strong></th>";
@@ -54,18 +53,28 @@ public class Melih extends HttpServlet {
     	myTableOut+="</tr>";
 		for(int i = 0; i < allData.size();i++){
 			if(allData.get(i).isSelected){
+				//Data headings have been printed out, now the ascension dates and emperor names are being printed.
 				myTableOut+="<tr>";
 				myTableOut+="<td align='center'>"+ allData.get(i).date +"</td>";
-				myTableOut+="<td align='center'>"+ allData.get(i).emperor +"</td>";
+				myTableOut+="<td align='center'>"+ allData.get(i).emperor +"</td>"; 
 				myTableOut+="</tr>";
 			}
 		}
-		return myTableOut;
+		return myTableOut;	//This string now will be printed by the doGet method
     }
+    
+    /**
+	   * This method takes the array of saved data from the servlet's {@link #doGet [doGet]}
+	   * method. This method create and returns the html code required to print these entities
+	   * out in a string. 
+	   * 
+	   * @param allSaves The array includes the save history records from the doGet method.
+	   * @return myTableOut This string includes the html code to be printed.
+	   */
     
 public String printSaveHistory(ArrayList<String> allSaves){
     	String myTableOut = "";
-    	myTableOut+="<br>";
+    	myTableOut+="<br>";		
     	myTableOut+="<table>";
     	myTableOut+="<tr>";
 			myTableOut+="<th colspan='2'><strong>Here is your save history:</strong></th>";
@@ -136,11 +145,11 @@ public String printSaveHistory(ArrayList<String> allSaves){
 	   * demanding the relevant data in JSON format. After the
 	   * data is received, it is parsed into a MelihData object and sent to the 
 	   * Database to be inserted using the {@link Melih_DatabaseConnection#addData(Melih_Data myData) [addData]} method of {@link Melih_DatabaseConnection [Melih_DatabaseConnection]} 
-	   * class.
+	   * class. 
 	   */
     
     public void flushDatabase(){
-
+    	
     	Melih_DatabaseConnection.dropDatabase();
 		Melih_DatabaseConnection.createDatabase();
 		Melih_DatabaseConnection.useDatabase();
@@ -237,7 +246,7 @@ public String printSaveHistory(ArrayList<String> allSaves){
 			out.println("<p style='text-align:center'>Welcome. This is a page created by Melih Barsbey. Please choose one of the options below. This application allows you to enter a year to see which emperors ascended to Roman Empire's throne that year, or years close by. After you made a query, you can save some emperors for later review, or add a new emperor to the database.</p>");
 			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=makequery>Make a query<a></p>");
 			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=seeSaved>See your saved entries and save history<a></p>");
-			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=unsave>Unsave your saved entries<a></p>");
+			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=unsave>Unsave your saved entries and delete your save history<a></p>");
 			out.println("<p style='color:red; text-align:center'><a href=Melih?menu=flush>Reset the database from wikidata.org<a></p>");
 		} else if (selection.equals("makequery")){
 			out.println("<p>Please enter a year to see the Roman emperor or emperors that have ascended to the throne that year (or years close by).<br></p>");

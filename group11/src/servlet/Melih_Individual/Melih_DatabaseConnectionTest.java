@@ -1,6 +1,16 @@
 import static org.junit.Assert.*;
 import org.junit.*;
 
+/**
+* This is a JUnit class which tests the functions related to database connection.
+* The first tests whether the using of a database is successfully done. The 
+* second test tests whether table ordering is unproblematically conducted.    
+*
+* @author  Melih Barsbey
+* @version 1.0
+* @since   2016-05-10
+*/
+
 public class Melih_DatabaseConnectionTest {
 
 	@Test
