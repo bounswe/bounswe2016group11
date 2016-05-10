@@ -92,6 +92,10 @@ public class Ozgur_HtmlToJson {
 	 * which is in the JSONObject named "results", the JSONArray is the 
 	 * JSONArray of "bindings"
 	 * 
+	 * 
+	 * Also Main structure of the connection to wikidata 
+	 * page was taken from https://docs.oracle.com/javase/tutorial/networking/urls/readingURL.html 
+	 * 
 	 * @url the URL to fetch the json file
 	 * 
 	 * */
