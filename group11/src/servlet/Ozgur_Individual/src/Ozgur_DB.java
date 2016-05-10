@@ -15,7 +15,7 @@ public class Ozgur_DB {
 
 	//  Database credentials
 	static final String USER = "root";
-	static final String PASS = ""|
+	static final String PASS = "";
 
 	//  Necessary for connection to database
 	static Connection conn = null;
