@@ -1,3 +1,21 @@
+My wikidata query is:
+SELECT ?populationLabel ?countryLabel 
+WHERE{ 
+  ?country wdt:P1082 ?population. 
+  ?country wdt:P31 wd:Q3624078. 
+  SERVICE wikibase:label {
+    bd:serviceParam wikibase:language "en" . 
+  } 
+}
+
+Example Results:
+35702707	Canada
+127110047	Japan
+5109056	Norway
+4588252	Ireland
+9893899	Hungary
+46617825	Spain
+
 Mustafa.java is the main page.
 In Mustafa.java there are 3 options that user can choose. Initialize data, make query and show saved entries.
 
