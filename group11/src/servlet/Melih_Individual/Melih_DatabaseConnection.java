@@ -11,14 +11,15 @@ import java.util.ArrayList;
 * are called by the {@link Melih [Melih]} class and serve to access and update
 * the database. 
 * 
-* In creation of this class, codes and instruction in 
-* the following link have been partially utilized: 
+* In creation of this class, codes and instruction in the following link
+* have been utilized with modifications and additions: 
 * http://www.tutorialspoint.com/jdbc/jdbc-sample-code.htm
+* The page was first accessed in 03.05.16.
 *
 * @author  Melih Barsbey
 * @version 1.0
 * @since   2016-05-10 
-*/
+*/  
 
 public class Melih_DatabaseConnection {
 	// JDBC driver name and database URL
@@ -52,6 +53,7 @@ public class Melih_DatabaseConnection {
 	   }
 		/**
 		 *  When called, this method drops the database if it already exists.
+		 *  @return boolean Whether the action succeeded or not. 
 		 */
 	   public static boolean dropDatabase(){
 		   initialize();		   
@@ -70,6 +72,7 @@ public class Melih_DatabaseConnection {
 	   }
 	   /**
 		 *  When called, this method creates a database called 'melih_database' when called.
+		 *  @return boolean Whether the action succeeded or not. 
 		 */
 	   public static boolean createDatabase(){
 		   initialize();		   
@@ -88,6 +91,7 @@ public class Melih_DatabaseConnection {
 	   
 	   /**
 		 *  When called, this method selects the database 'melih_database' to be used.
+		 *  @return boolean Whether the action succeeded or not. 
 		 */
 	   	      
 	   public static boolean useDatabase(){
@@ -107,6 +111,7 @@ public class Melih_DatabaseConnection {
 	   /**
 	    *  When called, this method creates the table 'melih_data' with three columns.
 	    *  This table holds the data obtained from Wikidata.org.
+	    *  @return boolean Whether the action succeeded or not. 
 	    */
 	 	   	      
 	   public static boolean createDataTable(){
@@ -124,6 +129,14 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   
+	   /**
+	    *  When called, this method creates the table 'melih_save' with two columns.
+	    *  One is an auto-incrementing save ID, whereas the other is a string
+	    *  that includes the name of the emperors that are added to the saved
+	    *  emperors within a given batch.
+	    *  @return boolean Whether the action succeeded or not. 
+	    */
+	   
 	   public static boolean createSaveTable(){
 		   initialize();		   
 		   String sql = "CREATE TABLE melih_save (save_id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY, savedEmperors VARCHAR(300))";
@@ -138,6 +151,11 @@ public class Melih_DatabaseConnection {
 			return false;
 		}
 	   }
+	   
+	   /**
+	    *  When called, this method clears the table 'melih_save'
+	    *  @return boolean Whether the action succeeded or not. 
+	    */
 	   
 	   public static boolean clearSaveHistory(){
 		   initialize();		   
@@ -155,6 +173,7 @@ public class Melih_DatabaseConnection {
 	   
 	   /**
 	    *  When called, this method orders the table according to the data of ascension
+	    *  @return boolean Whether the action succeeded or not. 
 	    */
 	   
 	   public static boolean orderTable(){
@@ -177,6 +196,7 @@ public class Melih_DatabaseConnection {
 	    *  
 	    *  @param myData This parameter holds the name of the emperor and his date of
 	    *  ascension to be marked as saved.
+	    *  @return boolean Whether the action succeeded or not. 
 	    */
 	   public static boolean saveData(Melih_Data myData){
 		   initialize();		   
@@ -195,6 +215,7 @@ public class Melih_DatabaseConnection {
 	   }
 	   /**
 	    *  When called, this method lifts the marks of all emperors, marking them all as unsaved.
+	    *  @return boolean Whether the action succeeded or not. 
 	    */
 	   public static boolean unsaveSaved(){
 		   initialize();		   
@@ -262,6 +283,15 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   
+	   /**
+	    *  When called with a String object containing the names of the last 
+	    *  added emperors, this method adds this save to the
+	    *  database.
+	    *  
+	    *  @param mySavedEmperors This string includes the latest batch of saved emperors
+	    *  @return boolean Whether the action succeeded or not.
+	    */
+	   
 	   public static boolean addSave(String mySavedEmperors){
 		   initialize();		   
 		   String sql = "INSERT INTO melih_save (savedEmperors) VALUES (?)";
@@ -278,9 +308,8 @@ public class Melih_DatabaseConnection {
 		}
 	   }
 	   /**
-	    *  When called with a Melih_Data object containing all emperor names, 
-	    *  ascension years, and marking information are returned to the 
-	    *  user in an array.
+	    *  When called, all emperor names, ascension years, and marking information are returned to the 
+	    *  user in an array of Melih_Data objects.
 	    *  
 	    *  @return data This Melih_Data array includes all the emperor information. 
 	    */
@@ -301,6 +330,13 @@ public class Melih_DatabaseConnection {
 		   }  
 		   return data;
 	   }
+	   
+	   /**
+	    *  When called, all save information is returned to the user
+	    *  in a string array
+	    *  
+	    *  @return myEmperors This string array includes all the emperor name saving history. 
+	    */
 	   
 	   public static ArrayList<String> getSave() {
 		   initialize();

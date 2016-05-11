@@ -2,6 +2,15 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+/**
+* This is a JUnit class which tests the constructors of the data class
+* Melih_Data. Both constructors are tested within this test class.
+*
+* @author  Melih Barsbey
+* @version 1.0
+* @since   2016-05-10
+*/  
+
 public class Melih_DataTest {
 
 	@Test

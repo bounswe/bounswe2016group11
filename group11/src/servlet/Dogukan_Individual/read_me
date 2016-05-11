@@ -1,0 +1,6 @@
+Some instructions about the project
+
+- You should create database and tablemanually.
+- The database and the table should be set according to the code in the project.
+- When you initialize the database in the home page, database will be fed by stadium and team data from Wikidata.
+- To get a stadium you should enter a valid team name, for example, Galatasaray S.K. or FC Barcelona.

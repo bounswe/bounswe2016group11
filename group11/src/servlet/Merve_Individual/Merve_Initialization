@@ -1,0 +1,90 @@
+/**
+ * This is the code that initialize the database by using wikidata URL and XML Parsing. 
+ * Reference for this code: https://docs.oracle.com/javase/tutorial/networking/urls/readingURL.html
+ */
+/**
+ * @author Merve Cerit
+ *
+ */
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.net.URL;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+
+/**
+ * Servlet implementation class Initialization
+ */
+@WebServlet("/Initialization")
+public class Initialization extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private String getFromURL() throws IOException{
+		URL oracle = new URL("https://query.wikidata.org/sparql?query=SELECT%20?ActorLabel%20?TwitterIDLabel%20?BirthDateLabel%20WHERE{%20?Actor%20wdt:P106%20wd:Q33999.%20?Actor%20wdt:P2002%20?TwitterID.%20?Actor%20wdt:P27%20wd:Q30.%20OPTIONAL{?Actor%20wdt:P569%20?BirthDate.}.%20SERVICE%20wikibase:label{%20bd:serviceParam%20wikibase:language%20%22en%22.%20}%20}%20ORDER%20BY%20DESC(?BirthDate)%20LIMIT%20200");
+        BufferedReader in = new BufferedReader(
+        new InputStreamReader(oracle.openStream()));
+
+        Boolean b = false;
+        String inputLine,result=" ";
+        while ((inputLine = in.readLine()) != null){
+        	if(b)	result+=inputLine+ "\n";
+        	b = true;
+        }
+        in.close();
+        return result;
+	}      
+    
+  
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		PrintWriter out=response.getWriter();
+		out.print("<html><body>");
+		Merve_DatabaseConnection.deleteDatabase();
+		
+		try {
+			String xml=getFromURL();
+			DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			InputSource is = new InputSource();
+			is.setCharacterStream(new StringReader(xml));
+			Document doc = db.parse(is);
+			doc.getDocumentElement().normalize();
+			NodeList results = doc.getElementsByTagName("result");
+			
+			
+			for(int i=0;i<results.getLength();i++){
+				Element result = (Element) results.item(i);
+				NodeList bindings = result.getElementsByTagName("binding");	
+				Merve_Data newActor = new Merve_Data(1000+i,bindings.item(0).getTextContent().trim(),bindings.item(1).getTextContent().trim(),
+						bindings.item(2).getTextContent().trim());
+				
+				Merve_DatabaseConnection.addActor(newActor);
+				
+			}
+		}catch (Exception e){
+			
+		}
+		out.print("<p>Database is initialized, please go back to query again.</p>");
+		out.print("</body></html>");
+	}
+
+	
+}
