@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="../assets/main.css">
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<title></title>
+</head>
+<body>
+	<nav style="margin-bottom:0" class="navbar navbar-default">
+	  <div class="container-fluid">
+	    <!-- Brand and toggle get grouped for better mobile display -->
+	    <div class="navbar-header">
+	      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+	        <span class="sr-only">Toggle navigation</span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	        <span class="icon-bar"></span>
+	      </button>
+	      <a class="navbar-brand" href="#">COCOMAP</a>
+	    </div>
+
+	    <!-- Collect the nav links, forms, and other content for toggling -->
+	    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	      <ul class="nav navbar-nav">
+	        <li class="active"><a href="#">Home Page <span class="sr-only"></span></a></li>
+	        <li><a href="#">Profile</a></li>
+	        <li><a href="#">Log Out</a></li>
+	        <li><a href="#">Create Topic</a></li>
+	        <li><a href="#">Add Relationship</a></li>
+	      </ul>
+	    </div><!-- /.navbar-collapse -->
+	  </div><!-- /.container-fluid -->
+	</nav>
+	<div class="col-sm-9 col-md-9 main">
+		<div class="">
+			<!-- <div class="row">
+				<div class="text-center col-sm-12">
+					<div class="col-sm-4 col-sm-offset-5 circle1">ASDSADSA</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="text-center col-sm-6">
+					<div class="col-sm-2 col-sm-offset-5 circle2">ZXCXZXZ</div>
+				</div>
+				<div class="text-center col-sm-6">
+					<div class="col-sm-2 col-sm-offset-5 circle3">QWEQWE</div>
+				</div>
+			</div> -->
+			<canvas style="" id="circleCanvas" width="1000px" height="500px" onclick="redirectToTopic()">
+				
+			</canvas>
+			<div class="row col-sm-9 sticky-footer">
+		    <div class="input-group">
+		      <input type="text" class="form-control" placeholder="Search for...">
+		      <span class="input-group-btn">
+		        <button class="btn btn-default" type="button">Search</button>
+		        <button style="margin-left: 20px;" class="btn btn-default" type="button">Advanced Search</button>
+		      </span>
+		    </div><!-- /input-group -->
+		  </div><!-- /.col-lg-6 -->
+		</div>
+	</div>
+	<div class="col-sm-3 col-md-3 sidebar">
+		<div class="text-center">POST FROM USERS YOU FOLLOW</div>
+		</br>
+    <ul class="nav nav-sidebar list-group list-following-posts">
+      <li class="list-group-item">
+      	<a href="#">Cabbar posted to Security in Ce... <span class="sr-only">(current)</span></a>
+      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips lorem lorem...</p>
+      </li>
+      <li class="list-group-item">
+      	<a href="#">Yeliz posted to Music</a>
+      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips</p>
+      </li>
+      <li class="list-group-item">
+      	<a href="#">Pasha posted to Shopping in Mil...</a>
+      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips</p>
+      </li>
+      <li class="list-group-item">
+      	<a href="#">Recep posted to equality</a>
+      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips</p>
+      </li>
+    </ul>
+    </br>
+    </br>
+    <div class="text-center">POPULAR TOPICS</div>
+		</br>
+    <ul class="nav nav-sidebar">
+      <li class="">
+      	<a href="#">First Flight in Turkey <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="">
+      	<a href="#">Sivil War in Mozambique</a>
+      </li>
+      <li class="">
+      	<a href="#">Inferno</a>
+      </li>
+      <li class="">
+      	<a href="#">Debate2016</a>
+      </li>
+    </ul>
+  </div>
+	<script type="text/javascript">
+		var can = document.getElementById('circleCanvas');
+		var context = can.getContext('2d');
+
+	  context.fillStyle = "blue";
+	  context.beginPath();
+	  var radius = 75; // for example
+	  context.arc(200, 400, radius, 0, Math.PI * 2);
+	  context.closePath();
+	  context.fill();
+	  context.fillStyle = "black"; // font color to write the text with
+	  var font = "bold " + radius/3 +"px serif";
+	  context.font = font;
+	  context.textBaseline = "top";
+	  context.fillText("TRUMP", 170-radius/4 ,420-radius/2);
+
+	  context.fillStyle = "yellow";
+	  context.beginPath();
+	  var radius = 75; // for example
+	  context.arc(800, 400, radius, 0, Math.PI * 2);
+	  context.closePath();
+	  context.fill();
+	  context.fillStyle = "black"; // font color to write the text with
+	  var font = "bold " + radius/3 +"px serif";
+	  context.font = font;
+	  context.textBaseline = "top";
+	  context.fillText("CLINTON", 760-radius/4 ,420-radius/2);
+	  
+	  context.beginPath();
+	  canvas_arrow (context, 265, 345, 420, 220);
+	  canvas_arrow (context, 590, 220, 740, 340);
+	  context.stroke();
+
+	  context.fillStyle = "red";
+	  context.beginPath();
+	  var radius = 100; // for example
+	  context.arc(500, 150, radius, 0, Math.PI * 2);
+	  context.closePath();
+	  context.fill();
+	  context.fillStyle = "black"; // font color to write the text with
+	  context.lineWidth = 5;
+    context.strokeStyle = '#003300';
+    context.stroke();
+	  var font = "bold " + radius/3 +"px serif";
+	  context.font = font;
+	  context.textBaseline = "top";
+	  context.fillText("DEBATE", 455-radius/4 ,180-radius/2);
+	  function canvas_arrow(context, fromx, fromy, tox, toy){
+	    var headlen = 10;   // length of head in pixels
+	    var angle = Math.atan2(toy-fromy,tox-fromx);
+	    context.moveTo(fromx, fromy);
+	    context.lineTo(tox, toy);
+	    context.lineTo(tox-headlen*Math.cos(angle-Math.PI/6),toy-headlen*Math.sin(angle-Math.PI/6));
+	    context.moveTo(tox, toy);
+	    context.lineTo(tox-headlen*Math.cos(angle+Math.PI/6),toy-headlen*Math.sin(angle+Math.PI/6));
+		}
+
+		function redirectToTopic() {
+			window.location.href = "topic"
+		}
+
+	</script>
+</body>
+</html>
