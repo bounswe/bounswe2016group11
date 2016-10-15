@@ -1,0 +1,16 @@
+CMPE 352 Assignment 6 Individual Project
+Merve Cerit
+2012402015
+IE-CMPE
+
+
+This project is a web project which is aiming to serve as a search engine for Twitter Usernames of actors and actresses from USA. 
+Program takes an age(0-51) from user, and results actors who has the given age, and their twitter usernames and their exact birth dates. 
+Results are sorted in decreasing birthdates, meaningly younger is upper in the result list. For the sake of speed of the program, database
+is limited to 200 results, then there will be results till age 22. After this particular age, program returns a kind of "try again" warning.
+
+Users can also initialize the database, which means updating the local database from Wikidata Query Services.
+
+References:
+http://www.tutorialspoint.com/jdbc/jdbc-sample-code.htm
+https://docs.oracle.com/javase/tutorial/networking/urls/readingURL.html
