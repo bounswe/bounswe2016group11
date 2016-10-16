@@ -8,8 +8,15 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
-def topic(request):
+def show_topic(request):
     template = loader.get_template('topic.html')
+    context = {
+        'asd': 'asd',
+    }
+    return HttpResponse(template.render(context, request))
+
+def add_topic(request):
+    template = loader.get_template('topicAdd.html')
     context = {
         'asd': 'asd',
     }

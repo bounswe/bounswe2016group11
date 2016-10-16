@@ -1,6 +1,11 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+
 <!DOCTYPE html>
 <html>
 <head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../assets/main.css">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -29,7 +34,7 @@
           <li><a href="/cocomapapp">Home Page <span class="sr-only"></span></a></li>
           <li><a href="#">Profile</a></li>
           <li><a href="#">Log Out</a></li>
-          <li><a href="#">Create Topic</a></li>
+          <li><a href="add">Create Topic</a></li>
           <li><a href="#">Add Relationship</a></li>
         </ul>
       </div><!-- /.navbar-collapse -->
@@ -154,20 +159,22 @@
     </br>
     <div class="text-center">POPULAR TOPICS</div>
 		</br>
-    <ul class="nav nav-sidebar">
-      <li class="">
-      	<a href="#">First Flight in Turkey <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="">
-      	<a href="#">Sivil War in Mozambique</a>
-      </li>
-      <li class="">
-      	<a href="#">Inferno</a>
-      </li>
-      <li class="">
-      	<a href="#">Debate2016</a>
-      </li>
-    </ul>
+    <div class="panel panel-default">
+	    <ul class="nav nav-sidebar">
+	      <li class="">
+	      	<a href="#">First Flight in Turkey <span class="sr-only">(current)</span></a>
+	      </li>
+	      <li class="">
+	      	<a href="#">Sivil War in Mozambique</a>
+	      </li>
+	      <li class="">
+	      	<a href="#">Inferno</a>
+	      </li>
+	      <li class="">
+	      	<a href="#">Debate2016</a>
+	      </li>
+	    </ul>
+		</div>
   </div>
 </body>
 </html>
