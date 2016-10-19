@@ -21,3 +21,9 @@ def add_topic(request):
         'asd': 'asd',
     }
     return HttpResponse(template.render(context, request))
+def second_topic(request):
+    template = loader.get_template('secondTopic.html')
+    context = {
+        'asd': 'asd',
+    }
+    return HttpResponse(template.render(context, request))

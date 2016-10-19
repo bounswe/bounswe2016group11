@@ -6,7 +6,7 @@
 <html>
 <head>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
+
 	<link rel="stylesheet" type="text/css" href="../assets/main.css">
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -42,6 +42,11 @@
 	        <li><a href="topic/add">Create Topic</a></li>
 	        <li><a href="#">Add Relationship</a></li>
 	      </ul>
+				<div class="pull-right">
+					<a href="#" class="btn btn-info btn-lg">
+          	<span class="glyphicon glyphicon-user"></span> Busra
+        	</a>
+				</div>
 	    </div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
 	</nav>
@@ -60,14 +65,14 @@
 					<div class="col-sm-2 col-sm-offset-5 circle3">QWEQWE</div>
 				</div>
 			</div> -->
-			<canvas style="" id="circleCanvas" width="1000px" height="500px" onclick="redirectToTopic()">
-				
+			<canvas style="" id="circleCanvas" width="1000px" height="700px" onclick="redirectToTopic()">
+
 			</canvas>
 			<div class="row col-sm-9 sticky-footer">
 		    <div class="input-group">
 		      <input type="text" class="form-control" placeholder="Search for...">
 		      <span class="input-group-btn">
-		        <button class="btn btn-default" type="button">Search</button>
+		        <button class="btn btn-default" type="button" onclick="redirectToTopic()">Search</button>
 		        <button style="margin-left: 20px;" class="btn btn-default" type="button">Advanced Search</button>
 		      </span>
 		    </div><!-- /input-group -->
@@ -78,21 +83,25 @@
 		<div class="text-center">POST FROM USERS YOU FOLLOW</div>
 		</br>
     <ul class="nav nav-sidebar list-group list-following-posts">
-      <li class="list-group-item">
-      	<a href="#">Cabbar posted to Security in Ce... <span class="sr-only">(current)</span></a>
-      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips lorem lorem...</p>
+			<li class="list-group-item">
+      	<a href="#">Ozgur posted to Security in Ce... <span class="sr-only">(current)</span></a>
+      	<p>Threatpost, is an independent news site which is a leading source of information about IT ...</p>
+      </li>
+			<li class="list-group-item">
+      	<a href="#">Dogukan posted to White House state dinner <span class="sr-only">(current)</span></a>
+      	<p>President Barack Obama's final State Dinner Tuesday was a swirl of dolce vita diplomacy, </p>
+      </li>
+			<li class="list-group-item">
+      	<a href="#">Kaan posted to Saudi Arabia executes ...</a>
+      	<p>Saudi Arabia has taken the rare step of executing a member of its royal family after he was found guilty </p>
+      </li>
+			<li class="list-group-item">
+      	<a href="#">Mehmet posted to European giants forcing ...</a>
+      	<p>That's because UEFA announced in August that the top four clubs from the top four leagues</p>
       </li>
       <li class="list-group-item">
-      	<a href="#">Yeliz posted to Music</a>
-      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips</p>
-      </li>
-      <li class="list-group-item">
-      	<a href="#">Pasha posted to Shopping in Mil...</a>
-      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips</p>
-      </li>
-      <li class="list-group-item">
-      	<a href="#">Recep posted to equality</a>
-      	<p>selam kizlar naber haha ben de iyi takiliyoruz kips kips</p>
+      	<a href="#">Emrah posted to Champions League</a>
+      	<p>Thanks for joining today, the live blog will return tomorrow morning. Head over to the UEFA</p>
       </li>
     </ul>
     </br>
@@ -143,7 +152,9 @@
 	  context.font = font;
 	  context.textBaseline = "top";
 	  context.fillText("CLINTON", 760-radius/4 ,420-radius/2);
+
 	  
+
 	  context.beginPath();
 	  canvas_arrow (context, 265, 345, 420, 220);
 	  canvas_arrow (context, 590, 220, 740, 340);
