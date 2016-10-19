@@ -72,7 +72,7 @@
         <div class="input-group">
           <input type="text" class="form-control" placeholder="Search for...">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button" onclick="redirectToTopic()">Search</button>
+            <button class="btn btn-default" type="button" onclick="redirectToTopicMath()">Search</button>
             <button style="margin-left: 20px;" class="btn btn-default" type="button">Advanced Search</button>
           </span>
         </div><!-- /input-group -->
@@ -196,7 +196,10 @@
     }
 
     function redirectToTopic() {
-      window.location.href = "topic/show"
+      window.location.href = "/cocomapapp/topic/show"
+    }
+    function redirectToTopicMath() {
+      window.location.href = "/cocomapapp/topic/math"
     }
 
   </script>

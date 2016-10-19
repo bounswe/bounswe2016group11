@@ -27,3 +27,13 @@ def second_topic(request):
         'asd': 'asd',
     }
     return HttpResponse(template.render(context, request))
+
+def math_topic(request):
+    template = loader.get_template('topicMath.html')
+    context = {
+        'asd': 'asd',
+    }
+    return HttpResponse(template.render(context, request))
+
+
+    
