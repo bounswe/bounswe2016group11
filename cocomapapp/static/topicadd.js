@@ -22,6 +22,7 @@ $(document).ready(function(){
     }
   });
 
+
   /*
   $("#tags2").on("keydown",function(event){
        console.log("geldi");
@@ -33,6 +34,13 @@ $(document).ready(function(){
         });
   });
   */
+
+
+
+  $('#cancel_bt').click(function(){
+  		parent.history.back();
+  		return false;
+  	});
 
 
 
