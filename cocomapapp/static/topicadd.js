@@ -24,7 +24,10 @@ $(document).ready(function(){
 
 
 
-
+  $('#cancel_bt').click(function(){
+  		parent.history.back();
+  		return false;
+  	});
 
 
 
