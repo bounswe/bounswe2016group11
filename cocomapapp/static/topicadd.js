@@ -4,7 +4,7 @@ $(document).ready(function(){
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: {
-      url: '/tags.json',
+      url: '/static/tags.json',
       filter: function(list) {
         return $.map(list, function(cityname) {
           return { name: cityname }; });
@@ -13,7 +13,7 @@ $(document).ready(function(){
   });
   citynames.initialize();
 
-  $('input').tagsinput({
+  $('#tags2').tagsinput({
     typeaheadjs: {
       name: 'citynames',
       displayKey: 'name',

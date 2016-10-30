@@ -4,9 +4,13 @@
 <html>
 <head>
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">        </script>
+
 		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
 		<script src="/static/topicadd.js" type="text/javascript"></script>
 		<script src="/static/typeahead.bundle.js" type="text/javascript"></script>
+		<script src="/static/bootstrap-tagsinput.js" type="text/javascript"></script>
+		<link href="/static/bootstrap-tagsinput.css" rel="stylesheet"/>
+
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../assets/main.css">
     <!-- Latest compiled and minified CSS -->
@@ -18,6 +22,7 @@
     <title></title>
 </head>
 <body>
+	<input type="text" id="tags2" data-role="tagsinput">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <!-- Brand and toggle get grouped for better mobile display -->
@@ -64,7 +69,8 @@
                 </div>
             </div>
             <label class="checkbox-inline">
-                <input type="checkbox" value="">Check this if you want to add a post(you can add the post later)</label>
+                <input type="checkbox">Check this if you want to add a post(you can add the post later)</input>
+						</label>
         </div>
         <div class="col-md-3"></div>
       </div>
