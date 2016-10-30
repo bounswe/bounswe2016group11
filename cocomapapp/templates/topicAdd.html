@@ -6,6 +6,7 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">        </script>
 		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
 		<script src="/static/topicadd.js" type="text/javascript"></script>
+		<script src="/static/typeahead.bundle.js" type="text/javascript"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../assets/main.css">
     <!-- Latest compiled and minified CSS -->
@@ -57,7 +58,7 @@
                     <h1>Topic Name</h1>
                     <input type="text" id="topicName">
                     <h1>Tags</h1>
-                    <input type="text" name="typeahead" id="tags">
+                    <input type="text" id="tags" data-role="tagsinput">
                     <h1>Relationships</h1>
                     <input type="text" id="relationships">
                 </div>

@@ -1,4 +1,35 @@
 $(document).ready(function(){
+
+  var citynames = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    prefetch: {
+      url: '/tags.json',
+      filter: function(list) {
+        return $.map(list, function(cityname) {
+          return { name: cityname }; });
+      }
+    }
+  });
+  citynames.initialize();
+
+  $('input').tagsinput({
+    typeaheadjs: {
+      name: 'citynames',
+      displayKey: 'name',
+      valueKey: 'name',
+      source: citynames.ttAdapter()
+    }
+  });
+
+
+
+
+
+
+
+
+
   /*
   console.log("here");
     $('input#tags').typeahead({
@@ -7,12 +38,37 @@ $(document).ready(function(){
         limit : 10
     });
     */
-    console.log("here");
-  $("#tags").on("keydown",function(){
-
-    console.log($("#tags").val());
-    $.get("add",{"search": $("#tags").val()}).done(function(data){
-      console.log("data come: "+ data);
-    });
-  });
+    // console.log("here");
+    // var cars = ['Audi', 'BMW', 'Bugatti', 'Ferrari', 'Ford', 'Lamborghini', 'Mercedes Benz', 'Porsche', 'Rolls-Royce', 'Volkswagen'];
+    //
+    //     // Constructing the suggestion engine
+    //     var cars = new Bloodhound({
+    //         datumTokenizer: Bloodhound.tokenizers.whitespace,
+    //         queryTokenizer: Bloodhound.tokenizers.whitespace,
+    //         local: cars
+    //     });
+    //
+    //     // Initializing the typeahead
+    //     $('.typeahead').typeahead({
+    //         hint: true,
+    //         highlight: true, /* Enable substring highlighting */
+    //         minLength: 1 /* Specify minimum characters required for showing result */
+    //     },
+    //     {
+    //         name: 'cars',
+    //         source: cars
+    //     });
+    //
+    //
+    //
+    //   $("#tags").on("keydown",function(event){
+    //
+    //     console.log("geldi");
+    //     if(event.which == 13)
+    //       console.log($("#tags").val());
+    //     // console.log($("#tags").val());
+    //     // $.get("add",{"search": $("#tags").val()}).done(function(data){
+    //     //   console.log("data come: "+ data);
+    //     // });
+    //   });
 });
