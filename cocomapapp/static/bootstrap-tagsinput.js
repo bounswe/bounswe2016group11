@@ -364,6 +364,7 @@
 
 
       self.$container.on('keydown', 'input', $.proxy(function(event) {
+
         var $input = $(event.target),
             $inputWrapper = self.findInputWrapper();
 

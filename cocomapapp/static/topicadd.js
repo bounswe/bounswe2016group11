@@ -13,7 +13,7 @@ $(document).ready(function(){
   });
   citynames.initialize();
 
-  $('#tags2').tagsinput({
+  $('#tags').tagsinput({
     typeaheadjs: {
       name: 'citynames',
       displayKey: 'name',
@@ -22,9 +22,17 @@ $(document).ready(function(){
     }
   });
 
-
-
-
+  /*
+  $("#tags2").on("keydown",function(event){
+       console.log("geldi");
+       if(event.which == 13)
+         console.log($("#tags").val());
+         console.log($("#tags").val());
+         $.get("add",{"search": $("#tags").val()}).done(function(data){
+         console.log("data come: "+ data);
+        });
+  });
+  */
 
 
 

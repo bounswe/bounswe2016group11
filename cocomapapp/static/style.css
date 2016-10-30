@@ -97,3 +97,6 @@ body {
     height: 35px;
     z-index: 1;
 }
+#tags {
+  min-width: 150px !important;
+}

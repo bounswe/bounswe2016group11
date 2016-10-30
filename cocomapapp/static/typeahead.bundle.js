@@ -1382,6 +1382,11 @@
                 this.trigger("focused");
             },
             _onKeydown: function onKeydown($e) {
+
+              //Ajax get
+              //$.get("add",{"search": $("#tags2").val()}).done(function(data){
+                //console.log("data come: "+ data);
+               //});
                 var keyName = specialKeyCodeMap[$e.which || $e.keyCode];
                 this._managePreventDefault(keyName, $e);
                 if (keyName && this._shouldTrigger(keyName, $e)) {
