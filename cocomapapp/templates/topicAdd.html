@@ -68,15 +68,18 @@
                 </div>
             </div>
             <label class="checkbox-inline">
-                <input type="checkbox">Check this if you want to add a post(you can add the post later)</input>
+                <input type="checkbox" id="checkbox" data-toggle="collapse" data-target="#post">Check this if you want to add a post(you can add the post later)</input>
 						</label>
+						<textarea class="form-control collapse" rows="3" id="post"></textarea> <br/>
+
         </div>
         <div class="col-md-3"></div>
       </div>
       <div class="row">
           <div class="col-md-4"></div>
           <div class="col-md-4">
-              <a href="/cocomapapp/topic/second" style="width:100%" type="button" class="btn btn-primary">Publish</a>
+              <!-- <a href="/cocomapapp/topic/second" id="publish" style="width:100%" type="button" class="btn btn-primary">Publish</a> -->
+							<button id="publish" style="width:100%" class="btn btn-primary">Publish</button>
           </div>
           <div class="col-md-4"></div>
           <div class="col-md-5"></div>
@@ -142,5 +145,26 @@
 	    </ul>
 		</div>
   </div>
+	<script>
+
+		$("#publish").click(function(){
+				topic_name = $("#topicName").val();
+				tags_name = $("#tags").val();
+				relationships = $("#relationships").val();
+				isChecked = $("#checkbox:checked").length;
+				post = "";
+
+				console.log(isChecked);
+				if(isChecked == 1){
+						post = $("#post").val();
+				}
+				console.log(post);
+				var obj = { 'topic_name' : topic_name, 'tags_name' : tags_name, 'relationships' : relationships,
+					'isChecked' : isChecked, 'post' : post };
+				console.log(JSON.stringify(obj));
+				window.location.href = "secondTopic.html";
+		});
+
+	</script>
 </body>
 </html>
