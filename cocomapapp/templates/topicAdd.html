@@ -10,6 +10,7 @@
 		<script src="/static/typeahead.bundle.js" type="text/javascript"></script>
 		<script src="/static/bootstrap-tagsinput.js" type="text/javascript"></script>
 		<link href="/static/bootstrap-tagsinput.css" rel="stylesheet"/>
+		<link href="/static/topicAdd.css" rel="stylesheet"/>
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../assets/main.css">
@@ -55,25 +56,28 @@
 		<!-- title -->
 		<div class="mb-for-footer">
 			<div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
+        <div class="col-md-2"></div>
+        <div class="col-md-8">
             <div class="img-circle">
-                <div class="img-circle-content">
+                <div class="img-circle-content form-inline">
                     <h1>Topic Name</h1>
-                    <input type="text" id="topicName">
-                    <h1>Tags</h1>
-                    <input type="text" id="tags" data-role="tagsinput">
+                    <input type="text" id="topicName" class="form-control nextInput" placeholder="Topic Name">
                     <h1>Relationships</h1>
-                    <input type="text" id="relationships">
+										<div class="form-group">
+											<input type="text" id="relationships-name" class="form-control nextInput" placeholder="Relationship Name">
+	                    <input type="text" id="relationships-topic" class="form-control nextInput" placeholder="Name of a Topic">
+										</div>
+										<h1>Tags</h1>
+										<input type="text" id="tags" data-role="tagsinput nextInput">
                 </div>
             </div>
-            <label class="checkbox-inline">
+            <label class="checkbox-inline" id="postCheck">
                 <input type="checkbox" id="checkbox" data-toggle="collapse" data-target="#post">Check this if you want to add a post(you can add the post later)</input>
 						</label>
 						<textarea class="form-control collapse" rows="3" id="post"></textarea> <br/>
 
         </div>
-        <div class="col-md-3"></div>
+        <div class="col-md-2"></div>
       </div>
       <div class="row">
           <div class="col-md-4"></div>
@@ -145,26 +149,5 @@
 	    </ul>
 		</div>
   </div>
-	<script>
-
-		$("#publish").click(function(){
-				topic_name = $("#topicName").val();
-				tags_name = $("#tags").val();
-				relationships = $("#relationships").val();
-				isChecked = $("#checkbox:checked").length;
-				post = "";
-
-				console.log(isChecked);
-				if(isChecked == 1){
-						post = $("#post").val();
-				}
-				console.log(post);
-				var obj = { 'topic_name' : topic_name, 'tags_name' : tags_name, 'relationships' : relationships,
-					'isChecked' : isChecked, 'post' : post };
-				console.log(JSON.stringify(obj));
-				window.location.href = "secondTopic.html";
-		});
-
-	</script>
 </body>
 </html>

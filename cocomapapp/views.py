@@ -18,8 +18,6 @@ def show_topic(request):
     return HttpResponse(template.render(context, request))
 
 def add_topic(request):
-
-    #if 
     if request.is_ajax():
         context = json.dumps({"result": ["delilo","delilo2","delilo3"]})
         return HttpResponse(context)

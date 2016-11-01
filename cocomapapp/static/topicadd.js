@@ -1,6 +1,9 @@
 $(document).ready(function(){
 
+
+
   var citynames = new Bloodhound({
+
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
     prefetch: {
@@ -22,8 +25,36 @@ $(document).ready(function(){
     }
   });
 
+  //
+  $("#publish").click(function(){
+      topic_name = $("#topicName").val();
+      tags_name = $("#tags").val();
+      relationships = $("#relationships").val();
+      isChecked = $("#checkbox:checked").length;
+      post = "";
 
-  /*
+      console.log(isChecked);
+      if(isChecked == 1){
+          post = $("#post").val();
+      }
+      console.log(post);
+      var obj = { 'topic_name' : topic_name, 'tags_name' : tags_name, 'relationships' : relationships,
+        'isChecked' : isChecked, 'post' : post };
+      console.log(JSON.stringify(obj));
+      window.location.href = "secondTopic.html";
+  });
+  $('#cancel_bt').click(function(){
+  		parent.history.back();
+  		return false;
+  });
+
+  $('.nextInput').keydown(function (e) {
+     if (e.which === 13) {
+         var index = $('.nextInput').index(this) + 1;
+         $('.nextInput').eq(index).focus();
+     }
+ });
+  /* //Example Get
   $("#tags2").on("keydown",function(event){
        console.log("geldi");
        if(event.which == 13)
@@ -34,57 +65,4 @@ $(document).ready(function(){
         });
   });
   */
-
-
-
-  $('#cancel_bt').click(function(){
-  		parent.history.back();
-  		return false;
-  	});
-
-
-
-
-
-  /*
-  console.log("here");
-    $('input#tags').typeahead({
-        name: 'typeahead',
-        remote:'topic/add',
-        limit : 10
-    });
-    */
-    // console.log("here");
-    // var cars = ['Audi', 'BMW', 'Bugatti', 'Ferrari', 'Ford', 'Lamborghini', 'Mercedes Benz', 'Porsche', 'Rolls-Royce', 'Volkswagen'];
-    //
-    //     // Constructing the suggestion engine
-    //     var cars = new Bloodhound({
-    //         datumTokenizer: Bloodhound.tokenizers.whitespace,
-    //         queryTokenizer: Bloodhound.tokenizers.whitespace,
-    //         local: cars
-    //     });
-    //
-    //     // Initializing the typeahead
-    //     $('.typeahead').typeahead({
-    //         hint: true,
-    //         highlight: true, /* Enable substring highlighting */
-    //         minLength: 1 /* Specify minimum characters required for showing result */
-    //     },
-    //     {
-    //         name: 'cars',
-    //         source: cars
-    //     });
-    //
-    //
-    //
-    //   $("#tags").on("keydown",function(event){
-    //
-    //     console.log("geldi");
-    //     if(event.which == 13)
-    //       console.log($("#tags").val());
-    //     // console.log($("#tags").val());
-    //     // $.get("add",{"search": $("#tags").val()}).done(function(data){
-    //     //   console.log("data come: "+ data);
-    //     // });
-    //   });
 });
