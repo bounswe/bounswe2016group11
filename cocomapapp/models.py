@@ -20,8 +20,8 @@ class Tag(models.Model):
 @python_2_unicode_compatible
 class Topic(models.Model):
   name = models.TextField()
-  relates_to = models.ForeignKey('self', null=True)
-  tags = models.ManyToManyField(Tag, null=True)
+  relates_to = models.ForeignKey('self', null=True, blank=True)
+  tags = models.ManyToManyField(Tag, null=True, blank=True)
   created_at     = models.DateTimeField(editable=False)
   updated_at    = models.DateTimeField()
 
