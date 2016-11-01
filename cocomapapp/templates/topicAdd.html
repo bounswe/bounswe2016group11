@@ -3,14 +3,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">        </script>
 
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">        </script>
+		<link href="/static/selectize.default.css" rel="stylesheet"/>
+		<script src="/static/selectize.js" type="text/javascript"></script>
 		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
 		<script src="/static/topicadd.js" type="text/javascript"></script>
 		<script src="/static/typeahead.bundle.js" type="text/javascript"></script>
 		<script src="/static/bootstrap-tagsinput.js" type="text/javascript"></script>
 		<link href="/static/bootstrap-tagsinput.css" rel="stylesheet"/>
 		<link href="/static/topicAdd.css" rel="stylesheet"/>
+
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="../assets/main.css">
@@ -56,19 +59,19 @@
 		<!-- title -->
 		<div class="mb-for-footer">
 			<div class="row">
-        <div class="col-md-2"></div>
-        <div class="col-md-8">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
             <div class="img-circle">
                 <div class="img-circle-content form-inline">
                     <h1>Topic Name</h1>
-                    <input type="text" id="topicName" class="form-control nextInput" placeholder="Topic Name">
+                    <input type="text" id="topicName" class="form-control" placeholder="Topic Name">
                     <h1>Relationships</h1>
 										<div class="form-group">
-											<input type="text" id="relationships-name" class="form-control nextInput" placeholder="Relationship Name">
-	                    <input type="text" id="relationships-topic" class="form-control nextInput" placeholder="Name of a Topic">
+											<input type="text" id="relationships-name" class="form-control" placeholder="Relationship Name">
+	                    <input id="relationships-topic" placeholder="Name of a Topic">
 										</div>
 										<h1>Tags</h1>
-										<input type="text" id="tags" data-role="tagsinput nextInput">
+										<input type="text" id="tags" data-role="tagsinput" placeholder="Tag">
                 </div>
             </div>
             <label class="checkbox-inline" id="postCheck">
@@ -77,7 +80,7 @@
 						<textarea class="form-control collapse" rows="3" id="post"></textarea> <br/>
 
         </div>
-        <div class="col-md-2"></div>
+        <div class="col-md-1"></div>
       </div>
       <div class="row">
           <div class="col-md-4"></div>

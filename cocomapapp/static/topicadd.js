@@ -24,8 +24,53 @@ $(document).ready(function(){
       source: citynames.ttAdapter()
     }
   });
+  var relations=[];
+  /*
+  $.getJSON("/static/tags.json", function(data){
+    $.each(data,function(i,value){
+        relations.push({
+          id: i,
+          name: value
+        });
+    });
+  });*/
+  //relations = relations.join(",");
+  $('#relationships-topic').selectize({
+      maxItems: 1,
+      maxOptions: 3,
+      valueField: 'name',
+      labelField: 'name',
+      searchField: ['name'],
+      options: [],
+      create: false,
+      load: function(query, callback) {
+        if (!query.length) return callback();
+        $.getJSON("/static/tags.json"
+        ).fail( function() {
+            callback();
+        }).done( function(data) {
+            $.each(data,function(i,value){
+                relations.push({
+                  id: i,
+                  name: value
+                });
+            });
+            callback(relations);
+          }
+        );
+        }
+  });
 
-  //
+  $("#tags").on("keypress",function(event){
+    console.log("asda");
+    if(event.which == 13){
+        alert("x");
+    }
+
+  });
+
+  //publish button functionalities...
+  // if the django's own form is used, then this is to be removed
   $("#publish").click(function(){
       topic_name = $("#topicName").val();
       tags_name = $("#tags").val();
@@ -47,13 +92,6 @@ $(document).ready(function(){
   		parent.history.back();
   		return false;
   });
-
-  $('.nextInput').keydown(function (e) {
-     if (e.which === 13) {
-         var index = $('.nextInput').index(this) + 1;
-         $('.nextInput').eq(index).focus();
-     }
- });
   /* //Example Get
   $("#tags2").on("keydown",function(event){
        console.log("geldi");
