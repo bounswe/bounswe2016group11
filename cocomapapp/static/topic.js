@@ -1,7 +1,5 @@
 $(document).ready(function(){
 
-
-
   $.getJSON("/static/topic.json"
 ).done( function(data) {
       $("#theTitle").text(data.title);
@@ -58,7 +56,7 @@ $(document).ready(function(){
 
     var str = $("#content").text().trim();
     if(str == ""){
-      
+
     }else{
 
       console.log(str);

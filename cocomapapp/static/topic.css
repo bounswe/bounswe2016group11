@@ -4,7 +4,7 @@ textarea{
 
 }
 
-div[contenteditable]{
+div[contenteditable="true"]{
 
   padding: 20px;
   max-height: 400px ;
