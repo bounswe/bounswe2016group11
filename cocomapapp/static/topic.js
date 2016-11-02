@@ -5,6 +5,7 @@ $(document).ready(function(){
   $.getJSON("/static/topic.json"
 ).done( function(data) {
       $("#theTitle").text(data.title);
+
       $.each(data.tags, function(i,val){
         $("#topicTags").append(
           "<a><b>#</b>"+val +"</a>"
@@ -23,7 +24,10 @@ $(document).ready(function(){
             var text = obj.text;
             var post_tags = obj.tags;
             var accuracy = obj.accuracy;
-
+            var tagsAsStr="";
+            $.each(post_tags, function(i,val){
+                tagsAsStr +="<a><b>#</b>"+val +"</a>";
+            });
             $(".panelContainer").append(
 
               '<div class="panel panel-default panel-margined">'
@@ -32,7 +36,7 @@ $(document).ready(function(){
                 +'</div>'
                 +'<div class="panel-footer">'
                   <!-- Tags -->
-                  +'<a href="#">#trump</a> <a href="#">#clinton</a> <a href="#">#president</a> <a href="#">#politics</a>'
+                  +tagsAsStr
                   <!-- Thumbs up, down -->
                   +'<div class="pull-right">'
                     +'Accuracy:'
