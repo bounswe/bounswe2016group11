@@ -1,17 +1,21 @@
 $(document).ready(function(){
 
-var data;
+
 
   $.getJSON("/static/topic.json"
-).done( function(post_page) {
-
-      data = post_page;
+).done( function(data) {
+      $("#theTitle").text(data.title);
+      $.each(data.tags, function(i,val){
+        $("#topicTags").append(
+          "<a><b>#</b>"+val +"</a>"
+        );
+      });
 
       var title = data.title;
       var topic_tags = data.tags;
       var posts = data.posts;
 
-      console.log(data);
+      //console.log(data);
 
       $.each(posts, function(i, obj) {
             //use obj.id and obj.name here, for example:
