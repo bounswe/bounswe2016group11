@@ -1,6 +1,11 @@
 from django.http import HttpResponse
 from django.template import loader
 
+from cocomapapp.forms import TopicForm
+from cocomapapp.models import Topic
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+
+
 def index(request):
     template = loader.get_template('global.html')
     context = {
@@ -17,6 +22,16 @@ def show_topic(request):
 
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
+    if request.method == "POST":
+        try:
+            Topic.objects.get(name="simple topic")
+            return HttpResponse("This topic exists")
+        except ObjectDoesNotExist:
+            Topic.objects.create(name="simple topic")
+        except MultipleObjectsReturned:
+            return HttpResponse("This topic exists")
+
+
     context = {
         'asd': 'asd',
     }
