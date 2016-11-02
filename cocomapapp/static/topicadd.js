@@ -68,6 +68,14 @@ $(document).ready(function(){
     }
 
   });
+  /*
+  $("#relationships-topic").removeAttr("id");
+  $(".newRelation").append(
+    "<input type='text' id='relationships-name' class='form-control makeinline' placeholder='Relationship Name'>"
+
+    +"<input id='relationships-topic' class='makeinline' placeholder='Name of a Topic'>"
+  );
+*/
 
   //publish button functionalities...
   // if the django's own form is used, then this is to be removed

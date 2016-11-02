@@ -130,7 +130,7 @@
 .selectize-control.single .selectize-input.input-active {
   background: #ffffff;
   cursor: text;
-  display: inline-block;
+  display: inline;
 }
 .selectize-input {
   border: 1px solid #d0d0d0;
@@ -294,7 +294,7 @@
 }
 .selectize-control.single .selectize-input:after {
   content: ' ';
-  display: block;
+  display: inline;
   position: absolute;
   top: 50%;
   right: 15px;
