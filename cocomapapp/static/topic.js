@@ -54,6 +54,17 @@ $(document).ready(function(){
     }
   );
 
+  $("#post_button").click(function(){
 
+    var str = $("#content").text().trim();
+    if(str == ""){
+      
+    }else{
+
+      console.log(str);
+    }
+
+
+  });
 
 });
