@@ -78,8 +78,8 @@ WSGI_APPLICATION = 'djangoproj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cocomap',
-        'USER': 'cocouser',
+        'NAME': 'cmpe451',
+        'USER': 'devuser',
         'PASSWORD': '1234',
         'HOST': 'localhost',
         'PORT': '',

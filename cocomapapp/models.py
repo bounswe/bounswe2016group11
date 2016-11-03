@@ -37,7 +37,7 @@ class Topic(models.Model):
 @python_2_unicode_compatible
 class Post(models.Model):
   content = models.TextField()
-  tags = models.ManyToManyField(Tag, null=True)
+  tags = models.ManyToManyField(Tag, null=True, blank=True)
   positive_reaction_count = models.PositiveIntegerField()
   negative_reaction_count = models.IntegerField()
   created_at     = models.DateTimeField(editable=False)

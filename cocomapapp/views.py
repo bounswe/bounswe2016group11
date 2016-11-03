@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.template import loader
 
-from cocomapapp.forms import TopicForm
+#from cocomapapp.forms import TopicForm
 from cocomapapp.models import Topic
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
@@ -49,6 +49,3 @@ def math_topic(request):
         'asd': 'asd',
     }
     return HttpResponse(template.render(context, request))
-
-
-    
