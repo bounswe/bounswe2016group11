@@ -1,9 +1,12 @@
 from django.http import HttpResponse
 from django.template import loader
 
-from cocomapapp.forms import TopicForm
+#from cocomapapp.forms import TopicForm
 from cocomapapp.models import Topic
+from cocomapapp.models import Post
+from cocomapapp.models import Tag
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
@@ -20,6 +23,7 @@ def show_topic(request):
     }
     return HttpResponse(template.render(context, request))
 
+@csrf_exempt
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
     if request.method == "POST":
@@ -31,11 +35,31 @@ def add_topic(request):
         except MultipleObjectsReturned:
             return HttpResponse("This topic exists")
 
+    context = {
+        'asd': 'asd',
+    }
+    return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def add_post(request):
+    template = loader.get_template('postAdd.html')
+    if request.method == "POST":
+        postObject = Post.objects.create(content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        tags = request.POST.get("tags", "").split(",");
+        for tag in tags:
+            try:
+                tagObject = Tag.objects.get(name=tag)
+            except ObjectDoesNotExist:
+                tagObject = Tag.objects.create(name=tag)
+            except MultipleObjectsReturned:
+                return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+            postObject.tags.add(tagObject)
 
     context = {
         'asd': 'asd',
     }
     return HttpResponse(template.render(context, request))
+
 def second_topic(request):
     template = loader.get_template('secondTopic.html')
     context = {
@@ -43,12 +67,10 @@ def second_topic(request):
     }
     return HttpResponse(template.render(context, request))
 
+@csrf_exempt
 def math_topic(request):
     template = loader.get_template('topicMath.html')
     context = {
         'asd': 'asd',
     }
     return HttpResponse(template.render(context, request))
-
-
-    
