@@ -1,142 +1,41 @@
-{% load static %}
-
-<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
-
-<!DOCTYPE html>
-<html>
-<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="../assets/main.css">
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <title></title>
-</head>
-<body>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/cocomapapp">COCOMAP</a>
-      </div>
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
-          <li><a href="/cocomapapp">Home Page <span class="sr-only"></span></a></li>
-          <li><a href="#">Profile</a></li>
-          <li><a href="#">Log Out</a></li>
-          <li class="active"><a href="topic/add">Create Topic</a></li>
-          <li><a href="#">Add Relationship</a></li>
-        </ul>
-				<div class="pull-right">
-					<a href="#" class="btn btn-info btn-lg">
-          	<span class="glyphicon glyphicon-user"></span> Busra
-        	</a>
-				</div>
-      </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-  </nav>
+{% extends 'base.html' %}
+{% block content %}
   <div class="col-sm-9 col-md-9 main">
-		<!-- title -->
-		<div class="mb-for-footer">
-			<form action="" method="post">{% csrf_token %}
-			<div class="row">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-            <div class="img-circle">
-                <div class="img-circle-content">
-                    <h1>Topic Name</h1>
-                    <input type="text" id="topicName">
-                    <h1>Tags</h1>
-                    <input type="text" id="tags">
-                    <h1>Relationships</h1>
-                    <input type="text" id="relationships">
-                </div>
-            </div>
-            <label class="checkbox-inline">
-                <input type="checkbox" value="">Check this if you want to add a post(you can add the post later)</label>
+  	<!-- title -->
+  	<div class="mb-for-footer">
+  		<form action="" method="post">{% csrf_token %}
+  			<div class="row">
+          <div class="col-md-3"></div>
+          <div class="col-md-6">
+              <div class="img-circle">
+                  <div class="img-circle-content">
+                      <h1>Topic Name</h1>
+                      <input type="text" id="topicName">
+                      <h1>Tags</h1>
+                      <input type="text" id="tags">
+                      <h1>Relationships</h1>
+                      <input type="text" id="relationships">
+                  </div>
+              </div>
+              <label class="checkbox-inline">
+                  <input type="checkbox" value="">Check this if you want to add a post(you can add the post later)</label>
+          </div>
+          <div class="col-md-3"></div>
         </div>
-        <div class="col-md-3"></div>
-      </div>
-      <div class="row">
-          <div class="col-md-4"></div>
-          <div class="col-md-4">
-			   <button name="foo" value="upvote">Publish</button>
-              <!--<a href="/cocomapapp/topic/second" style="width:100%" type="button" class="btn btn-primary">Publish</a> -->
-          </div>
-          <div class="col-md-4"></div>
-          <div class="col-md-5"></div>
-          <div class="col-md-2">
-              <button style="width:100%" type="button" class="btn btn-default">Cancel</button>
-          </div>
-          <div class="col-md-5"></div>
-      </div>
-  </form>
-		</div>
-    <div class="row col-sm-9 sticky-footer" style="bottom:0; position:fixed;">
-  	  <div class="input-group">
-	      <input type="text" class="form-control" placeholder="Search for...">
-	      <span class="input-group-btn">
-	        <button class="btn btn-default" type="button">Search</button>
-	        <button style="margin-left: 20px;" class="btn btn-default" type="button">Advanced Search</button>
-	      </span>
-	    </div><!-- /input-group -->
-	  </div><!-- /.col-lg-6 -->
-	</div>
-  <div class="col-sm-3 col-md-3 sidebar">
-		<div class="text-center">POST FROM USERS YOU FOLLOW</div>
-		</br>
-		<ul class="nav nav-sidebar list-group list-following-posts">
-			<li class="list-group-item">
-      	<a href="#">Ozgur posted to Security in Ce... <span class="sr-only">(current)</span></a>
-      	<p>Threatpost, is an independent news site which is a leading source of information about IT ...</p>
-      </li>
-			<li class="list-group-item">
-      	<a href="#">Dogukan posted to White House state dinner <span class="sr-only">(current)</span></a>
-      	<p>President Barack Obama's final State Dinner Tuesday was a swirl of dolce vita diplomacy, </p>
-      </li>
-			<li class="list-group-item">
-      	<a href="#">Kaan posted to Saudi Arabia executes ...</a>
-      	<p>Saudi Arabia has taken the rare step of executing a member of its royal family after he was found guilty </p>
-      </li>
-			<li class="list-group-item">
-      	<a href="#">Mehmet posted to European giants forcing ...</a>
-      	<p>That's because UEFA announced in August that the top four clubs from the top four leagues</p>
-      </li>
-      <li class="list-group-item">
-      	<a href="#">Emrah posted to Champions League</a>
-      	<p>Thanks for joining today, the live blog will return tomorrow morning. Head over to the UEFA</p>
-      </li>
-    </ul>
-    </br>
-    </br>
-    <div class="text-center">POPULAR TOPICS</div>
-		</br>
-    <div class="panel panel-default">
-	    <ul class="nav nav-sidebar">
-	      <li class="">
-	      	<a href="#">First Flight in Turkey <span class="sr-only">(current)</span></a>
-	      </li>
-	      <li class="">
-	      	<a href="#">Sivil War in Mozambique</a>
-	      </li>
-	      <li class="">
-	      	<a href="#">Inferno</a>
-	      </li>
-	      <li class="">
-	      	<a href="#">Debate2016</a>
-	      </li>
-	    </ul>
-		</div>
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 text-center">
+  			   <button class="btn btn-success" name="foo" value="upvote">Publish</button>
+                <!--<a href="/cocomapapp/topic/second" style="width:100%" type="button" class="btn btn-primary">Publish</a> -->
+            </div>
+            <div class="col-md-4"></div>
+            <div class="col-md-5"></div>
+            <div class="col-md-2">
+                <button style="width:100%; margin-top:10px;" type="button" class="btn btn-danger">Cancel</button>
+            </div>
+            <div class="col-md-5"></div>
+        </div>
+      </form>
+  	</div>
   </div>
-</body>
-</html>
+{% endblock content %}
