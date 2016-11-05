@@ -30,7 +30,7 @@ $(document).ready(function(){
 
               '<div class="panel panel-default panel-margined">'
                 +'<div class="panel-body">'
-                  +'<p><a href="#">'+ username +'</a>'+text+'</p>'
+                  +'<p><a href="#">'+ username +'</a><br />'+text+'</p>'
                 +'</div>'
                 +'<div class="panel-footer">'
                   <!-- Tags -->
