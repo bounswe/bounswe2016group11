@@ -26,12 +26,31 @@ def show_topic(request):
 @csrf_exempt
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
+    #if request.method == "POST":
+    #    try:
+    #        Topic.objects.get(name="simple topic")
+    #        return HttpResponse("This topic exists")
+    #    except ObjectDoesNotExist:
+    #        Topic.objects.create(name="simple topic")
+    #    except MultipleObjectsReturned:
+    #        return HttpResponse("This topic exists")
+
     if request.method == "POST":
         try:
-            Topic.objects.get(name="simple topic")
+            Topic.objects.get(name=request.POST.get("topicName", ""))
             return HttpResponse("This topic exists")
         except ObjectDoesNotExist:
-            Topic.objects.create(name="simple topic")
+            topicObject = Topic.objects.create(name=request.POST.get("topicName", ""))
+            tags = request.POST.get("tags", "").split(",");
+            for tag in tags:
+                try:
+                    tagObject = Tag.objects.get(name=tag)
+                except ObjectDoesNotExist:
+                    tagObject = Tag.objects.create(name=tag)
+                except MultipleObjectsReturned:
+                    return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+                topicObject.tags.add(tagObject)
+
         except MultipleObjectsReturned:
             return HttpResponse("This topic exists")
 
