@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from django.template import loader
+import json
 
 #from cocomapapp.forms import TopicForm
 from cocomapapp.models import Topic
@@ -17,6 +18,7 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 def show_topic(request):
+
     template = loader.get_template('topic.html')
     context = {
         'asd': 'asd',

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 {% block content %}
 	<div class="col-sm-9 col-md-9 main">
@@ -8,80 +9,19 @@
 		    	<div class="panel panel-default panel-modest panelmb0 pull-right" style="background-color:#F8F9FC;">
 		      	<a href="/cocomapapp"><b>Zoom Out</b></a>
 		    	</div>
-		    	<h1 style= "text-align:center;">TRUMP</h1>
-		    	<div class="panel panel-default panel-modest panelmb0 pull-right" style="background-color:#F8F9FC;">
-		      	<a><b>#</b>president2016</a> <a><b>#</b>makeamericagreatagain</a> <a><b>#</b>thedonald</a>
+		    	<h1 id="theTitle" style= "text-align:center;"></h1>
+		    	<div id="topicTags" class="panel panel-default panel-modest panelmb0 pull-right" style="background-color:#F8F9FC;">
+
 		    	</div>
 		  	</div>
 		  	<hr style="margin-top: 0; margin-bottom: 0;">
-				<div class="panel panelmb0;" style="margin-bottom:0; background-color:#dfe3ee;">
+				<div class="panel panelmb0; panelContainer" style="margin-bottom:0; background-color:#dfe3ee;">
 		    	<!-- 1st entry -->
-		      <div class="panel panel-default panel-margined">
-		        <div class="panel-body">
-		          <p><a href="#">Didem Surus: </a> Donald John Trump (born June 14, 1946) is an American businessman, television producer, author, politician, and the Republican Party nominee for President of the United States in the 2016 election. He is the chairman and president of The Trump Organization, which is the principal holding company for his real estate ventures and other business interests. During his career, Trump has built office towers, hotels, casinos, golf courses, an urban development project in Manhattan, and other branded facilities worldwide.</p>
-		        </div>
-		        <div class="panel-footer">
-		        	<!-- Tags -->
-		          <a href="#">#trump</a> <a href="#">#clinton</a> <a href="#">#president</a> <a href="#">#politics</a>
-		          <!-- Thumbs up, down -->
-		          <div class="pull-right">
-		            Accuracy:
-		            <span class="glyphicon glyphicon-thumbs-up" style="color: blue;"><span style="color:green;">%82</span></span>
-		            <span class="glyphicon glyphicon-thumbs-down"><span style="color:red;">%18</span> </span>
-		          </div>
-		        </div>
-		      </div>
-		  		<!-- 2nd entry -->
-		      <div class="panel panel-default panel-margined">
-		        <div class="panel-body">
-		          <p><a href="#">John Black: </a> If Trump had half the media help that Crooked had this game would be over.
-							Can you imagine a handful of Hannity's on the news? It would be great.</p>
-		        </div>
-		        <div class="panel-footer">
-		          <!-- Tags -->
-		          <a href="#">#trump</a> <a href="#">#clinton</a> <a href="#">#president</a> <a href="#">#politics</a>
-		          <!-- Thumbs up, down -->
-		          <div class="pull-right">
-		            Accuracy:
-		            <span class="glyphicon glyphicon-thumbs-up" style="color: blue;"><span style="color:green;">%36</span></span>
-		            <span class="glyphicon glyphicon-thumbs-down"><span style="color:red;">%64</span> </span>
-		          </div>
-		        </div>
-		      </div>
-		    	<!-- 3rd entry -->
-		      <div class="panel panel-default panel-margined">
-		        <div class="panel-body">
-		          <p><a href="#">Dogukan Ocak: </a> All three of those stories can't be true. Deductive reasoning says: If her Judicial Watch testimony is true, then she lied to the FBI about Powell. That's a crime. If her Judicial Watch testimony is true, then she lied to the Benghazi Committee about the server. That's a crime. If her FBI testimony is true, then she lied in a deposition. That's a crime, and it's what got Bill Clinton impeached and disbarred. If her Benghazi Committee testimony is true, then she lied in a deposition. That's a crime, and it's what got Bill Clinton impeached and disbarred.</p>
-		        </div>
-		        <div class="panel-footer">
-		          <!-- Tags -->
-		          <a href="#">#trump</a> <a href="#">#clinton</a> <a href="#">#president</a> <a href="#">#politics</a>
-		          <!-- Thumbs up, down -->
-		          <div class="pull-right">
-		            Accuracy:
-		            <span class="glyphicon glyphicon-thumbs-up"><span style="color:green;">%54</span></span>
-		            <span class="glyphicon glyphicon-thumbs-down" style="color: blue;"><span style="color:red;">%46</span> </span>
-		          </div>
-		        </div>
-		      </div>
-		    	<!-- 4th entry -->
-		      <div class="panel panel-default panel-margined">
-		        <div class="panel-body">
-		          <p><a href="#">Cobra Johnson: </a> As a liberal, no. It's the evil Clinton corruption campaign at its finest. They're Everything that's wrong with the Democratic party. And please don't say liberals are bad for everything, we need the Bernie vote.
-							</p>
-		        </div>
-		        <div class="panel-footer">
-		          <!-- Tags -->
-		          <a href="#">#trump</a> <a href="#">#clinton</a> <a href="#">#president</a> <a href="#">#politics</a>
-		          <!-- Thumbs up, down -->
-		          <div class="pull-right">
-		            Accuracy:
-		            <span class="glyphicon glyphicon-thumbs-up" style="color: blue;"><span style="color:green;">%99</span></span>
-		            <span class="glyphicon glyphicon-thumbs-down"><span style="color:red;">%1</span> </span>
-		          </div>
-		        </div>
-		      </div>
+
 		    </div>
+				<div id="content" contenteditable="true" class="panel panel-default panel-margined" >
+				</div>
+				<button id="post_button" type="button" class="btn btn-primary btn-lg btn-block">Post</button>
 		  </div>
 		</div>
 	</div>

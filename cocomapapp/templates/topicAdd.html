@@ -1,41 +1,55 @@
 {% extends 'base.html' %}
 {% block content %}
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js">        </script>
+		<link href="/static/selectize.default.css" rel="stylesheet"/>
+		<script src="/static/selectize.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+		<script src="/static/topicadd.js" type="text/javascript"></script>
+		<script src="/static/typeahead.bundle.js" type="text/javascript"></script>
+		<script src="/static/bootstrap-tagsinput.js" type="text/javascript"></script>
+		<link href="/static/bootstrap-tagsinput.css" rel="stylesheet"/>
+		<link href="/static/topicAdd.css" rel="stylesheet"/>
+
   <div class="col-sm-9 col-md-9 main">
-  	<!-- title -->
-  	<div class="mb-for-footer">
-  		<form action="" method="post">{% csrf_token %}
-  			<div class="row">
-          <div class="col-md-3"></div>
-          <div class="col-md-6">
-              <div class="img-circle">
-                  <div class="img-circle-content">
-                      <h1>Topic Name</h1>
-                      <textarea rows="1" cols="30" name="topicName"></textarea>
-                      <h1>Tags</h1>
-                      <textarea rows="1" cols="30" name="tags"></textarea>
-                      <h1>Relationships</h1>
-                      <textarea rows="1" cols="30" name="relationship"></textarea>
-                  </div>
-              </div>
-              <label class="checkbox-inline">
-                  <input type="checkbox" value="">Check this if you want to add a post(you can add the post later)</label>
+		<!-- title -->
+		<div class="mb-for-footer">
+			<div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <div class="img-circle">
+                <div class="img-circle-content form-inline">
+                    <h1>Topic Name</h1>
+                    <input type="text" id="topicName" class="form-control" placeholder="Topic Name">
+                    <h1>Relationships</h1>
+										<div class="form-group newRelation">
+											<input type="text" id="relationships-name" class="form-control makeinline" placeholder="Relationship Name">
+	                    <input id="relationships-topic" class="makeinline" placeholder="Name of a Topic">
+										</div>
+										<h1>Tags</h1>
+										<input type="text" id="tags" data-role="tagsinput" placeholder="Tag">
+                </div>
+            </div>
+            <label class="checkbox-inline" id="postCheck">
+                <input type="checkbox" id="checkbox" data-toggle="collapse" data-target="#post">Check this if you want to add a post(you can add the post later)</input>
+						</label>
+						<textarea class="form-control collapse" rows="3" id="post"></textarea> <br/>
+
+        </div>
+        <div class="col-md-1"></div>
+      </div>
+      <div class="row">
+          <div class="col-md-4"></div>
+          <div class="col-md-4">
+              <!-- <a href="/cocomapapp/topic/second" id="publish" style="width:100%" type="button" class="btn btn-primary">Publish</a> -->
+							<button id="publish" style="width:100%" class="btn btn-primary">Publish</button>
           </div>
-          <div class="col-md-3"></div>
-        </div>
-        <div class="row">
-            <div class="col-md-4"></div>
-            <div class="col-md-4 text-center">
-  			   <button class="btn btn-success" name="submit" type="submit" value="upvote">Publish</button>
-                <!--<a href="/cocomapapp/topic/second" style="width:100%" type="button" class="btn btn-primary">Publish</a> -->
-            </div>
-            <div class="col-md-4"></div>
-            <div class="col-md-5"></div>
-            <div class="col-md-2">
-                <button style="width:100%; margin-top:10px;" type="button" class="btn btn-danger">Cancel</button>
-            </div>
-            <div class="col-md-5"></div>
-        </div>
-      </form>
-  	</div>
+          <div class="col-md-4"></div>
+          <div class="col-md-5"></div>
+          <div class="col-md-2">
+              <button id="cancel_bt" style="width:100%" type="button" class="btn btn-default">Cancel</button>
+          </div>
+          <div class="col-md-5"></div>
+      </div>
+		</div>
   </div>
 {% endblock content %}

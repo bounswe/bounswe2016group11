@@ -1,0 +1,9 @@
+#postCheck{
+  margin-left: 15%;
+}
+#tags {
+  min-width: 150px !important;
+}
+.makeinline {
+  display: inline;
+}

@@ -1,0 +1,24 @@
+{
+  "title":"The Title of the Year",
+  "tags": ["tag1","tag2","tag2"],
+  "posts":[
+    {
+      "username":"User Name 1",
+      "text":"A meaningless text here",
+      "tags":["posttag1","posttag2","posttag3","posttag4"],
+      "accuracy":[3,97]
+    },
+    {
+      "username":"User Name 2",
+      "text":"A meaningless text here",
+      "tags":["posttag1","posttag2","posttag3","posttag4"],
+      "accuracy":[1,99]
+    },
+    {
+      "username":"User Name 3",
+      "text":"A meaningless text here",
+      "tags":["posttag1","posttag2","posttag3","posttag4"],
+      "accuracy":[100,0]
+    }
+  ]
+}
