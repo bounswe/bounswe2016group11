@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.template import loader
 import json
 
@@ -6,59 +7,66 @@ import json
 from cocomapapp.models import Topic
 from cocomapapp.models import Post
 from cocomapapp.models import Tag
+from cocomapapp.models import User
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_exempt
 
 
 def index(request):
     template = loader.get_template('global.html')
+    hot_topics = Topic.objects.order_by('-updated_at')[:5]
+    random_topic = Topic.objects.order_by('?').first()
     context = {
-        'asd': 'asd',
+        'hot_topics': hot_topics,
+        'random_topic': random_topic
     }
     return HttpResponse(template.render(context, request))
 
-def show_topic(request):
-
+def show_topic(request, id):
+    topic = get_object_or_404(Topic, id=id)
+    hot_topics = Topic.objects.order_by('-updated_at')[:5]
     template = loader.get_template('topic.html')
+    try:
+        posts = Post.objects.get(topic_id=id)
+    except ObjectDoesNotExist:
+        posts = None
     context = {
-        'asd': 'asd',
+        'topic': topic,
+        'hot_topics': hot_topics,
+        'posts': posts
     }
+    print (context)
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
-    #if request.method == "POST":
-    #    try:
-    #        Topic.objects.get(name="simple topic")
-    #        return HttpResponse("This topic exists")
-    #    except ObjectDoesNotExist:
-    #        Topic.objects.create(name="simple topic")
-    #    except MultipleObjectsReturned:
-    #        return HttpResponse("This topic exists")
-
+    context = {}
     if request.method == "POST":
         try:
-            Topic.objects.get(name=request.POST.get("topicName", ""))
+            Topic.objects.get(name=request.POST.get("name"))
             return HttpResponse("This topic exists")
         except ObjectDoesNotExist:
-            topicObject = Topic.objects.create(name=request.POST.get("topicName", ""))
-            tags = request.POST.get("tags", "").split(",");
+            user = User.objects.first()
+            user_id = user.id
+            print (user)
+            print (user_id)
+            topicObject = Topic.objects.create(name=request.POST.get("name"), user_id= user_id)
+            tags = request.POST.get("tags").split(",");
+            print (tags)
             for tag in tags:
                 try:
                     tagObject = Tag.objects.get(name=tag)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag)
+                    tagObject = Tag.objects.create(name=tag, user_id=user_id)
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
                 topicObject.tags.add(tagObject)
-
+                context = {
+                    'topic': topicObject,
+                }
         except MultipleObjectsReturned:
             return HttpResponse("This topic exists")
-
-    context = {
-        'asd': 'asd',
-    }
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
@@ -81,17 +89,19 @@ def add_post(request):
     }
     return HttpResponse(template.render(context, request))
 
-def second_topic(request):
-    template = loader.get_template('secondTopic.html')
-    context = {
-        'asd': 'asd',
-    }
-    return HttpResponse(template.render(context, request))
 
-@csrf_exempt
-def math_topic(request):
-    template = loader.get_template('topicMath.html')
-    context = {
-        'asd': 'asd',
-    }
-    return HttpResponse(template.render(context, request))
+
+# def second_topic(request):
+#     template = loader.get_template('secondTopic.html')
+#     context = {
+#         'asd': 'asd',
+#     }
+#     return HttpResponse(template.render(context, request))
+
+# @csrf_exempt
+# def math_topic(request):
+#     template = loader.get_template('topicMath.html')
+#     context = {
+#         'asd': 'asd',
+#     }
+#     return HttpResponse(template.render(context, request))
