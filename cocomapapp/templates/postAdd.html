@@ -18,26 +18,25 @@
 
 		    	<!-- 4th entry -->
 		      <div class="panel panel-default panel-margined">
-				<form action="" method="post">{% csrf_token %}
-		        <div class="panel-body">
-		          <p><a href="#">Busra Ozis: </a>							</p>
-
-					  <textarea rows="4" cols="70" name="content">
-					  </textarea>
-		        </div>
-		        <div class="panel-footer">
-		          <!-- Tags -->
-				  Tags: <textarea rows="1" cols="30" name="tags">
-				  </textarea>
-		          <!-- Thumbs up, down -->
-		          <div class="pull-right">
-		            <button name="submit">Submit</button>
-		          </div>
-		        </div>
-				</form>
-		      </div>
-		    </div>
-		  </div>
+						<form action="" method="post">{% csrf_token %}
+			        <div class="panel-body">
+			          <p><a href="#">Busra Ozis: </a></p>
+						  	<textarea rows="4" cols="70" name="content"></textarea>
+			        </div>
+			        <div class="panel-footer">
+			          <!-- Tags -->
+							  Tags: 
+							  <textarea rows="1" cols="30" name="tags">
+							  </textarea>
+			          <!-- Thumbs up, down -->
+			          <div class="pull-right">
+			            <button name="submit">Submit</button>
+			          </div>
+			        </div>
+						</form>
+      		</div>
+    		</div>
+  		</div>
 		</div>
 	</div>
 {% endblock content %}
