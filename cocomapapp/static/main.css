@@ -86,6 +86,11 @@ body {
     height: 35px;
 }
 
+.main{
+  height: 600px !important;
+}
+
+
 .mt7 {
 	margin-top: 7px;
 }

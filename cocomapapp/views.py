@@ -22,6 +22,13 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+def login(request):
+    template = loader.get_template('login.html')
+    context = {
+        'asd': 'asd',
+    }
+    return HttpResponse(template.render(context, request))
+
 def show_topic(request, id):
     topic = get_object_or_404(Topic, id=id)
     hot_topics = Topic.objects.order_by('-updated_at')[:5]
