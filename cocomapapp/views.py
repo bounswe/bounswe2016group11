@@ -29,6 +29,8 @@ def login(request):
     }
     return HttpResponse(template.render(context, request))
 
+
+@csrf_exempt
 def show_topic(request, id):
     topic = get_object_or_404(Topic, id=id)
     hot_topics = Topic.objects.order_by('-updated_at')[:5]
@@ -42,6 +44,20 @@ def show_topic(request, id):
         'hot_topics': hot_topics,
         'posts': posts
     }
+    if request.method == "POST":
+        user = User.objects.first()
+        postObject = Post.objects.create(user_id=user.id, topic_id=topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        #tags = request.POST.get("tags", "").split(",");
+        #for tag in tags:
+        #    try:
+        #        tagObject = Tag.objects.get(name=tag)
+        #    except ObjectDoesNotExist:
+        #        tagObject = Tag.objects.create(name=tag)
+        #    except MultipleObjectsReturned:
+        #        return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+        #    postObject.tags.add(tagObject)
+
+
     print (context)
     return HttpResponse(template.render(context, request))
 
@@ -49,6 +65,7 @@ def show_topic(request, id):
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
     context = {}
+    #User.objects.create(first_name="Ali", last_name="Veli", email="a@b", password="1234");
     if request.method == "POST":
         try:
             Topic.objects.get(name=request.POST.get("name"))

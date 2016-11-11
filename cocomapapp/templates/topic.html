@@ -20,10 +20,12 @@
 				<div class="panel panelmb0; panelContainer" style="margin-bottom:0; background-color:#dfe3ee;">
 		    	<!-- 1st entry -->
 
-		    </div>
-				<div id="content" contenteditable="true" class="panel panel-default panel-margined" >
-				</div>
-				<button id="post_button" type="button" class="btn btn-primary btn-lg btn-block">Post</button>
+		    	</div>
+			<form action="" method="post">{% csrf_token %}
+
+				<textarea rows="4" cols="90" name="content"></textarea>
+				<button id="submit" class="btn btn-primary btn-lg btn-block">Post</button>
+		</form>
 		  </div>
 		</div>
 	</div>
