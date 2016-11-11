@@ -9,6 +9,13 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
+def login(request):
+    template = loader.get_template('login.html')
+    context = {
+        'asd': 'asd',
+    }
+    return HttpResponse(template.render(context, request))
+
 def show_topic(request):
 
     template = loader.get_template('topic.html')

@@ -1,0 +1,200 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../assets/main.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="../static/vis-4.17.0/dist/vis.js"></script>
+    <link href="../static/vis-4.17.0/dist/vis.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <title></title>
+</head>
+
+<body>
+    <nav style="margin-bottom:0" class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">COCOMAP</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home Page <span class="sr-only"></span></a></li>
+                    <li><a href="#">Profile</a></li>
+                    <li><a href="topic/add">Create Topic</a></li>
+                    <li><a href="#">Add Relationship</a></li>
+                </ul>
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+      <ul class="nav navbar-nav navbar-right">
+        <li><p class="navbar-text">Already have an account?</p></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
+			<ul id="login-dp" class="dropdown-menu">
+				<li>
+					 <div class="row">
+							<div class="col-md-12">
+
+								 <form class="form" role="form" method="post" action="login" accept-charset="UTF-8" id="login-nav">
+										<div class="form-group">
+											 <label class="sr-only" for="exampleInputEmail2">Email address</label>
+											 <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Email address" required>
+										</div>
+										<div class="form-group">
+											 <label class="sr-only" for="exampleInputPassword2">Password</label>
+											 <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password" required>
+                                             <div class="help-block text-right"><a href="">Forget the password ?</a></div>
+										</div>
+										<div class="form-group">
+											 <button type="submit" class="btn btn-primary btn-block" onclick="window.location.href='../cocomapapp'">Sign in</button>
+										</div>
+										<div class="checkbox">
+											 <label>
+											 <input type="checkbox"> keep me logged-in
+											 </label>
+										</div>
+								 </form>
+							</div>
+							<div class="bottom text-center">
+								New here ? <a href="#"><b>Join Us</b></a>
+							</div>
+					 </div>
+				</li>
+			</ul>
+        </li>
+      </ul>
+    </div>
+    </nav>
+    <div class="col-sm-9 col-md-9 main">
+      <div id="mynetwork" style="width:100%; height:80%; ">
+        <div class="vis-network" tabindex="900" style="position: relative; overflow: hidden; touch-action: pan-y; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;">
+          <canvas width="1200" height="800" style=" position: relative; touch-action: none; user-select: none; -webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); width: 100%; height: 100%;"></canvas>
+        </div>
+      </div>
+
+      <script type="text/javascript">
+
+          var json_string = '[  {    "topicId":"1",    "topicName":"Am I Trump?",    "relateTo":[      {"relationId":"14", "topicId":"3", "grade":"10","relationName":"buildTheWall"},      {"relationId":"3", "topicId":"2", "grade":"10","relationName":"is_sarcastic_than"}    ]  },  {    "topicId":"2",    "topicName":"Kitty Videos",    "relateTo":[      {"relationId":"5", "topicId":"3", "grade":"10","relationName":"will_not_exist"}    ]  },  {    "topicId":"3",    "topicName":"In the Future...",    "relateTo":[    ]  }]';
+          var json = JSON.parse(json_string);
+
+          // create an array with nodes
+          var nodes = new vis.DataSet([
+            {id: 1, label: 'Hillary Clinton'},
+            {id: 2, label: 'Donald Trump'},
+            {id: 3, label: 'US Elections'},
+            {id: 4, label: 'Trump Towers'},
+            {id: 5, label: 'Bill Clinton'}
+          ]);
+
+          // create an array with edges
+          var edges = new vis.DataSet([
+            {from: 1, to: 3, arrows:'from'},
+            {from: 1, to: 2},
+            {from: 1, to: 5},
+            {from: 2, to: 4, arrows:'to'},
+            {from: 2, to: 3, arrows:'from'},
+          ]);
+
+          // create a network
+          var container = document.getElementById('mynetwork');
+          var data = {
+            nodes: nodes,
+            edges: edges
+          };
+          var options = {};
+          var network = new vis.Network(container, data, options);
+
+          network.on("click", function (params) {
+              params.event = "[original event]";
+
+              var clickedNode = params['nodes'][0];
+              if(clickedNode != undefined){
+                  if(clickedNode<3)
+                    window.location.href = "/cocomapapp/topic/show";
+                  else
+                    window.location.href = "/cocomapapp/topic/math";
+              }
+              console.log(params);
+              console.log(params['nodes'][0]);
+          });
+      </script>
+    </div>
+
+    <script>
+
+    </script>
+    <style>
+
+    #login-dp{
+        min-width: 250px;
+        padding: 14px 14px 0;
+        overflow:hidden;
+        background-color:rgba(255,255,255,.8);
+    }
+    #login-dp .help-block{
+        font-size:12px
+    }
+    #login-dp .bottom{
+        background-color:rgba(255,255,255,.8);
+        border-top:1px solid #ddd;
+        clear:both;
+        padding:14px;
+    }
+    #login-dp .social-buttons{
+        margin:12px 0
+    }
+    #login-dp .social-buttons a{
+        width: 49%;
+    }
+    #login-dp .form-group {
+        margin-bottom: 10px;
+    }
+    .btn-fb{
+        color: #fff;
+        background-color:#3b5998;
+    }
+    .btn-fb:hover{
+        color: #fff;
+        background-color:#496ebc
+    }
+    .btn-tw{
+        color: #fff;
+        background-color:#55acee;
+    }
+    .btn-tw:hover{
+        color: #fff;
+        background-color:#59b5fa;
+    }
+    @media(max-width:768px){
+        #login-dp{
+            background-color: inherit;
+            color: #fff;
+        }
+        #login-dp .bottom{
+            background-color: inherit;
+            border-top:0 none;
+        }
+    }
+
+    </style>
+</body>
+
+</html>
