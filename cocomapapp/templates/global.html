@@ -58,6 +58,10 @@
       </div>
 
       <script type="text/javascript">
+
+          var json_string = '[  {    "topicId":"1",    "topicName":"Am I Trump?",    "relateTo":[      {"relationId":"14", "topicId":"3", "grade":"10","relationName":"buildTheWall"},      {"relationId":"3", "topicId":"2", "grade":"10","relationName":"is_sarcastic_than"}    ]  },  {    "topicId":"2",    "topicName":"Kitty Videos",    "relateTo":[      {"relationId":"5", "topicId":"3", "grade":"10","relationName":"will_not_exist"}    ]  },  {    "topicId":"3",    "topicName":"In the Future...",    "relateTo":[    ]  }]';
+          var json = JSON.parse(json_string);
+
           // create an array with nodes
           var nodes = new vis.DataSet([
             {id: 1, label: 'Hillary Clinton'},
