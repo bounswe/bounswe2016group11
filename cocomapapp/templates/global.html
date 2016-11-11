@@ -59,26 +59,25 @@
 
       <script type="text/javascript">
 
-          var json_string = '[  {    "topicId":"1",    "topicName":"Am I Trump?",    "relateTo":[      {"relationId":"14", "topicId":"3", "grade":"10","relationName":"buildTheWall"},      {"relationId":"3", "topicId":"2", "grade":"10","relationName":"is_sarcastic_than"}    ]  },  {    "topicId":"2",    "topicName":"Kitty Videos",    "relateTo":[      {"relationId":"5", "topicId":"3", "grade":"10","relationName":"will_not_exist"}    ]  },  {    "topicId":"3",    "topicName":"In the Future...",    "relateTo":[    ]  }]';
-          var json = JSON.parse(json_string);
-
+          var json_string = '[{    "topicId":"1",    "topicName":"Am I Trump?",    "relateTo":[      {"relationId":"14", "topicId":"3", "grade":"10","relationName":"buildTheWall"},      {"relationId":"3", "topicId":"2", "grade":"10","relationName":"is_sarcastic_than"}    ]  },  {    "topicId":"2",    "topicName":"Kitty Videos",    "relateTo":[      {"relationId":"5", "topicId":"3", "grade":"10","relationName":"will_not_exist"}    ]  },  {    "topicId":"3",    "topicName":"In the Future...",    "relateTo":[    ]  }]';
+          var json_array = JSON.parse(json_string);
           // create an array with nodes
-          var nodes = new vis.DataSet([
-            {id: 1, label: 'Hillary Clinton'},
-            {id: 2, label: 'Donald Trump'},
-            {id: 3, label: 'US Elections'},
-            {id: 4, label: 'Trump Towers'},
-            {id: 5, label: 'Bill Clinton'}
-          ]);
+          var dict1 = [];
+
+          for(i = 0; i < json_array.length; i++){
+            dict1.push({id: json_array[i]['topicId'], label: json_array[i]['topicName'] });
+          }
+          var nodes = new vis.DataSet(dict1);
+
 
           // create an array with edges
-          var edges = new vis.DataSet([
-            {from: 1, to: 3, arrows:'from'},
-            {from: 1, to: 2},
-            {from: 1, to: 5},
-            {from: 2, to: 4, arrows:'to'},
-            {from: 2, to: 3, arrows:'from'},
-          ]);
+          var dict2 = [];
+          for(i = 0; i < json_array.length; i++){
+            for(j = 0; j < json_array[i]['relateTo'].length; j++)
+              dict2.push({from: json_array[i]['topicId'], to: json_array[i]['relateTo'][j]['topicId'], arrows:'from' });
+          }
+          var edges = new vis.DataSet(dict2);
+
 
           // create a network
           var container = document.getElementById('mynetwork');
