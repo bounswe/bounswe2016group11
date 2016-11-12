@@ -78,11 +78,11 @@ WSGI_APPLICATION = 'djangoproj.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'cocomap',
-        'USER': 'cocouser',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': 'd5fd5o1s32iot1',
+        'USER': 'sdzheaqdwdwibn',
+        'PASSWORD': '7QCtVm1rQaeBFXMzw_QI1vfVj9',
+        'HOST': 'postgres://sdzheaqdwdwibn:7QCtVm1rQaeBFXMzw_QI1vfVj9@ec2-23-23-225-158.compute-1.amazonaws.com:5432/d5fd5o1s32iot1',
+        'PORT': '5432',
     }
 }
 
