@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'd5fd5o1s32iot1',
         'USER': 'sdzheaqdwdwibn',
         'PASSWORD': '7QCtVm1rQaeBFXMzw_QI1vfVj9',
-        'HOST': 'postgres://sdzheaqdwdwibn:7QCtVm1rQaeBFXMzw_QI1vfVj9@ec2-23-23-225-158.compute-1.amazonaws.com:5432/d5fd5o1s32iot1',
+        'HOST': 'ec2-23-23-225-158.compute-1.amazonaws.com',
         'PORT': '5432',
     }
 }
