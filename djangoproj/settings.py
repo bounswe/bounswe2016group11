@@ -136,9 +136,9 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = "https://guarded-depths-45847.herokuapp.com/cocomapapp/staticFiles/"
-STATIC_URL = '/static/'
+STATIC_URL = '/cocomapapp/static/'
 
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
+    os.path.join(PROJECT_ROOT, 'cocomapapp/static/'),
 )
