@@ -15,4 +15,4 @@ urlpatterns = [
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
     url(r'topics/postAdd', add_post),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
