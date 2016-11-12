@@ -64,8 +64,15 @@
                                              <div class="help-block text-right"><a href="">Forget the password ?</a></div>
 										</div>
 										<div class="form-group">
-											 <button type="submit" class="btn btn-primary btn-block" onclick="window.location.href='../cocomapapp'">Sign in</button>
+											 <button type="submit" class="btn btn-primary btn-block" onclick="myFunction(); window.location.href='../cocomapapp'">Sign in</button>
 										</div>
+                    <script type="text/javascript">
+                    function myFunction() {
+                      //password and email set to null
+                      document.getElementById("exampleInputPassword2").value = "";
+                      document.getElementById("exampleInputEmail2").value = "";
+                    }
+                    </script>
 										<div class="checkbox">
 											 <label>
 											 <input type="checkbox"> keep me logged-in
@@ -102,7 +109,7 @@
           }
           var nodes = new vis.DataSet(dict1);
 
-          
+
           // create an array with edges
           var dict2 = [];
           for(i = 0; i < json_array.length; i++){
