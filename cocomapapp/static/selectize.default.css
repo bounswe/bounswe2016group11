@@ -199,7 +199,8 @@
   padding: 0 !important;
   min-height: 0 !important;
   max-height: none !important;
-  max-width: 100% !important;
+  max-width: 176px !important; /*max-width of input when dropdown is changed from 100% to 176 px*/
+  min-width: 176px !important; /*min-width of input when dropdown is added*/
   margin: 0 1px !important;
   text-indent: 0 !important;
   border: 0 none !important;
