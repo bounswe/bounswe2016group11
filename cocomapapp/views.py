@@ -10,12 +10,13 @@ from cocomapapp.models import Tag
 from cocomapapp.models import User
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_exempt
-
+from django.core import serializers
 
 def index(request):
     template = loader.get_template('global.html')
-    hot_topics = Topic.objects.order_by('-updated_at')[:5]
-    random_topic = Topic.objects.order_by('?').first()
+    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
+    random_topic = serializers.serialize("json", Topic.objects.order_by('?')[:1])
+
     context = {
         'hot_topics': hot_topics,
         'random_topic': random_topic
@@ -32,11 +33,13 @@ def login(request):
 
 @csrf_exempt
 def show_topic(request, id):
-    topic = get_object_or_404(Topic, id=id)
-    hot_topics = Topic.objects.order_by('-updated_at')[:5]
-    template = loader.get_template('topic.html')
     try:
-        posts = Post.objects.get(topic_id=id)
+        topic = serializers.serialize("json", Topic.objects.filter(id=id))
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
+    try:
+        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
     except ObjectDoesNotExist:
         posts = None
     context = {
@@ -44,6 +47,7 @@ def show_topic(request, id):
         'hot_topics': hot_topics,
         'posts': posts
     }
+    template = loader.get_template('topic.html')
     if request.method == "POST":
         user = User.objects.first()
         postObject = Post.objects.create(user_id=user.id, topic_id=topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
@@ -58,7 +62,6 @@ def show_topic(request, id):
         #    postObject.tags.add(tagObject)
 
 
-    print (context)
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
@@ -73,11 +76,8 @@ def add_topic(request):
         except ObjectDoesNotExist:
             user = User.objects.first()
             user_id = user.id
-            print (user)
-            print (user_id)
             topicObject = Topic.objects.create(name=request.POST.get("name"), user_id= user_id)
             tags = request.POST.get("tags").split(",");
-            print (tags)
             for tag in tags:
                 try:
                     tagObject = Tag.objects.get(name=tag)
