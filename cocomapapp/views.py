@@ -3,14 +3,65 @@ from django.shortcuts import get_object_or_404
 from django.template import loader
 import json
 
-#from cocomapapp.forms import TopicForm
-from cocomapapp.models import Topic
-from cocomapapp.models import Post
-from cocomapapp.models import Tag
-from cocomapapp.models import User
+from cocomapapp.models import User, Tag, Topic, Post
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, PostSerializer
+from rest_framework import generics
+
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+class TopicList(generics.ListAPIView):
+    queryset = Topic.objects.all()
+    serializer_class = TopicSerializer
+
+class TopicCreate(generics.CreateAPIView):
+    serializer_class = TopicSerializer
+
+class TopicRetrieve(generics.RetrieveAPIView):
+    queryset = Topic.objects.all()
+    serializer_class = TopicSerializer
+
+class PostCreate(generics.CreateAPIView):
+    serializer_class = PostSerializer
+
+class PostRetrieve(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+class PostUpdate(generics.UpdateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+@api_view(['PUT'])
+def post_upvote(request, pk):
+    try:
+        post = Post.objects.get(pk=pk)
+    except Snippet.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        post.positive_reaction_count += 1
+        post.save()
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
+@api_view(['PUT'])
+def post_downvote(request, pk):
+    try:
+        post = Post.objects.get(pk=pk)
+    except Snippet.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        post.negative_reaction_count += 1
+        post.save()
+        serializer = PostSerializer(post)
+        return Response(serializer.data)
+
 
 def index(request):
     template = loader.get_template('global.html')
