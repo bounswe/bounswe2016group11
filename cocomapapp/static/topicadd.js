@@ -16,6 +16,15 @@ $(document).ready(function(){
   });
   citynames.initialize();
 
+  $('#tags2').tagsinput({
+    typeaheadjs: {
+      name: 'citynames',
+      displayKey: 'name',
+      valueKey: 'name',
+      source: citynames.ttAdapter()
+    }
+  });
+
   $('#tags').tagsinput({
     typeaheadjs: {
       name: 'citynames',
@@ -24,6 +33,7 @@ $(document).ready(function(){
       source: citynames.ttAdapter()
     }
   });
+
   var relations=[];
   /*
   $.getJSON("/static/tags.json", function(data){
@@ -61,13 +71,14 @@ $(document).ready(function(){
         }
   });
 
+  /*
   $("#tags").on("keypress",function(event){
     console.log("asda");
     if(event.which == 13){
         alert("x");
     }
 
-  });
+  });*/
   /*
   $("#relationships-topic").removeAttr("id");
   $(".newRelation").append(
