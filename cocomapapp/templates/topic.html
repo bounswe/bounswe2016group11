@@ -20,12 +20,14 @@
 				<div class="panel panelmb0; panelContainer" style="margin-bottom:0; background-color:#dfe3ee;">
 		    	<!-- 1st entry -->
 
-		    	</div>
-			<form action="" method="post">{% csrf_token %}
+		  	</div>
+				<form class="panel" style="background-color:#F8F9FC; padding: 0;" action="" method="post">{% csrf_token %}
+					<div class="panel-body">
+						<textarea class="form-control" name="content"></textarea>
+						<button id="submit" class="btn btn-primary btn-lg btn-block">Post</button>
+					</div>
 
-				<textarea rows="4" cols="90" name="content"></textarea>
-				<button id="submit" class="btn btn-primary btn-lg btn-block">Post</button>
-		</form>
+			</form>
 		  </div>
 		</div>
 	</div>
