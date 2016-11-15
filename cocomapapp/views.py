@@ -36,7 +36,7 @@ def show_topic(request, id):
     hot_topics = Topic.objects.order_by('-updated_at')[:5]
     template = loader.get_template('topic.html')
     try:
-        posts = Post.objects.get(topic_id=id)
+        posts = Post.objects.filter(topic_id=id)
     except ObjectDoesNotExist:
         posts = None
     context = {
