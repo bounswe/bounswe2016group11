@@ -6,7 +6,15 @@ from .views import (
 	show_topic,
 	add_topic,
 	login,
-	add_post
+	add_post,
+	TopicList,
+	TopicCreate,
+	TopicRetrieve,
+	PostCreate,
+	PostRetrieve,
+	PostUpdate,
+	post_upvote,
+	post_downvote,
 )
 
 urlpatterns = [
@@ -15,4 +23,15 @@ urlpatterns = [
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
     url(r'topics/postAdd', add_post),
+
+	url(r'topicList',  TopicList.as_view()),
+	url(r'topicCreate',  TopicCreate.as_view()),
+	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view()),
+
+	url(r'postCreate', PostCreate.as_view()),
+	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
+	url(r'postUpdate/(?P<pk>[0-9]+)/',  PostUpdate.as_view()),
+
+	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
+	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
 ]
