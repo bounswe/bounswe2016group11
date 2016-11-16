@@ -1,6 +1,6 @@
 from django import forms
 
-from cocomapapp.models import User
+from cocomapapp.models import User, Post
 
 
 class RegisterForm(forms.Form):
@@ -18,3 +18,9 @@ class LoginForm(forms.Form):
 
     class Meta:
         model = User
+# 
+# class PostAdd(forms.Form):
+#     content = forms.CharField(max_length=1000, widget=forms.TextInput(attrs={'placeholder': 'Write something', 'class' : 'input-group'})
+#
+#     class Meta:
+#         model = Post

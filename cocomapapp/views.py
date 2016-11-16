@@ -16,6 +16,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .forms import RegisterForm, LoginForm
 from .models import User
+from django.template import RequestContext
+
 
 class TopicList(generics.ListAPIView):
     queryset = Topic.objects.all()
@@ -73,7 +75,8 @@ def index(request):
 
     context = {
         'hot_topics': hot_topics,
-        'random_topic': random_topic
+        'random_topic': random_topic,
+        'request': request,
     }
     return HttpResponse(template.render(context, request))
 
@@ -89,6 +92,7 @@ def login(request):
             if checkUser == User.DoesNotExist:
                 return HttpResponseRedirect('/cocomapapp/login')
             if checkUser.password == user.password:
+                request.session['username'] = checkUser.first_name
                 return HttpResponseRedirect('/cocomapapp/')
             return HttpResponseRedirect('/cocomapapp/login')
     else:
