@@ -13,17 +13,52 @@ from django.core import serializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.renderers import TemplateHTMLRenderer
+from rest_framework.renderers import JSONRenderer
+from rest_framework.views import APIView
+from django.http import Http404
 
-class TopicList(generics.ListAPIView):
-    queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+# class TopicList(generics.ListAPIView):
+#     queryset = Topic.objects.all()
+#     serializer_class = TopicSerializer
+#     renderer_classes = (TemplateHTMLRenderer,)
+#     lookup_fields = ('name')
+#     def get(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         return Response({'topic': serializer_class}, template_name='global.html')
 
-class TopicCreate(generics.CreateAPIView):
-    serializer_class = TopicSerializer
+class TopicList(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'global.html'
+    def get(self, request, format=None):
+        queryset = Topic.objects.all()
+        serializer = TopicSerializer(queryset, many=True)
+        return Response({'serializer': serializer, 'topics': queryset})
 
-class TopicRetrieve(generics.RetrieveAPIView):
-    queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+class TopicCreate(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'topicAdd.html'
+    def get(self, request, format=None):
+        return Response()
+    def post(self, request, format=None):
+        serializer = TopicSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TopicRetrieve(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'topic.html'
+    def get_object(self, pk):
+        try:
+            return Topic.objects.get(pk=pk)
+        except Topic.DoesNotExist:
+            raise Http404
+    def get(self, request, pk, format=None):
+        topic = self.get_object(pk)
+        serializer = TopicSerializer(topic)
+        return Response({'serializer': serializer.data})
 
 class PostCreate(generics.CreateAPIView):
     serializer_class = PostSerializer
