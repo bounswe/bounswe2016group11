@@ -1,5 +1,5 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
@@ -15,6 +15,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 import requests
+
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
 
 class TopicList(generics.ListAPIView):
     queryset = Topic.objects.all()
@@ -95,24 +98,11 @@ def login(request):
 
 @csrf_exempt
 def show_topic(request, id):
-    try:
-        topic = serializers.serialize("json", Topic.objects.filter(id=id))
-    except ObjectDoesNotExist:
-        return HttpResponse("This topic doesn't exists!")
-    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
-    try:
-        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
-    except ObjectDoesNotExist:
-        posts = None
-    context = {
-        'topic': topic,
-        'hot_topics': hot_topics,
-        'posts': posts
-    }
     template = loader.get_template('topic.html')
     if request.method == "POST":
         user = User.objects.first()
-        postObject = Post.objects.create(user_id=user.id, topic_id=topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        requested_topic = Topic.objects.get(id=id)
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
         #tags = request.POST.get("tags", "").split(",");
         #for tag in tags:
         #    try:
@@ -122,7 +112,26 @@ def show_topic(request, id):
         #    except MultipleObjectsReturned:
         #        return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
         #    postObject.tags.add(tagObject)
-
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    try:
+        topic = serializers.serialize("json", Topic.objects.filter(id=id))
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
+    try:
+        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
+    except ObjectDoesNotExist:
+        posts = None
+    try:
+        user = serializers.serialize("json", User.objects.filter(id=1))
+    except ObjectDoesNotExist:
+        user = None
+    context = {
+        'topic': topic,
+        'hot_topics': hot_topics,
+        'posts': posts,
+        'user' : user
+    }
 
     return HttpResponse(template.render(context, request))
 
@@ -130,29 +139,34 @@ def show_topic(request, id):
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
     context = {}
-    #User.objects.create(first_name="Ali", last_name="Veli", email="a@b", password="1234");
     if request.method == "POST":
+        data = JSONParser().parse(request)
         try:
-            Topic.objects.get(name=request.POST.get("name"))
+            Topic.objects.get(name=data["name"])
             return HttpResponse("This topic exists")
         except ObjectDoesNotExist:
             user = User.objects.first()
-            user_id = user.id
-            topicObject = Topic.objects.create(name=request.POST.get("name"), user_id= user_id)
-            tags = request.POST.get("tags").split(",");
+            name = data["name"]
+            topicObject = Topic.objects.create(name=name, user=user)
+            tags = data["tags"].split(",");
             for tag in tags:
                 try:
                     tagObject = Tag.objects.get(name=tag)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag, user_id=user_id)
+                    tagObject = Tag.objects.create(name=tag, user=user)
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
                 topicObject.tags.add(tagObject)
                 context = {
-                    'topic': topicObject,
                 }
+            try:
+                relatedTopicObject = Topic.objects.get(name=data["relates_to"])
+                topicObject.relates_to.add(relatedTopicObject)
+            except ObjectDoesNotExist:
+                return HttpResponse("Related topic does not exist");
         except MultipleObjectsReturned:
             return HttpResponse("This topic exists")
+        return HttpResponse(template.render(context, request))
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
