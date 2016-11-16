@@ -6,6 +6,7 @@ from .views import (
 	show_topic,
 	add_topic,
 	login,
+	signup,
 	add_post,
 	TopicList,
 	TopicCreate,
@@ -20,6 +21,7 @@ from .views import (
 urlpatterns = [
     url(r'^$', index),
 	url(r'login', login, name='login'),
+	url(r'signup', signup, name='signup'),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
     url(r'topics/postAdd', add_post),
