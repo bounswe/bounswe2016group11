@@ -76,28 +76,7 @@ WSGI_APPLICATION = 'djangoproj.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 
-<<<<<<< HEAD
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': 'cmpe451',
-#        'USER': 'devuser',
-#        'PASSWORD': '1234',
-#        'HOST': 'localhost',
-#        'PORT': '',
-#    }
-#}
 
-DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql_psycopg2',
-       'NAME': 'dfcfr3ac7a9o2i',
-       'USER': 'hqhbgpkurkcyrk',
-       'PASSWORD': 'rUlFCP8czPQ_jet8znuCwkcuPG',
-       'PORT': '5432',
-       'HOST': 'ec2-54-243-249-132.compute-1.amazonaws.com',
-   }
-=======
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -107,9 +86,6 @@ DATABASES = {
         'HOST': 'localhost',
         'PORT': '',
     }
->>>>>>> 51f7cac2125c7a5fd1aaba0056c924430504a63b
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
