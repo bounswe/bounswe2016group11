@@ -1,5 +1,5 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
@@ -98,24 +98,11 @@ def login(request):
 
 @csrf_exempt
 def show_topic(request, id):
-    try:
-        topic = serializers.serialize("json", Topic.objects.filter(id=id))
-    except ObjectDoesNotExist:
-        return HttpResponse("This topic doesn't exists!")
-    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
-    try:
-        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
-    except ObjectDoesNotExist:
-        posts = None
-    context = {
-        'topic': topic,
-        'hot_topics': hot_topics,
-        'posts': posts
-    }
     template = loader.get_template('topic.html')
     if request.method == "POST":
         user = User.objects.first()
-        postObject = Post.objects.create(user_id=user.id, topic_id=topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        requested_topic = Topic.objects.get(id=id)
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
         #tags = request.POST.get("tags", "").split(",");
         #for tag in tags:
         #    try:
@@ -125,7 +112,26 @@ def show_topic(request, id):
         #    except MultipleObjectsReturned:
         #        return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
         #    postObject.tags.add(tagObject)
-
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    try:
+        topic = serializers.serialize("json", Topic.objects.filter(id=id))
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
+    try:
+        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
+    except ObjectDoesNotExist:
+        posts = None
+    try:
+        user = serializers.serialize("json", User.objects.filter(id=1))
+    except ObjectDoesNotExist:
+        user = None
+    context = {
+        'topic': topic,
+        'hot_topics': hot_topics,
+        'posts': posts,
+        'user' : user
+    }
 
     return HttpResponse(template.render(context, request))
 
