@@ -13,6 +13,10 @@ from django.core import serializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .forms import RegisterForm, LoginForm
+from .models import User
+from django.template import RequestContext
+
 
 import requests
 
@@ -84,15 +88,56 @@ def index(request):
 
     context = {
         'hot_topics': hot_topics,
-        'random_topic': random_topic
+        'random_topic': random_topic,
+        'request': request,
     }
     return HttpResponse(template.render(context, request))
 
 def login(request):
-    template = loader.get_template('login.html')
-    context = {
-        'asd': 'asd',
-    }
+
+    if request.method =='POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = User()
+            user.email = form.cleaned_data['email']
+            user.password = form.cleaned_data['password']
+            checkUser = User.objects.get(email=user.email)
+            if checkUser == User.DoesNotExist:
+                return HttpResponseRedirect('/cocomapapp/login')
+            if checkUser.password == user.password:
+                request.session['username'] = checkUser.first_name
+                return HttpResponseRedirect('/cocomapapp/')
+            return HttpResponseRedirect('/cocomapapp/login')
+    else:
+        template = loader.get_template('login.html')
+        registerForm = RegisterForm()
+        loginForm = LoginForm()
+        context = {
+            'loginForm': loginForm,
+            'registerForm': registerForm,
+        }
+    return HttpResponse(template.render(context, request))
+
+def signup(request):
+
+    if request.method =='POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            newuser = User()
+            newuser.email = form.cleaned_data['email']
+            newuser.first_name = form.cleaned_data['first_name']
+            newuser.last_name = form.cleaned_data['last_name']
+            newuser.password = form.cleaned_data['password']
+            newuser.save()
+            return HttpResponseRedirect('/cocomapapp/login')
+    else:
+        template = loader.get_template('signup.html')
+        registerForm = RegisterForm()
+        loginForm = LoginForm()
+        context = {
+            'loginForm': loginForm,
+            'registerForm': registerForm,
+        }
     return HttpResponse(template.render(context, request))
 
 
