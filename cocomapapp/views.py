@@ -14,6 +14,8 @@ from django.core import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+import requests
+
 class TopicList(generics.ListAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
@@ -61,6 +63,15 @@ def post_downvote(request, pk):
         post.save()
         serializer = PostSerializer(post)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def wikidata_search(request, str):
+    url_head = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search='
+    url_tail = '&language=en&format=json'
+    if request.method == 'GET':
+        r = requests.get(url_head+str+url_tail);
+        return Response(r.json()['search'])
+     #print r
 
 
 def index(request):
