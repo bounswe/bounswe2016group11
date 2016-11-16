@@ -15,6 +15,7 @@ from django.core import serializers
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .forms import RegisterForm, LoginForm
+from .models import User
 
 class TopicList(generics.ListAPIView):
     queryset = Topic.objects.all()
@@ -81,11 +82,15 @@ def login(request):
     if request.method =='POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            newuser = User()
-            newuser.email = form.cleaned_data['email']
-            newuser.password = form.cleaned_data['password']
-            newuser.save()
-            return HttpResponseRedirect('/cocomapapp/')
+            user = User()
+            user.email = form.cleaned_data['email']
+            user.password = form.cleaned_data['password']
+            checkUser = User.objects.get(email=user.email)
+            if checkUser == User.DoesNotExist:
+                return HttpResponseRedirect('/cocomapapp/login')
+            if checkUser.password == user.password:
+                return HttpResponseRedirect('/cocomapapp/')
+            return HttpResponseRedirect('/cocomapapp/login')
     else:
         template = loader.get_template('login.html')
         registerForm = RegisterForm()
@@ -107,7 +112,7 @@ def signup(request):
             newuser.last_name = form.cleaned_data['last_name']
             newuser.password = form.cleaned_data['password']
             newuser.save()
-            return HttpResponseRedirect('/cocomapapp/')
+            return HttpResponseRedirect('/cocomapapp/login')
     else:
         template = loader.get_template('signup.html')
         registerForm = RegisterForm()
