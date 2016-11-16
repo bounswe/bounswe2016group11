@@ -8,7 +8,10 @@
     <link href="/static/bootstrap-tagsinput.css" rel="stylesheet"/>
     <link href="/static/topicAdd.css" rel="stylesheet"/>
 		<link href="/static/selectize.default.css" rel="stylesheet"/>
-
+		<script>
+				var topicsList = "{{topics|escapejs|safe}}"
+				console.log(topicsList);
+		</script>
   <div class="col-sm-9 col-md-9 main">
 		<!-- title -->
 		<div class="mb-for-footer">

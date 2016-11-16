@@ -58,49 +58,11 @@ $(document).ready(function(){
 
       }
     );
-
-    //$('#tags').tagsinput('destroy');
-    //$('#tags2').tagsinput('destroy');
-    /*
-    var citynames = new Bloodhound({
-
-      datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-      queryTokenizer: Bloodhound.tokenizers.whitespace,
-      local: theTags
-    });
-    citynames.initialize();
-
-    $('#tags2').tagsinput({
-      typeaheadjs: {
-        name: 'name',
-        displayKey: 'name',
-        valueKey: 'name',
-        source: citynames.ttAdapter()
-      }
-    });
-
-    $('#tags').tagsinput({
-      typeaheadjs: {
-        name: 'name',
-        displayKey: 'name',
-        valueKey: 'name',
-        source: citynames.ttAdapter()
-      }
-    });
-    */
   });
-
+  console.log(topicsList);
+  topicsList = JSON.parse(topicsList);
+  console.log(topicsList[0]);
   var relations=[];
-  /*
-  $.getJSON("/static/tags.json", function(data){
-    $.each(data,function(i,value){
-        relations.push({
-          id: i,
-          name: value
-        });
-    });
-  });*/
-  //relations = relations.join(",");
   $('#relationships-topic').selectize({
       maxItems: 1,
       maxOptions: 3,
@@ -111,6 +73,15 @@ $(document).ready(function(){
       create: false,
       load: function(query, callback) {
         if (!query.length) return callback();
+        $.each(topicsList,function(i,value){
+          console.log(value);
+            relations.push({
+              id: i,
+              name: value.fields.name
+            });
+        });
+        callback(relations);
+        /*
         $.getJSON("/static/tags.json"
         ).fail( function() {
             callback();
@@ -124,6 +95,7 @@ $(document).ready(function(){
             callback(relations);
           }
         );
+        */
         }
   });
 
