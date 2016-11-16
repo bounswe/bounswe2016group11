@@ -129,7 +129,13 @@ def show_topic(request, id):
 @csrf_exempt
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
-    context = {}
+    try:
+        topic = serializers.serialize("json", Topic.objects.filter())
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+    context = {
+        'topics': topic
+    }
     #User.objects.create(first_name="Ali", last_name="Veli", email="a@b", password="1234");
     if request.method == "POST":
         try:
