@@ -16,6 +16,9 @@ from rest_framework.response import Response
 
 import requests
 
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+
 class TopicList(generics.ListAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
@@ -130,29 +133,34 @@ def show_topic(request, id):
 def add_topic(request):
     template = loader.get_template('topicAdd.html')
     context = {}
-    #User.objects.create(first_name="Ali", last_name="Veli", email="a@b", password="1234");
     if request.method == "POST":
+        data = JSONParser().parse(request)
         try:
-            Topic.objects.get(name=request.POST.get("name"))
+            Topic.objects.get(name=data["name"])
             return HttpResponse("This topic exists")
         except ObjectDoesNotExist:
             user = User.objects.first()
-            user_id = user.id
-            topicObject = Topic.objects.create(name=request.POST.get("name"), user_id= user_id)
-            tags = request.POST.get("tags").split(",");
+            name = data["name"]
+            topicObject = Topic.objects.create(name=name, user=user)
+            tags = data["tags"].split(",");
             for tag in tags:
                 try:
                     tagObject = Tag.objects.get(name=tag)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag, user_id=user_id)
+                    tagObject = Tag.objects.create(name=tag, user=user)
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
                 topicObject.tags.add(tagObject)
                 context = {
-                    'topic': topicObject,
                 }
+            try:
+                relatedTopicObject = Topic.objects.get(name=data["relates_to"])
+                topicObject.relates_to.add(relatedTopicObject)
+            except ObjectDoesNotExist:
+                return HttpResponse("Related topic does not exist");
         except MultipleObjectsReturned:
             return HttpResponse("This topic exists")
+        return HttpResponse(template.render(context, request))
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt

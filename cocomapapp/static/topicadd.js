@@ -1,7 +1,31 @@
+function AddTopic() {
+    jQuery.support.cors = true;
+    var topic = {
+        name: $('#name').val(),
+        relates_to: $('#relates_to').val(),
+        tags: $('#tags').val(),
+        posts: [],
+    };
+    $.ajax({
+        url: 'add',
+        type: 'POST',
+        data:JSON.stringify(topic),
+        contentType: "application/json;charset=utf-8",
+        success: function (data) {
+            return data;
+        },
+        error: function (x, y, z) {
+            alert(x + '\n' + y + '\n' + z);
+        }
+    });
+}
+
+
+
 $(document).ready(function(){
 
 
-
+/*
   var citynames = new Bloodhound({
 
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
@@ -35,7 +59,7 @@ $(document).ready(function(){
   });
 
   var relations=[];
-  /*
+
   $.getJSON("/static/tags.json", function(data){
     $.each(data,function(i,value){
         relations.push({
@@ -45,7 +69,7 @@ $(document).ready(function(){
     });
   });*/
   //relations = relations.join(",");
-  $('#relationships-topic').selectize({
+ /* $('#relationships-topic').selectize({
       maxItems: 1,
       maxOptions: 3,
       valueField: 'name',
@@ -69,7 +93,7 @@ $(document).ready(function(){
           }
         );
         }
-  });
+  });*/
 
   /*
   $("#tags").on("keypress",function(event){
