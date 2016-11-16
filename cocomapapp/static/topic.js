@@ -7,7 +7,7 @@ $(document).ready(function(){
   var title = topic[0]["fields"]["name"];
   //var topic_tags = data.tags;
   var posts = posts2;
-
+  console.log(posts);
   $("#theTitle").text(title);
   /*
   $.each(data.tags, function(i,val){
