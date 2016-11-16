@@ -21,11 +21,8 @@ function AddTopic() {
 }
 
 
-
 $(document).ready(function(){
 
-
-/*
   var citynames = new Bloodhound({
 
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
@@ -57,19 +54,10 @@ $(document).ready(function(){
       source: citynames.ttAdapter()
     }
   });
-
   var relations=[];
 
-  $.getJSON("/static/tags.json", function(data){
-    $.each(data,function(i,value){
-        relations.push({
-          id: i,
-          name: value
-        });
-    });
-  });*/
   //relations = relations.join(",");
- /* $('#relationships-topic').selectize({
+  $('#relates_to').selectize({
       maxItems: 1,
       maxOptions: 3,
       valueField: 'name',
@@ -93,24 +81,7 @@ $(document).ready(function(){
           }
         );
         }
-  });*/
-
-  /*
-  $("#tags").on("keypress",function(event){
-    console.log("asda");
-    if(event.which == 13){
-        alert("x");
-    }
-
-  });*/
-  /*
-  $("#relationships-topic").removeAttr("id");
-  $(".newRelation").append(
-    "<input type='text' id='relationships-name' class='form-control makeinline' placeholder='Relationship Name'>"
-
-    +"<input id='relationships-topic' class='makeinline' placeholder='Name of a Topic'>"
-  );
-*/
+  });
 
   //publish button functionalities...
   // if the django's own form is used, then this is to be removed
@@ -135,15 +106,4 @@ $(document).ready(function(){
   		parent.history.back();
   		return false;
   });
-  /* //Example Get
-  $("#tags2").on("keydown",function(event){
-       console.log("geldi");
-       if(event.which == 13)
-         console.log($("#tags").val());
-         console.log($("#tags").val());
-         $.get("add",{"search": $("#tags").val()}).done(function(data){
-         console.log("data come: "+ data);
-        });
-  });
-  */
 });
