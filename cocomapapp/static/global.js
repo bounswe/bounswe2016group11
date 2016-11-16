@@ -6,7 +6,7 @@ $(function(){
   // create an array with nodes
   var dict1 = [];
 
-  for(i = 0; i < json_array.length; i++){
+  for(var i = 0; i < json_array.length; i++){
     dict1.push({id: json_array[i]['pk'], label: json_array[i]['fields']['name'] });
   }
   var nodes = new vis.DataSet(dict1);
@@ -14,10 +14,11 @@ $(function(){
 
   // create an array with edges
   var dict2 = [];
-  for(i = 0; i < json_array.length; i++){
+  for(var i = 0; i < json_array.length; i++){
     // this code will be replaced ..............
-    //for(j = 0; j < json_array[i]['fields']['relates_to'].length; j++)
-      dict2.push({from: json_array[i]['fields']['relates_to'], to: json_array[i]['pk'], arrows:'from' });
+    for(var j = 0; j < json_array[i]['fields']['relates_to'].length; j++){
+      dict2.push({from: json_array[i]['fields']['relates_to'][j], to: json_array[i]['pk'], arrows:'from'  });
+    }
   }
   var edges = new vis.DataSet(dict2);
 
@@ -36,10 +37,10 @@ $(function(){
 
       var clickedNode = params['nodes'][0];
       if(clickedNode != undefined){
-          if(clickedNode<3)
-            window.location.href = "/cocomapapp/topics/1";
+          var clickedTopic =nodes.get(clickedNode);
+          window.location.href = ("topics/"+clickedTopic["id"]);
+          //when clicked to a topic node, the user is directed
+          //to that topics view page
       }
-      console.log(params);
-      console.log(params['nodes'][0]);
   });
 });
