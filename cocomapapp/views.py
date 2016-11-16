@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.template import loader
 import json
@@ -84,7 +85,7 @@ def login(request):
             newuser.email = form.cleaned_data['email']
             newuser.password = form.cleaned_data['password']
             newuser.save()
-            return HttpResponse(newuser.email)
+            return HttpResponseRedirect('/cocomapapp/')
     else:
         template = loader.get_template('login.html')
         registerForm = RegisterForm()
@@ -106,7 +107,7 @@ def signup(request):
             newuser.last_name = form.cleaned_data['last_name']
             newuser.password = form.cleaned_data['password']
             newuser.save()
-            return HttpResponse(newuser.email)
+            return HttpResponseRedirect('/cocomapapp/')
     else:
         template = loader.get_template('signup.html')
         registerForm = RegisterForm()
