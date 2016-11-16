@@ -13,6 +13,7 @@ from django.core import serializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .forms import RegisterForm, LoginForm
 
 class TopicList(generics.ListAPIView):
     queryset = Topic.objects.all()
@@ -75,10 +76,23 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 def login(request):
-    template = loader.get_template('login.html')
-    context = {
-        'asd': 'asd',
-    }
+
+    if request.method =='POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            newuser = User()
+            newuser.username = form.cleaned_data['username']
+            newuser.password = form.cleaned_data['password']
+            newuser.save()
+            return HttpResponse(newuser.username)
+    else:
+        template = loader.get_template('login.html')
+        registerForm = RegisterForm()
+        loginForm = LoginForm()
+        context = {
+            'loginForm': loginForm,
+            'registerForm': registerForm,
+        }
     return HttpResponse(template.render(context, request))
 
 
