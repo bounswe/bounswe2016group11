@@ -15,6 +15,7 @@ from .views import (
 	PostUpdate,
 	post_upvote,
 	post_downvote,
+	wikidata_search,
 )
 
 urlpatterns = [
@@ -34,4 +35,6 @@ urlpatterns = [
 
 	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+
+	url(r'wikidataSearch/(?P<str>.+)/', wikidata_search),
 ]
