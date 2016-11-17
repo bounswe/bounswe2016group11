@@ -43,7 +43,10 @@
 						<li><p class="navbar-text">Already have an account?</p></li>
 						<li class="dropdown">
 						<script type="text/javascript">
-							
+							var theSession = "{{ request.session.username }}"
+							if(theSession != ""){ // if not set To-DO
+								
+							}
 						</script>
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
 						<ul id="login-dp" class="dropdown-menu">
