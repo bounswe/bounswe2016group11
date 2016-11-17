@@ -13,7 +13,7 @@ class TagSerializer(serializers.ModelSerializer):
 
 class TopicSerializer(serializers.ModelSerializer):
     posts = serializers.StringRelatedField(many=True)
-
+    tags = serializers.StringRelatedField(many=True)
     class Meta:
         model = Topic
         fields = ('id', 'name', 'user', 'relates_to', 'tags', 'posts', 'created_at', 'updated_at')
