@@ -55,33 +55,31 @@ $(document).ready(function(){
     }
   });
   var relations=[];
+  topicsList= JSON.parse(topicsList);
+
 
   //relations = relations.join(",");
   $('#relates_to').selectize({
       maxItems: 1,
       maxOptions: 3,
-      valueField: 'name',
+      valueField: 'id',
       labelField: 'name',
       searchField: ['name'],
       options: [],
       create: false,
       load: function(query, callback) {
         if (!query.length) return callback();
-        $.getJSON("/static/tags.json"
-        ).fail( function() {
-            callback();
-        }).done( function(data) {
-            $.each(data,function(i,value){
-                relations.push({
-                  id: i,
-                  name: value
-                });
-            });
-            callback(relations);
+
+          $.each(topicsList,function(i,value){
+              relations.push({
+                id: value.pk,
+                name: value.fields.name
+              });
+          });
+          callback(relations);
           }
-        );
-        }
-  });
+
+        });
 
   //publish button functionalities...
   // if the django's own form is used, then this is to be removed
