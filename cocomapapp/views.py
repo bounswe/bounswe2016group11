@@ -175,6 +175,11 @@ def show_topic(request, id):
         posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
     except ObjectDoesNotExist:
         posts = None
+
+    try:
+        tags = serializers.serialize("json", Tag.objects.filter(topic_id=id))
+    except ObjectDoesNotExist:
+        tags = None
     try:
         user = serializers.serialize("json", User.objects.filter(id=1))
     except ObjectDoesNotExist:
@@ -183,6 +188,7 @@ def show_topic(request, id):
         'topic': topic,
         'hot_topics': hot_topics,
         'posts': posts,
+        'tags': tags,
         'user' : user
     }
 
@@ -213,7 +219,7 @@ def add_topic(request):
                 try:
                     tagObject = Tag.objects.get(name=tag)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag, user=user)
+                    tagObject = Tag.objects.create(name=tag, user=user, topic_id=topicObject.id)
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
                 topicObject.tags.add(tagObject)
