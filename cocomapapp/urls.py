@@ -14,6 +14,8 @@ from .views import (
 	PostCreate,
 	PostRetrieve,
 	PostUpdate,
+	RelationRetrieve,
+	RelationList,
 	post_upvote,
 	post_downvote,
 	wikidata_search,
@@ -34,6 +36,9 @@ urlpatterns = [
 	url(r'postCreate', PostCreate.as_view()),
 	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
 	url(r'postUpdate/(?P<pk>[0-9]+)/',  PostUpdate.as_view()),
+
+	url(r'relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view()),
+	url(r'relationList',  RelationList.as_view()),
 
 	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),

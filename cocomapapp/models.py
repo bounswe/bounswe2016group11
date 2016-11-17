@@ -34,10 +34,13 @@ class Tag(models.Model):
 class Topic(models.Model):
   name = models.TextField()
   user = models.ForeignKey(User, on_delete=models.CASCADE)
-  relates_to = models.ManyToManyField('self', null=True, blank=True)
+  #relates_to = models.ManyToManyField('self', null=True, blank=True)
   tags = models.ManyToManyField(Tag, null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
+
+  class Meta:
+    ordering = ('pk',)
 
   def save(self, *args, **kwargs):
     return super(Topic, self).save(*args, **kwargs)
@@ -45,6 +48,18 @@ class Topic(models.Model):
   def __str__(self):
     return (str(self.id) + ' ' + self.name)
 
+
+@python_2_unicode_compatible
+class Relation(models.Model):
+    topic_from = models.ForeignKey(Topic, related_name='relates_to', on_delete=models.CASCADE)
+    topic_to = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    label = models.TextField()
+
+    def save(self, *args, **kwargs):
+      return super(Relation, self).save(*args, **kwargs)
+
+    def __str__(self):
+      return (str(self.id) + ' ' + self.label)
 
 @python_2_unicode_compatible
 class Post(models.Model):

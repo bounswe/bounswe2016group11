@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import User, Tag, Topic, Post
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, PostSerializer
+from cocomapapp.models import User, Tag, Topic, Post, Relation
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, PostSerializer, RelationSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -44,6 +44,14 @@ class PostRetrieve(generics.RetrieveAPIView):
 class PostUpdate(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+class RelationRetrieve(generics.RetrieveAPIView):
+    queryset = Relation.objects.all()
+    serializer_class = RelationSerializer
+
+class RelationList(generics.ListAPIView):
+    queryset = Relation.objects.all()
+    serializer_class = RelationSerializer
 
 @api_view(['PUT'])
 def post_upvote(request, pk):
@@ -213,7 +221,8 @@ def add_topic(request):
                 }
             try:
                 relatedTopicObject = Topic.objects.get(name=data["relates_to"])
-                topicObject.relates_to.add(relatedTopicObject)
+                label = data["relationships_name"]
+                Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
             except ObjectDoesNotExist:
                 return HttpResponse("Related topic does not exist");
         except MultipleObjectsReturned:

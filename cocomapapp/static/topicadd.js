@@ -5,6 +5,7 @@ function AddTopic() {
         relates_to: $('#relates_to').val(),
         tags: $('#tags').val(),
         posts: [],
+        relationships_name: $('#relationships-name').val(),
     };
     $.ajax({
         url: 'add',
