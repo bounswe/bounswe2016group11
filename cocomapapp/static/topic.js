@@ -2,7 +2,8 @@ $(document).ready(function(){
   topic = JSON.parse(topic);
   hot_topics = JSON.parse(hot_topics);
   posts2 = JSON.parse(posts2);
-  console.log(posts2);
+  user = JSON.parse(user);
+  console.log(user);
 
   var title = topic[0]["fields"]["name"];
   //var topic_tags = data.tags;
