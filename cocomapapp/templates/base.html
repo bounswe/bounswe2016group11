@@ -45,7 +45,8 @@
 						<script type="text/javascript">
 							var theSession = "{{ request.session.username }}"
 							if(theSession != ""){ // if not set To-DO
-								
+								$(".dropdown-toggle").removeAttr("data-toggle");
+								$(".dropdown-toggle").text(theSession);
 							}
 						</script>
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>Login</b> <span class="caret"></span></a>
