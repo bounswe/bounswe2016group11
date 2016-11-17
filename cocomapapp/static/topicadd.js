@@ -20,7 +20,6 @@ function AddTopic() {
     });
 }
 
-
 $(document).ready(function(){
 
   var citynames = new Bloodhound({
@@ -62,7 +61,7 @@ $(document).ready(function(){
   $('#relates_to').selectize({
       maxItems: 1,
       maxOptions: 3,
-      valueField: 'id',
+      valueField: 'name',
       labelField: 'name',
       searchField: ['name'],
       options: [],
@@ -80,7 +79,7 @@ $(document).ready(function(){
           }
 
         });
-
+  /*
   //publish button functionalities...
   // if the django's own form is used, then this is to be removed
   $("#publish").click(function(){
@@ -99,9 +98,10 @@ $(document).ready(function(){
         'isChecked' : isChecked, 'post' : post };
       console.log(JSON.stringify(obj));
       window.location.href = "secondTopic.html";
-  });
+  });*/
   $('#cancel_bt').click(function(){
   		parent.history.back();
   		return false;
   });
+  
 });
