@@ -5,6 +5,7 @@ function AddTopic() {
         relates_to: $('#relates_to').val(),
         tags: $('#tags').val(),
         posts: [],
+        relationships_name: $('#relationships-name').val(),
     };
     $.ajax({
         url: 'add',
@@ -12,7 +13,6 @@ function AddTopic() {
         data:JSON.stringify(topic),
         contentType: "application/json;charset=utf-8",
         success: function (data) {
-            //
             window.location.href = "/cocomapapp";
         },
         error: function (x, y, z) {

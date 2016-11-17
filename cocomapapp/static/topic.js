@@ -24,10 +24,11 @@ $(document).ready(function(){
   $.each(posts2, function(i, obj) {
         //use obj.id and obj.name here, for example:
         //var username = obj.username;
-        var username = "sss";
+        //var username = "{{ request.session.username }}";
+        // var username = "username";
         var text = obj.fields.content;
         //var post_tags = obj.tags;
-        var post_tags = ["sda","asdasd","asda"];
+        var post_tags = ["tag1","tag2","tag3"];
         //var accuracy = obj.accuracy;
         var accuracy = [50,50];
         var tagsAsStr="";
