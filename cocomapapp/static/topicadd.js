@@ -12,7 +12,8 @@ function AddTopic() {
         data:JSON.stringify(topic),
         contentType: "application/json;charset=utf-8",
         success: function (data) {
-            return data;
+            // return data; redirect yapmak icin burayi comment haline getirdim. Daha sonradan buraya bakmak lazim.
+            window.location.href = '/cocomapapp'
         },
         error: function (x, y, z) {
             alert(x + '\n' + y + '\n' + z);
@@ -103,5 +104,5 @@ $(document).ready(function(){
   		parent.history.back();
   		return false;
   });
-  
+
 });
