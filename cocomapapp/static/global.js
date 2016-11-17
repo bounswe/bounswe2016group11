@@ -21,13 +21,13 @@ $(function(){
         dataType: 'json',
         success: function (data) {
             var json_array = data;
-            //console.log(data)
+            console.log(data)
             // create an array with nodes
             var dict1 = [];
 
             for(var i = 0; i < json_array.length; i++){
-              console.log({id: i+1, label: json_array[i]['name'] })
-              dict1.push({id: i+1, label: json_array[i]['name'] });
+              //console.log({id: i+1, label: json_array[i]['name'] })
+              dict1.push({id: json_array[i]['pk'], label: json_array[i]['name'] });
             }
             var nodes = new vis.DataSet(dict1);
 
@@ -44,8 +44,8 @@ $(function(){
                     dataType: 'json',
                     contentType: "application/json;charset=utf-8",
                     success: function (data) {
-                        console.log(i, data['topic_from'], data['topic_to']);
-                        console.log(json_array[i]['relates_to'][j])
+                        //console.log(i, data['topic_from'], data['topic_to']);
+                        //console.log(json_array[i]['relates_to'][j])
                         dict2.push({from: data['topic_from'], to: data['topic_to'], arrows:'to'  });
 
                     },
