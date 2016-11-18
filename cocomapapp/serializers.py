@@ -11,17 +11,24 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ('id', 'name', 'user', 'created_at', 'updated_at')
 
-class TopicSerializer(serializers.ModelSerializer):
-    posts = serializers.StringRelatedField(many=True)
+class PostSerializer(serializers.ModelSerializer):
     tags = serializers.StringRelatedField(many=True)
+    class Meta:
+        model = Post
+        fields = ('id', 'content', 'user', 'tags', 'topic', 'positive_reaction_count', 'negative_reaction_count', 'created_at', 'updated_at')
+
+class TopicSerializer(serializers.ModelSerializer):
+    posts = PostSerializer(many=True)
+    tags = TagSerializer(many=True)
     class Meta:
         model = Topic
         fields = ('id', 'name', 'user', 'relates_to', 'tags', 'posts', 'created_at', 'updated_at')
 
-class PostSerializer(serializers.ModelSerializer):
+class HotTopicsSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True)
     class Meta:
-        model = Post
-        fields = ('id', 'content', 'user', 'tags', 'topic', 'positive_reaction_count', 'negative_reaction_count', 'created_at', 'updated_at')
+        model = Topic
+        fields = ('id', 'name', 'user', 'tags', 'created_at', 'updated_at')
 
 class RelationSerializer(serializers.ModelSerializer):
     class Meta:

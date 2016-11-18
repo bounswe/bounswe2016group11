@@ -4,7 +4,7 @@ from django.template import loader
 import json
 
 from cocomapapp.models import User, Tag, Topic, Post, Relation
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, PostSerializer, RelationSerializer
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -156,40 +156,29 @@ def show_topic(request, id):
         user = User.objects.first()
         requested_topic = Topic.objects.get(id=id)
         postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
-        #tags = request.POST.get("tags", "").split(",");
-        #for tag in tags:
-        #    try:
-        #        tagObject = Tag.objects.get(name=tag)
-        #    except ObjectDoesNotExist:
-        #        tagObject = Tag.objects.create(name=tag)
-        #    except MultipleObjectsReturned:
-        #        return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
-        #    postObject.tags.add(tagObject)
+        tags = request.POST.get("tags", "").split(",");
+        for tag in tags:
+           try:
+               tagObject = Tag.objects.get(name=tag)
+           except ObjectDoesNotExist:
+                tagObject = Tag.objects.create(name=tag, user=user, post_id=postObject.id)
+
+           except MultipleObjectsReturned:
+               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+           postObject.tags.add(tagObject)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     try:
-        topic = serializers.serialize("json", Topic.objects.filter(id=id))
+        topic = Topic.objects.get(id=id)
+        serialized_topic = TopicSerializer(topic)
+        topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
-    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
-    try:
-        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
-    except ObjectDoesNotExist:
-        posts = None
-
-    try:
-        tags = serializers.serialize("json", Tag.objects.filter(topic_id=id))
-    except ObjectDoesNotExist:
-        tags = None
-    try:
-        user = serializers.serialize("json", User.objects.filter(id=1))
-    except ObjectDoesNotExist:
-        user = None
+    hot_topics = Topic.objects.order_by('-updated_at')[:5]
+    serialized_hot_topics = HotTopicsSerializer(hot_topics, many=True)
+    hot_topics_json = JSONRenderer().render(serialized_hot_topics.data)
     context = {
-        'topic': topic,
-        'hot_topics': hot_topics,
-        'posts': posts,
-        'tags': tags,
-        'user' : user
+        'topic': topic_json,
+        'hot_topics': hot_topics_json
     }
 
     return HttpResponse(template.render(context, request))
