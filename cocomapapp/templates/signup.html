@@ -1,0 +1,115 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}" />
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="../assets/main.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="../static/vis-4.17.0/dist/vis.js"></script>
+    <link href="../static/vis-4.17.0/dist/vis.css" rel="stylesheet" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <title></title>
+</head>
+
+<body>
+    <nav style="margin-bottom:0" class="navbar navbar-default">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/cocomapapp/login">COCOMAP</a>
+            </div>
+
+        </div>
+    </nav>
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6 col-md-9 main center-block container-fluid">
+        <div class="col-md-6 center-block">
+            <br/> <br/>
+            <form class="form" role="form" method="post" action="signup" accept-charset="UTF-8" id="login-nav">
+                   {% csrf_token %}
+                        <div class="form-group">
+                       {{ registerForm.email }}
+                        </div>
+                        <div class="form-group">
+                       {{ registerForm.first_name }}
+                        </div>
+                        <div class="form-group">
+                       {{ registerForm.last_name }}
+                        </div>
+                        <div class="form-group">
+                       {{ registerForm.password }}
+                        </div>
+                        <div class="form-group">
+                             <button type="submit" class="btn btn-primary btn-block" onclick="myFunction(); window.location.href='../cocomapapp'">Sign Up</button>
+                        </div>
+                    <script type="text/javascript">
+                    function myFunction() {
+                      //password and email set to null
+                      document.getElementById("exampleInputPassword2").value = "";
+                      document.getElementById("exampleInputEmail2").value = "";
+                    }
+                    </script>
+
+            </form>
+        </div>
+
+
+    </div>
+
+    <style>
+
+    #login-dp{
+        min-width: 250px;
+        padding: 14px 14px 0;
+        overflow:hidden;
+        background-color:rgba(255,255,255,.8);
+    }
+    #login-dp .help-block{
+        font-size:12px
+    }
+    #login-dp .bottom{
+        background-color:rgba(255,255,255,.8);
+        border-top:1px solid #ddd;
+        clear:both;
+        padding:14px;
+    }
+    #login-dp .social-buttons{
+        margin:12px 0
+    }
+    #login-dp .social-buttons a{
+        width: 49%;
+    }
+    #login-dp .form-group {
+        margin-bottom: 10px;
+    }
+    @media(max-width:768px){
+        #login-dp{
+            background-color: inherit;
+            color: #fff;
+        }
+        #login-dp .bottom{
+            background-color: inherit;
+            border-top:0 none;
+        }
+    }
+
+    </style>
+
+</body>
+
+</html>

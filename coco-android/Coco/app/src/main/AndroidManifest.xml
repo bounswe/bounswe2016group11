@@ -19,11 +19,21 @@
         </activity>
         <activity android:name=".GlobalViewActivity"
             android:theme="@style/AppTheme.NoActionBar">
+
+        </activity>
+        <activity
+            android:name=".SignUpActivity"
+            android:label="Sign Up">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".LogInActivity"
+            android:label="Login">
+
         </activity>
     </application>
 
