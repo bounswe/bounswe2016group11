@@ -1,17 +1,45 @@
+function AddTopic() {
+    jQuery.support.cors = true;
+    var topic = {
+        name: $('#name').val(),
+        relates_to: $('#relates_to').val(),
+        tags: $('#tags').val(),
+        posts: [],
+        relationships_name: $('#relationships-name').val(),
+    };
+    $.ajax({
+        url: 'add',
+        type: 'POST',
+        data:JSON.stringify(topic),
+        contentType: "application/json;charset=utf-8",
+        success: function (data) {
+            window.location.href = "/cocomapapp";
+        },
+        error: function (x, y, z) {
+            alert(x + '\n' + y + '\n' + z);
+        }
+    });
+}
+
 $(document).ready(function(){
 
-  var theTags=[{"name": "asd"},{"name": "sda"}];
   var citynames = new Bloodhound({
 
     datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
     queryTokenizer: Bloodhound.tokenizers.whitespace,
-    local: theTags
+    prefetch: {
+      url: '/static/tags.json',
+      filter: function(list) {
+        return $.map(list, function(cityname) {
+          return { name: cityname }; });
+      }
+    }
   });
   citynames.initialize();
 
   $('#tags2').tagsinput({
     typeaheadjs: {
-      name: 'name',
+      name: 'citynames',
       displayKey: 'name',
       valueKey: 'name',
       source: citynames.ttAdapter()
@@ -20,50 +48,18 @@ $(document).ready(function(){
 
   $('#tags').tagsinput({
     typeaheadjs: {
-      allowDuplicates: false,
-      itemValue: 'name',  // this will be used to set id of tag
-      itemText: 'name', // this will be used to set text of tag
+      name: 'citynames',
+      displayKey: 'name',
+      valueKey: 'name',
       source: citynames.ttAdapter()
     }
   });
-  $("#name").on("keyup",function(){
-
-    if($("#name").val().length <2 ){
-
-      return;
-    }
-    $.getJSON("/cocomapapp/wikidataSearch/" +$("#name").val() + "/"
-    ).fail( function() {
-      console.log("error in wikidata");
-    }).done( function(data) {
-
-        $.each(data,function(i,value){
-            theTags.push({
-              name : (value.label + value.description)
-            });
-
-        });
-
-        $("#tags").tagsinput("input").typeahead({
-          source: function(query, process) {
-              process(theTags);
-          }
-        });
-        /*
-        $.each(theTags,function(i,value){
-          console.log(value);
-          $("#tags").tagsinput("add",value);
-        });*/
-        console.log(theTags);
-
-      }
-    );
-  });
-  console.log(topicsList);
-  topicsList = JSON.parse(topicsList);
-  console.log(topicsList[0]);
   var relations=[];
-  $('#relationships-topic').selectize({
+  topicsList= JSON.parse(topicsList);
+
+
+  //relations = relations.join(",");
+  $('#relates_to').selectize({
       maxItems: 1,
       maxOptions: 3,
       valueField: 'name',
@@ -73,49 +69,18 @@ $(document).ready(function(){
       create: false,
       load: function(query, callback) {
         if (!query.length) return callback();
-        $.each(topicsList,function(i,value){
-          console.log(value);
-            relations.push({
-              id: i,
-              name: value.fields.name
-            });
-        });
-        callback(relations);
-        /*
-        $.getJSON("/static/tags.json"
-        ).fail( function() {
-            callback();
-        }).done( function(data) {
-            $.each(data,function(i,value){
-                relations.push({
-                  id: i,
-                  name: value
-                });
-            });
-            callback(relations);
+
+          $.each(topicsList,function(i,value){
+              relations.push({
+                id: value.pk,
+                name: value.fields.name
+              });
+          });
+          callback(relations);
           }
-        );
-        */
-        }
-  });
 
+        });
   /*
-  $("#tags").on("keypress",function(event){
-    console.log("asda");
-    if(event.which == 13){
-        alert("x");
-    }
-
-  });*/
-  /*
-  $("#relationships-topic").removeAttr("id");
-  $(".newRelation").append(
-    "<input type='text' id='relationships-name' class='form-control makeinline' placeholder='Relationship Name'>"
-
-    +"<input id='relationships-topic' class='makeinline' placeholder='Name of a Topic'>"
-  );
-*/
-
   //publish button functionalities...
   // if the django's own form is used, then this is to be removed
   $("#publish").click(function(){
@@ -134,20 +99,10 @@ $(document).ready(function(){
         'isChecked' : isChecked, 'post' : post };
       console.log(JSON.stringify(obj));
       window.location.href = "secondTopic.html";
-  });
+  });*/
   $('#cancel_bt').click(function(){
   		parent.history.back();
   		return false;
   });
-  /* //Example Get
-  $("#tags2").on("keydown",function(event){
-       console.log("geldi");
-       if(event.which == 13)
-         console.log($("#tags").val());
-         console.log($("#tags").val());
-         $.get("add",{"search": $("#tags").val()}).done(function(data){
-         console.log("data come: "+ data);
-        });
-  });
-  */
+
 });

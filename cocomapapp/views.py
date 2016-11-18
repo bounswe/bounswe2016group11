@@ -1,10 +1,10 @@
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import User, Tag, Topic, Post
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, PostSerializer
+from cocomapapp.models import User, Tag, Topic, Post, Relation
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, PostSerializer, RelationSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -13,8 +13,15 @@ from django.core import serializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from .forms import RegisterForm, LoginForm
+from .models import User
+from django.template import RequestContext
+
 
 import requests
+
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
 
 class TopicList(generics.ListAPIView):
     queryset = Topic.objects.all()
@@ -37,6 +44,14 @@ class PostRetrieve(generics.RetrieveAPIView):
 class PostUpdate(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+class RelationRetrieve(generics.RetrieveAPIView):
+    queryset = Relation.objects.all()
+    serializer_class = RelationSerializer
+
+class RelationList(generics.ListAPIView):
+    queryset = Relation.objects.all()
+    serializer_class = RelationSerializer
 
 @api_view(['PUT'])
 def post_upvote(request, pk):
@@ -81,38 +96,66 @@ def index(request):
 
     context = {
         'hot_topics': hot_topics,
-        'random_topic': random_topic
+        'random_topic': random_topic,
+        'request': request,
     }
     return HttpResponse(template.render(context, request))
 
 def login(request):
-    template = loader.get_template('login.html')
-    context = {
-        'asd': 'asd',
-    }
+
+    if request.method =='POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            user = User()
+            user.email = form.cleaned_data['email']
+            user.password = form.cleaned_data['password']
+            checkUser = User.objects.get(email=user.email)
+            if checkUser == User.DoesNotExist:
+                return HttpResponseRedirect('/cocomapapp/login')
+            if checkUser.password == user.password:
+                request.session['username'] = checkUser.first_name
+                return HttpResponseRedirect('/cocomapapp/')
+            return HttpResponseRedirect('/cocomapapp/login')
+    else:
+        template = loader.get_template('login.html')
+        registerForm = RegisterForm()
+        loginForm = LoginForm()
+        context = {
+            'loginForm': loginForm,
+            'registerForm': registerForm,
+        }
+    return HttpResponse(template.render(context, request))
+
+def signup(request):
+
+    if request.method =='POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            newuser = User()
+            newuser.email = form.cleaned_data['email']
+            newuser.first_name = form.cleaned_data['first_name']
+            newuser.last_name = form.cleaned_data['last_name']
+            newuser.password = form.cleaned_data['password']
+            newuser.save()
+            return HttpResponseRedirect('/cocomapapp/login')
+    else:
+        template = loader.get_template('signup.html')
+        registerForm = RegisterForm()
+        loginForm = LoginForm()
+        context = {
+            'loginForm': loginForm,
+            'registerForm': registerForm,
+        }
     return HttpResponse(template.render(context, request))
 
 
 @csrf_exempt
 def show_topic(request, id):
-    try:
-        topic = serializers.serialize("json", Topic.objects.filter(id=id))
-    except ObjectDoesNotExist:
-        return HttpResponse("This topic doesn't exists!")
-    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
-    try:
-        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
-    except ObjectDoesNotExist:
-        posts = None
-    context = {
-        'topic': topic,
-        'hot_topics': hot_topics,
-        'posts': posts
-    }
     template = loader.get_template('topic.html')
     if request.method == "POST":
         user = User.objects.first()
-        postObject = Post.objects.create(user_id=user.id, topic_id=topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        requested_topic = Topic.objects.get(id=id)
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
         #tags = request.POST.get("tags", "").split(",");
         #for tag in tags:
         #    try:
@@ -122,7 +165,32 @@ def show_topic(request, id):
         #    except MultipleObjectsReturned:
         #        return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
         #    postObject.tags.add(tagObject)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+    try:
+        topic = serializers.serialize("json", Topic.objects.filter(id=id))
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
+    try:
+        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
+    except ObjectDoesNotExist:
+        posts = None
 
+    try:
+        tags = serializers.serialize("json", Tag.objects.filter(topic_id=id))
+    except ObjectDoesNotExist:
+        tags = None
+    try:
+        user = serializers.serialize("json", User.objects.filter(id=1))
+    except ObjectDoesNotExist:
+        user = None
+    context = {
+        'topic': topic,
+        'hot_topics': hot_topics,
+        'posts': posts,
+        'tags': tags,
+        'user' : user
+    }
 
     return HttpResponse(template.render(context, request))
 
@@ -138,27 +206,34 @@ def add_topic(request):
     }
     #User.objects.create(first_name="Ali", last_name="Veli", email="a@b", password="1234");
     if request.method == "POST":
+        data = JSONParser().parse(request)
         try:
-            Topic.objects.get(name=request.POST.get("name"))
+            Topic.objects.get(name=data["name"])
             return HttpResponse("This topic exists")
         except ObjectDoesNotExist:
             user = User.objects.first()
-            user_id = user.id
-            topicObject = Topic.objects.create(name=request.POST.get("name"), user_id= user_id)
-            tags = request.POST.get("tags").split(",");
+            name = data["name"]
+            topicObject = Topic.objects.create(name=name, user=user)
+            tags = data["tags"].split(",");
             for tag in tags:
                 try:
                     tagObject = Tag.objects.get(name=tag)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag, user_id=user_id)
+                    tagObject = Tag.objects.create(name=tag, user=user, topic_id=topicObject.id)
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
                 topicObject.tags.add(tagObject)
                 context = {
-                    'topic': topicObject,
                 }
+            try:
+                relatedTopicObject = Topic.objects.get(name=data["relates_to"])
+                label = data["relationships_name"]
+                Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
+            except ObjectDoesNotExist:
+                return HttpResponse("Related topic does not exist");
         except MultipleObjectsReturned:
             return HttpResponse("This topic exists")
+        return HttpResponse(template.render(context, request))
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt

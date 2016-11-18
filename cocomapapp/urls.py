@@ -6,6 +6,7 @@ from .views import (
 	show_topic,
 	add_topic,
 	login,
+	signup,
 	add_post,
 	TopicList,
 	TopicCreate,
@@ -13,6 +14,8 @@ from .views import (
 	PostCreate,
 	PostRetrieve,
 	PostUpdate,
+	RelationRetrieve,
+	RelationList,
 	post_upvote,
 	post_downvote,
 	wikidata_search,
@@ -22,6 +25,7 @@ from .views import (
 urlpatterns = [
     url(r'^$', index),
 	url(r'login', login, name='login'),
+	url(r'signup', signup, name='signup'),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
     url(r'topics/postAdd', add_post),
@@ -33,6 +37,9 @@ urlpatterns = [
 	url(r'postCreate', PostCreate.as_view()),
 	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
 	url(r'postUpdate/(?P<pk>[0-9]+)/',  PostUpdate.as_view()),
+
+	url(r'relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view()),
+	url(r'relationList',  RelationList.as_view()),
 
 	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
