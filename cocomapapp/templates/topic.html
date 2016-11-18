@@ -4,10 +4,6 @@
 <script>
 			var hot_topics = "{{hot_topics|escapejs|safe}}"
 			var topic = "{{topic|escapejs|safe}}"
-			var posts2 = "{{posts|escapejs|safe}}"
-			var user = "{{user|escapejs|safe}}"
-			var username = "{{ request.session.username }}"
-			var topicTags = "{{tags|escapejs|safe}}"
 </script>
 <script src="/static/topic.js" type="text/javascript"></script>
 <link rel="stylesheet" type="text/css" href="/static/topic.css">
@@ -38,7 +34,7 @@
 
 									<span class="input-group-addon">
 									Tag:
-									<input type="text" id="tags2" data-role="tagsinput" placeholder="Tag">
+									<input type="text" name="tags" id="tags2" data-role="tagsinput" placeholder="Tag">
 								</span>
 							</div>
 						</form>

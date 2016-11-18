@@ -1,20 +1,16 @@
 $(document).ready(function(){
   topic = JSON.parse(topic);
   hot_topics = JSON.parse(hot_topics);
-  posts2 = JSON.parse(posts2);
-  user = JSON.parse(user);
-  topicTags = JSON.parse(topicTags);
 
+  console.log(topic);
 
-  var title = topic[0]["fields"]["name"];
-  //var topic_tags = data.tags;
-  var posts = posts2;
-
+  var title = topic.name;
+  var topic_tags = topic.tags;
+  var posts = topic.posts;
   $("#theTitle").text(title);
-
-  $.each(topicTags, function(i,val){
+  $.each(topic_tags, function(i,val){
     $("#topicTags").append(
-      "<a><b>#</b>"+val["fields"]["name"] +"</a>"
+      "<a><b>#</b>"+val.name +"</a>"
     );
   });
 
@@ -22,25 +18,22 @@ $(document).ready(function(){
 
   //console.log(data);
 
-  $.each(posts2, function(i, obj) {
-        //use obj.id and obj.name here, for example:
-        //var username = obj.username;
-        //var username = "{{ request.session.username }}";
-        // var username = "username";
-        var text = obj.fields.content;
+  $.each(posts, function(i, obj) {
+        var text = obj.content;
         //var post_tags = obj.tags;
-        var post_tags = ["tag1","tag2","tag3"];
-        //var accuracy = obj.accuracy;
-        var accuracy = [50,50];
+        var post_tags = obj.tags;
+        var user = obj.user;
+        //for accuracy first positive then negative
+        var accuracy = [obj.positive_reaction_count,obj.negative_reaction_count];
         var tagsAsStr="";
         $.each(post_tags, function(i,val){
-            tagsAsStr +="<a><b>#</b>"+val +"</a>";
+            tagsAsStr +="<a><b>#</b>"+val.name +"</a>";
         });
         $(".panelContainer").append(
 
           '<div class="panel panel-default panel-margined">'
             +'<div class="panel-body">'
-              +'<p><a href="#">'+ username +'</a><br />'+text+'</p>'
+              +'<p><a href="#">'+ user.first_name + ' '+ user.last_name +': </a><br />'+text+'</p>'
             +'</div>'
             +'<div class="panel-footer">'
               <!-- Tags -->
@@ -58,20 +51,4 @@ $(document).ready(function(){
 
 
       });
-
-
-
-  $("#post_button").click(function(){
-
-    var str = $("#content").text().trim();
-    if(str == ""){
-
-    }else{
-
-      console.log(str);
-    }
-
-
-  });
-
 });
