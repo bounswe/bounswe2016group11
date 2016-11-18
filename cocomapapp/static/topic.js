@@ -3,20 +3,21 @@ $(document).ready(function(){
   hot_topics = JSON.parse(hot_topics);
   posts2 = JSON.parse(posts2);
   user = JSON.parse(user);
-  console.log(user);
+  topicTags = JSON.parse(topicTags);
+
 
   var title = topic[0]["fields"]["name"];
   //var topic_tags = data.tags;
   var posts = posts2;
-  console.log(posts);
+
   $("#theTitle").text(title);
-  /*
-  $.each(data.tags, function(i,val){
+
+  $.each(topicTags, function(i,val){
     $("#topicTags").append(
-      "<a><b>#</b>"+val +"</a>"
+      "<a><b>#</b>"+val["fields"]["name"] +"</a>"
     );
   });
-  */
+
 
 
   //console.log(data);
