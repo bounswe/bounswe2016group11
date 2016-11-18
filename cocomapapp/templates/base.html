@@ -100,12 +100,18 @@
 
 	<div class="row col-sm-9 sticky-footer" style="bottom:0; position:fixed;">
 	  <div class="input-group">
-      <input type="text" class="form-control" placeholder="Search for...">
+      <input type="text" id="search" class="form-control" placeholder="Search for...">
       <span class="input-group-btn">
-        <button class="btn btn-success" type="button">Search</button>
+        <button class="btn btn-success" type="button" onclick="searchItem();" id="myButton">Search</button>
         <button style="margin-left: 20px;" class="btn btn-warning" type="button">Advanced Search</button>
       </span>
     </div><!-- /input-group -->
   </div><!-- /.col-lg-6 -->
+	<script>
+    function searchItem(){
+				var url = "../cocomapapp/search/"+document.getElementById("search").value+"/";
+				window.location.href = url;
+    }
+</script>
 </body>
 </html>

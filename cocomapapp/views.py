@@ -181,7 +181,14 @@ def add_post(request):
     }
     return HttpResponse(template.render(context, request))
 
+@csrf_exempt
+def search(request):
+    template = loader.get_template('searchresult.html')
 
+    context = {
+        'asd': 'asd',
+    }
+    return HttpResponse(template.render(context, request))
 
 # def second_topic(request):
 #     template = loader.get_template('secondTopic.html')
