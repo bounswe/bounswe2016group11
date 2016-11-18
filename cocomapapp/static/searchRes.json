@@ -1,0 +1,39 @@
+[
+  {
+  "topics":
+  [
+    {
+      "name": "Result Name of Topic1",
+      "id": 1
+    },
+    {
+      "name": "Result Name of Topic2",
+      "id": 1
+    },
+    {
+      "name": "Result Name of Topic3",
+      "id": 1
+    }
+  ]
+  },
+  {
+  "posts":
+  [
+    {
+      "content": "Content of the post1",
+      "topicId": 1,
+      "topicName":"name of post's topic1"
+    },
+    {
+      "name": "Content of the post2",
+      "topicId": 1,
+      "topicName":"name of post's topic1"
+    },
+    {
+      "name": "Content of the post3",
+      "topicId": 1,
+      "topicName":"name of post's topic1"
+    }
+  ]
+  }
+]
