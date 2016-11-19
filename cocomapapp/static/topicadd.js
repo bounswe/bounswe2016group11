@@ -23,37 +23,32 @@ function AddTopic() {
 
 $(document).ready(function(){
 
-  var citynames = new Bloodhound({
+  var theTags=[];
+  $("#name").on("keyup",function(){
 
-    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('name'),
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    prefetch: {
-      url: '/static/tags.json',
-      filter: function(list) {
-        return $.map(list, function(cityname) {
-          return { name: cityname }; });
+    if($("#name").val().length <2 ){
+
+      return;
+    }
+    $.getJSON("/cocomapapp/wikidataSearch/" +$("#name").val() + "/"
+    ).fail( function() {
+      console.log("error in wikidata");
+    }).done( function(data) {
+
+        $.each(data,function(i,value){
+            theTags.push({
+              name : (value.label +" "+ value.description)
+            });
+            console.log("my values are: "+i+" "+value.label+" "+value.description);
+
+        });
+
       }
-    }
-  });
-  citynames.initialize();
-
-  $('#tags2').tagsinput({
-    typeaheadjs: {
-      name: 'citynames',
-      displayKey: 'name',
-      valueKey: 'name',
-      source: citynames.ttAdapter()
-    }
+    );
   });
 
-  $('#tags').tagsinput({
-    typeaheadjs: {
-      name: 'citynames',
-      displayKey: 'name',
-      valueKey: 'name',
-      source: citynames.ttAdapter()
-    }
-  });
+
+
   var relations=[];
   topicsList= JSON.parse(topicsList);
 
@@ -70,16 +65,58 @@ $(document).ready(function(){
       load: function(query, callback) {
         if (!query.length) return callback();
 
+        $.each(topicsList,function(i,value){
+          relations.push({
+            id: value.pk,
+            name: value.fields.name
+          });
+        });
+        callback(relations);
+      }
+
+  });
+
+
+  $('#tags').selectize({
+      maxOptions: 6,
+      valueField: 'name',
+      labelField: 'name',
+      searchField: ['name'],
+      options: [],
+      create: false,
+      load: function(query, callback) {
+        if (!query.length) return callback();
+
           $.each(topicsList,function(i,value){
-              relations.push({
+              theTags.push({
                 id: value.pk,
                 name: value.fields.name
               });
           });
-          callback(relations);
+          callback(theTags);
           }
+  });
 
-        });
+  $('#tags2').selectize({
+      maxOptions: 6,
+      valueField: 'name',
+      labelField: 'name',
+      searchField: ['name'],
+      options: [],
+      create: false,
+      load: function(query, callback) {
+        if (!query.length) return callback();
+
+          $.each(topicsList,function(i,value){
+              theTags.push({
+                id: value.pk,
+                name: value.fields.name
+              });
+          });
+          callback(theTags);
+          }
+  });
+
   /*
   //publish button functionalities...
   // if the django's own form is used, then this is to be removed
