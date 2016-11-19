@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cocomap.coco.GlobalViewActivity">
+    tools:context=".activity.GlobalViewActivity">
     <TextView
         android:id="@+id/focusTopicTextView"
         android:layout_width="match_parent"

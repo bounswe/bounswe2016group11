@@ -1,7 +1,9 @@
-package com.cocomap.coco;
+package com.cocomap.coco.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.cocomap.coco.R;
 
 public class CreateTopicActivity extends AppCompatActivity {
 
