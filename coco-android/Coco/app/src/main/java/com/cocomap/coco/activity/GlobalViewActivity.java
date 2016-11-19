@@ -1,4 +1,4 @@
-package com.cocomap.coco;
+package com.cocomap.coco.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import com.cocomap.coco.adapter.GridViewAdapter;
+import com.cocomap.coco.R;
 
 public class GlobalViewActivity extends AppCompatActivity {
 
