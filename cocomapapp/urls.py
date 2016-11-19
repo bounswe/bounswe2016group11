@@ -1,12 +1,12 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.conf import settings
 from django.conf.urls.static import static
 from .views import (
 	index,
 	show_topic,
 	add_topic,
-	login,
-	signup,
+	# login,
+	# signup,
 	add_post,
 	TopicList,
 	TopicCreate,
@@ -23,8 +23,7 @@ from .views import (
 
 urlpatterns = [
     url(r'^$', index),
-	url(r'login', login, name='login'),
-	url(r'signup', signup, name='signup'),
+    url(r'^accounts/', include('allauth.urls')),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
     url(r'topics/postAdd', add_post),

@@ -25,23 +25,24 @@
 		    	<!-- 1st entry -->
 
 		  	</div>
-				<form class="panel" style="background-color:#F8F9FC; padding: 0;" action="" method="post">{% csrf_token %}
-					<div class="panel-body">
-						<textarea class="form-control" name="content"></textarea>
-						<form class="bs-example bs-example-form" method="">
+        {% if user.is_authenticated %}
+					<form class="panel" style="background-color:#F8F9FC; padding: 0;" action="" method="post">{% csrf_token %}
+						<div class="panel-body">
+							<textarea class="form-control" name="content"></textarea>
+							<form class="bs-example bs-example-form" method="">
 
-							<div class="input-group" align="center">
+								<div class="input-group" align="center">
 
-									<span class="input-group-addon">
-									Tag:
-									<input type="text" name="tags" id="tags2" data-role="tagsinput" placeholder="Tag">
-								</span>
-							</div>
-						</form>
-						<button id="submit" class="btn btn-primary btn-lg btn-block">Post</button>
-					</div>
-
-			</form>
+										<span class="input-group-addon">
+										Tag:
+										<input type="text" name="tags" id="tags2" data-role="tagsinput" placeholder="Tag">
+									</span>
+								</div>
+							</form>
+							<button id="submit" class="btn btn-primary btn-lg btn-block">Post</button>
+						</div>
+					</form>
+        {% endif %}
 		  </div>
 		</div>
 	</div>

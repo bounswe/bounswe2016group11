@@ -1,21 +1,22 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
+from django.contrib.auth.models import User
 
-@python_2_unicode_compatible
-class User(models.Model):
-  first_name = models.TextField()
-  last_name = models.TextField()
-  email = models.EmailField(max_length=70, blank=False, null=False, unique=True)
-  password = models.CharField(max_length=30, blank=False, null=False)
-  created_at = models.DateTimeField(auto_now_add=True)
-  updated_at = models.DateTimeField(auto_now=True)
+# @python_2_unicode_compatible
+# class User(models.Model):
+#   first_name = models.TextField()
+#   last_name = models.TextField()
+#   email = models.EmailField(max_length=70, blank=False, null=False, unique=True)
+#   password = models.CharField(max_length=30, blank=False, null=False)
+#   created_at = models.DateTimeField(auto_now_add=True)
+#   updated_at = models.DateTimeField(auto_now=True)
 
-  def save(self, *args, **kwargs):
-    return super(User, self).save(*args, **kwargs)
+#   def save(self, *args, **kwargs):
+#     return super(User, self).save(*args, **kwargs)
 
-  def __str__(self):
-    return (str(self.id) + ' ' + self.first_name + ' ' + self.last_name)
+#   def __str__(self):
+#     return (str(self.id) + ' ' + self.first_name + ' ' + self.last_name)
 
 @python_2_unicode_compatible
 class Topic(models.Model):
