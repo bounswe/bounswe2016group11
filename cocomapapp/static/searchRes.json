@@ -20,7 +20,7 @@
   "posts":
   [
     {
-      "content": "Content of the post1",
+      "name": "Content of the post1",
       "topicId": 1,
       "topicName":"name of post's topic1"
     },
