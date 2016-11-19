@@ -3,8 +3,8 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import User, Tag, Topic, Post
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, PostSerializer
+from cocomapapp.models import User, Tag, Topic, Post, Relation
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -44,6 +44,14 @@ class PostRetrieve(generics.RetrieveAPIView):
 class PostUpdate(generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+class RelationRetrieve(generics.RetrieveAPIView):
+    queryset = Relation.objects.all()
+    serializer_class = RelationSerializer
+
+class RelationList(generics.ListAPIView):
+    queryset = Relation.objects.all()
+    serializer_class = RelationSerializer
 
 @api_view(['PUT'])
 def post_upvote(request, pk):
@@ -148,34 +156,29 @@ def show_topic(request, id):
         user = User.objects.first()
         requested_topic = Topic.objects.get(id=id)
         postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
-        #tags = request.POST.get("tags", "").split(",");
-        #for tag in tags:
-        #    try:
-        #        tagObject = Tag.objects.get(name=tag)
-        #    except ObjectDoesNotExist:
-        #        tagObject = Tag.objects.create(name=tag)
-        #    except MultipleObjectsReturned:
-        #        return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
-        #    postObject.tags.add(tagObject)
+        tags = request.POST.get("tags", "").split(",");
+        for tag in tags:
+           try:
+               tagObject = Tag.objects.get(name=tag)
+           except ObjectDoesNotExist:
+                tagObject = Tag.objects.create(name=tag, user=user, post_id=postObject.id)
+
+           except MultipleObjectsReturned:
+               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+           postObject.tags.add(tagObject)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     try:
-        topic = serializers.serialize("json", Topic.objects.filter(id=id))
+        topic = Topic.objects.get(id=id)
+        serialized_topic = TopicSerializer(topic)
+        topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
-    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
-    try:
-        posts = serializers.serialize("json", Post.objects.filter(topic_id=id))
-    except ObjectDoesNotExist:
-        posts = None
-    try:
-        user = serializers.serialize("json", User.objects.filter(id=1))
-    except ObjectDoesNotExist:
-        user = None
+    hot_topics = Topic.objects.order_by('-updated_at')[:5]
+    serialized_hot_topics = HotTopicsSerializer(hot_topics, many=True)
+    hot_topics_json = JSONRenderer().render(serialized_hot_topics.data)
     context = {
-        'topic': topic,
-        'hot_topics': hot_topics,
-        'posts': posts,
-        'user' : user
+        'topic': topic_json,
+        'hot_topics': hot_topics_json
     }
 
     return HttpResponse(template.render(context, request))
@@ -205,7 +208,7 @@ def add_topic(request):
                 try:
                     tagObject = Tag.objects.get(name=tag)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag, user=user)
+                    tagObject = Tag.objects.create(name=tag, user=user, topic_id=topicObject.id)
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
                 topicObject.tags.add(tagObject)
@@ -213,7 +216,8 @@ def add_topic(request):
                 }
             try:
                 relatedTopicObject = Topic.objects.get(name=data["relates_to"])
-                topicObject.relates_to.add(relatedTopicObject)
+                label = data["relationships_name"]
+                Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
             except ObjectDoesNotExist:
                 return HttpResponse("Related topic does not exist");
         except MultipleObjectsReturned:
