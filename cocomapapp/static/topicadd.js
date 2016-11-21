@@ -117,26 +117,6 @@ $(document).ready(function(){
           }
   });
 
-  /*
-  //publish button functionalities...
-  // if the django's own form is used, then this is to be removed
-  $("#publish").click(function(){
-      topic_name = $("#topicName").val();
-      tags_name = $("#tags").val();
-      relationships = $("#relationships").val();
-      isChecked = $("#checkbox:checked").length;
-      post = "";
-
-      console.log(isChecked);
-      if(isChecked == 1){
-          post = $("#post").val();
-      }
-      console.log(post);
-      var obj = { 'topic_name' : topic_name, 'tags_name' : tags_name, 'relationships' : relationships,
-        'isChecked' : isChecked, 'post' : post };
-      console.log(JSON.stringify(obj));
-      window.location.href = "secondTopic.html";
-  });*/
   $('#cancel_bt').click(function(){
   		parent.history.back();
   		return false;
