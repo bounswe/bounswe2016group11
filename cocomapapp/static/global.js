@@ -45,10 +45,7 @@ $(function(){
                     dataType: 'json',
                     contentType: "application/json;charset=utf-8",
                     success: function (data) {
-                        //console.log(i, data['topic_from'], data['topic_to']);
-                        //console.log(json_array[i]['relates_to'][j])
                         dict2.push({from: data['topic_from'], to: data['topic_to'], arrows:'to',label:data.label  });
-
                     },
                     error: function (x, y, z) {
                         alert(x + '\n' + y + '\n' + z);
