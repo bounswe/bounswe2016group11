@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cocomap.coco.TopicDetailActivity">
+    tools:context=".activity.TopicDetailActivity">
 
 
     <LinearLayout
@@ -58,6 +58,7 @@
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/activity_margin_8"
         android:background="@color/colorPrimary"
+        android:onClick="onClickPost"
         android:text="Post"
         android:textColor="@android:color/white" />
 
