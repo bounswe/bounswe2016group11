@@ -88,6 +88,13 @@ def wikidata_search(request, str):
         return Response(r.json()['search'])
      #print r
 
+@api_view(['GET'])
+def topic_get_hot(request):
+    if request.method == 'GET':
+        hot_topics = Topic.objects.order_by('-updated_at')[:5]
+        serializer = TopicSerializer(hot_topics, many=True)
+        return Response(serializer.data)
+
 
 def index(request):
     template = loader.get_template('global.html')
