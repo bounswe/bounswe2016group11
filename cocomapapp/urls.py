@@ -14,6 +14,7 @@ from .views import (
 	PostCreate,
 	PostRetrieve,
 	PostUpdate,
+	RelationCreate,
 	RelationRetrieve,
 	RelationList,
 	TagCreate,
@@ -40,6 +41,7 @@ urlpatterns = [
 	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
 	url(r'postUpdate/(?P<pk>[0-9]+)/',  PostUpdate.as_view()),
 
+	url(r'relationCreate',  RelationCreate.as_view()),
 	url(r'relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view()),
 	url(r'relationList',  RelationList.as_view()),
 

@@ -23,40 +23,57 @@ import requests
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 
-class TopicList(generics.ListAPIView):
+
+class ReadNestedWriteFlatMixin(object):
+    """
+    Mixin that sets the depth of the serializer to 0 (flat) for writing operations.
+    For all other operations it keeps the depth specified in the serializer_class
+    """
+    def get_serializer_class(self, *args, **kwargs):
+        serializer_class = super(ReadNestedWriteFlatMixin, self).get_serializer_class(*args, **kwargs)
+        if self.request.method in ['PATCH', 'POST', 'PUT']:
+            serializer_class.Meta.depth = 0
+        else:
+            serializer_class.Meta.depth = 1
+        return serializer_class
+
+class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
 
-class TopicCreate(generics.CreateAPIView):
+class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
     serializer_class = TopicSerializer
 
-class TopicRetrieve(generics.RetrieveAPIView):
+class TopicRetrieve(ReadNestedWriteFlatMixin, generics.RetrieveAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
 
-class PostCreate(generics.CreateAPIView):
+class PostCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = PostSerializer
 
-class PostRetrieve(generics.RetrieveAPIView):
+class PostRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-class PostUpdate(generics.UpdateAPIView):
+class PostUpdate(ReadNestedWriteFlatMixin,generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-class RelationRetrieve(generics.RetrieveAPIView):
+class RelationRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
 
-class RelationList(generics.ListAPIView):
+class RelationList(ReadNestedWriteFlatMixin,generics.ListAPIView):
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
 
-class TagCreate(generics.CreateAPIView):
+class RelationCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+    serializer_class = RelationSerializer
+
+class TagCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = TagSerializer
 
-class TagRetrieve(generics.RetrieveAPIView):
+class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
