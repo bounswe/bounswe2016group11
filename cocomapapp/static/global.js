@@ -28,7 +28,6 @@ $(function(){
             for(var i = 0; i < json_array.length; i++){
               //console.log({id: i+1, label: json_array[i]['name'] })
               dict1.push({id: json_array[i]['id'], label: json_array[i]['name'] });
-
             }
             var nodes = new vis.DataSet(dict1);
 
