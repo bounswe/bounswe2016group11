@@ -38,23 +38,10 @@ $(function(){
               // this code will be replaced ..............
               for(var j = 0; j < json_array[i]['relates_to'].length; j++){
                   //console.log(json_array[i]['relates_to'])
-                $.ajax({
-                    url: 'relationRetrieve/'+json_array[i]['relates_to'][j],
-                    type: 'GET',
-                    dataType: 'json',
-                    contentType: "application/json;charset=utf-8",
-                    success: function (data) {
-                        //console.log(i, data['topic_from'], data['topic_to']);
-                        //console.log(json_array[i]['relates_to'][j])
-                        dict2.push({from: data['topic_from'], to: data['topic_to'], arrows:'to',label:data.label  });
-
-                    },
-                    error: function (x, y, z) {
-                        alert(x + '\n' + y + '\n' + z);
-                    },
-                    async: false
-                });
-                //console.log({from: json_array[i]['relates_to'][j], to: i, arrows:'from'  })
+                  //console.log(i, data['topic_from'], data['topic_to']);
+                  //console.log(json_array[i]['relates_to'][j])
+                  dict2.push({from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label']  });
+                  //console.log({from: json_array[i]['relates_to'][j], to: i, arrows:'from'  })
               }
             }
             var edges = new vis.DataSet(dict2);
