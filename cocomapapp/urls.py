@@ -46,9 +46,6 @@ urlpatterns = [
 	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
 
 	url(r'wikidataSearch/(?P<str>.+)/', wikidata_search),
-<<<<<<< HEAD
 	url(r'getHotTopics/', topic_get_hot),
-=======
     url(r'wikidataQuery/(?P<str>.+)/', wikidata_query),
->>>>>>> wikiIdQuery
 ]
