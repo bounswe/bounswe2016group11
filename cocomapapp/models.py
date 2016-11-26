@@ -17,10 +17,30 @@ class User(models.Model):
   def __str__(self):
     return (str(self.id) + ' ' + self.first_name + ' ' + self.last_name)
 
+
+@python_2_unicode_compatible
+class Tag(models.Model):
+  name = models.TextField()
+  #user = models.ForeignKey(User, on_delete=models.CASCADE)
+  #topic = models.ForeignKey(Topic, related_name='tags', null=True, blank=True)
+  #post = models.ForeignKey(Post, related_name='tags', null=True, blank=True)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
+
+  def save(self, *args, **kwargs):
+    return super(Tag, self).save(*args, **kwargs)
+
+  def __str__(self):
+    return (str(self.id) + ' ' + self.name)
+
+  def __unicode__(self):
+    return (str(self.id) + ' ' + self.name)
+
 @python_2_unicode_compatible
 class Topic(models.Model):
   name = models.TextField()
   user = models.ForeignKey(User, on_delete=models.CASCADE)
+  tags = models.ManyToManyField(Tag, null=True, blank=True)
   #relates_to = models.ManyToManyField('self', null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
@@ -52,6 +72,7 @@ class Post(models.Model):
   content = models.TextField()
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   topic = models.ForeignKey(Topic, related_name='posts', null=True, blank=True)
+  tags = models.ManyToManyField(Tag, null=True, blank=True)
   positive_reaction_count = models.PositiveIntegerField(default=0)
   negative_reaction_count = models.PositiveIntegerField(default=0)
   created_at = models.DateTimeField(auto_now_add=True)
@@ -62,21 +83,3 @@ class Post(models.Model):
 
   def __str__(self):
     return (str(self.id) + ' ' + self.content)
-
-@python_2_unicode_compatible
-class Tag(models.Model):
-  name = models.TextField()
-  user = models.ForeignKey(User, on_delete=models.CASCADE)
-  topic = models.ForeignKey(Topic, related_name='tags', null=True, blank=True)
-  post = models.ForeignKey(Post, related_name='tags', null=True, blank=True)
-  created_at = models.DateTimeField(auto_now_add=True)
-  updated_at = models.DateTimeField(auto_now=True)
-
-  def save(self, *args, **kwargs):
-    return super(Tag, self).save(*args, **kwargs)
-
-  def __str__(self):
-    return (str(self.id) + ' ' + self.name)
-
-  def __unicode__(self):
-    return (str(self.id) + ' ' + self.name)

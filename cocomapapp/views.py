@@ -53,6 +53,13 @@ class RelationList(generics.ListAPIView):
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
 
+class TagCreate(generics.CreateAPIView):
+    serializer_class = TagSerializer
+
+class TagRetrieve(generics.RetrieveAPIView):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+
 @api_view(['PUT'])
 def post_upvote(request, pk):
     try:

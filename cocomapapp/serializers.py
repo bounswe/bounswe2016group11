@@ -7,10 +7,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'first_name', 'last_name', 'email', 'password', 'created_at', 'updated_at')
 
 class TagSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'user', 'created_at', 'updated_at')
+        fields = ('id', 'name', 'created_at', 'updated_at')
 
 class PostSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
