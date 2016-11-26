@@ -23,6 +23,7 @@ from .views import (
 	post_downvote,
 	wikidata_search,
 	topic_get_hot,
+    wikidata_query,
 )
 
 urlpatterns = [
@@ -53,4 +54,5 @@ urlpatterns = [
 
 	url(r'wikidataSearch/(?P<str>.+)/', wikidata_search),
 	url(r'getHotTopics/', topic_get_hot),
+    url(r'wikidataQuery/(?P<str>.+)/', wikidata_query),
 ]
