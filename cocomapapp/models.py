@@ -20,6 +20,7 @@ class User(models.Model):
 
 @python_2_unicode_compatible
 class Tag(models.Model):
+  wikidataID = models.TextField(primary_key = True)
   name = models.TextField()
   #user = models.ForeignKey(User, on_delete=models.CASCADE)
   #topic = models.ForeignKey(Topic, related_name='tags', null=True, blank=True)
@@ -31,10 +32,10 @@ class Tag(models.Model):
     return super(Tag, self).save(*args, **kwargs)
 
   def __str__(self):
-    return (str(self.id) + ' ' + self.name)
+    return (str(self.wikidataID) + ' ' + self.name)
 
   def __unicode__(self):
-    return (str(self.id) + ' ' + self.name)
+    return (str(self.wikidataID) + ' ' + self.name)
 
 @python_2_unicode_compatible
 class Topic(models.Model):

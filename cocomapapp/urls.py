@@ -44,7 +44,7 @@ urlpatterns = [
 	url(r'relationList',  RelationList.as_view()),
 
 	url(r'tagCreate',  TagCreate.as_view()),
-	url(r'tagRetrieve/(?P<pk>[0-9]+)/',  TagRetrieve.as_view()),
+	url(r'tagRetrieve/(?P<pk>Q[0-9]+)/',  TagRetrieve.as_view()),
 
 	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),

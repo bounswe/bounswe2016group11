@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('id', 'name', 'created_at', 'updated_at')
+        fields = ('wikidataID', 'name', 'created_at', 'updated_at')
 
 class PostSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
