@@ -25,6 +25,7 @@ from .views import (
 	topic_get_hot,
     wikidata_query,
 	search_by_tags,
+	search,
 )
 
 urlpatterns = [
@@ -57,4 +58,6 @@ urlpatterns = [
 	url(r'getHotTopics/', topic_get_hot),
     url(r'wikidataQuery/(?P<str>.+)/', wikidata_query),
 	url(r'searchByTags/', search_by_tags),
+
+	url(r'search', search),
 ]
