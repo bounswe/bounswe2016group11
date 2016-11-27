@@ -13,6 +13,7 @@ from django.core import serializers
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 from .forms import RegisterForm, LoginForm
 from .models import User
 from django.template import RequestContext
@@ -81,7 +82,7 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
 def post_upvote(request, pk):
     try:
         post = Post.objects.get(pk=pk)
-    except Snippet.DoesNotExist:
+    except Post.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'PUT':
@@ -94,7 +95,7 @@ def post_upvote(request, pk):
 def post_downvote(request, pk):
     try:
         post = Post.objects.get(pk=pk)
-    except Snippet.DoesNotExist:
+    except Post.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'PUT':
@@ -130,6 +131,35 @@ def wikidata_query(request, str):
         return Response(r.json()['results']['bindings'])
      #print r
 
+@api_view(['POST'])
+def search_by_tags(request):
+    resultTopics = []
+    resultPosts = []
+    try:
+        if request.method == 'POST':
+            data = JSONParser().parse(request)
+            for tag in data["tags"]:
+                tagObject = Tag.objects.get(wikidataID=tag)
+                topics = tagObject.topics.all()
+                posts = tagObject.posts.all()
+                for topic in topics:
+                    if topic not in resultTopics:
+                        resultTopics.append(topic)
+                for post in posts:
+                    if post not in resultPosts:
+                        resultPosts.append(post)
+
+            TopicSerializer.Meta.depth = 0
+            PostSerializer.Meta.depth = 0
+
+            topicSerializer = TopicSerializer(resultTopics, many=True)
+            #topicSerializer.Meta.depth = 1
+            postSerializer = PostSerializer(resultPosts, many=True)
+            #postSerializer.Meta.depth = 1
+
+            return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
+    except Tag.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 def index(request):
