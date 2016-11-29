@@ -2,9 +2,16 @@ $(document).ready(function(){
   var theTags=[];
   $("#submit").click( function() {
       jQuery.support.cors = true;
-      var resultTagIds = $('#tags').val().split(",");
+
+      var resultTagIds = $('#tags').val();
+      if(resultTagIds != ""){
+        resultTagIds = resultTagIds.split(",");
+      }
+      else{
+        resultTagIds = [];
+      }
       var resultTags =[];
-      console.log(theTags);
+      console.log(resultTagIds);
       $.each(resultTagIds,function(i,value){
         var result = $.grep(theTags, function(e){ return e.id == value; });
         resultTags.push({
@@ -12,7 +19,7 @@ $(document).ready(function(){
           label : result[0].name
         });
       });
-      console.log(resultTags);
+      //console.log(resultTags);
       return;
       var topic = {
           name: $('#name').val(),

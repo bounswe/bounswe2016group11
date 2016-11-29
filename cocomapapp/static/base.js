@@ -1,5 +1,6 @@
 $(function(){
-
+  var searchId = window.location.pathname;
+  console.log(searchId);
   var searchId="";
   $("#search_field1").on("keyup",function(event){
 
@@ -32,37 +33,6 @@ $(function(){
     }
 
   });
-  /*
-  $('#search_field').selectize({
-      maxItems: 1 ,
-      maxOptions: 6,
-      valueField: 'id',
-      labelField: 'name',
-      searchField: ['name'],
-      options: [],
-      create: false,
-      load: function(query, callback) {
-          if(query.length <2 ){
-            return [];
-          }
-          $.getJSON("/cocomapapp/wikidataSearch/" +query+ "/"
-          ).fail( function() {
-            console.log("error in wikidata");
-          }).done( function(data) {
-              var wikiItems = [];
-              $.each(data,function(i,value){
-                  wikiItems.push({
-                    id : value.id,
-                    name : (value.label +" "+ value.description)
-                  });
-                  console.log("my values are: "+i+" "+value.label+" "+value.description);
-              });
-              callback(wikiItems);
-          });
-
-        }
-  });
-  */
 
   function formatWiki(wikiItem){
 
@@ -111,28 +81,10 @@ $(function(){
 
   $("#search_field").on("select2:select",function(e){
     var searchId = e.params.data.id;
-    $.getJSON("/cocomapapp/wikidataQuery/" +searchId + "/"
-    ).fail( function() {
-      console.log("error in wikidata");
-    }).done( function(data) {
-        var wikiItems=[];
-        if(data.length>0){
-          wikiItems = [];
-        }
+    var search_url = "/cocomapapp/search/"+searchId+"/";
+    window.location.href = search_url;
+    return;
 
-        $.each(data,function(i,value){
-          var toRegex = value.valUrl.value;
-          var theRegex = /.*\/([a-z]+?\d+?)$/im ;
-          var fetchedWikiId = theRegex.exec(toRegex)[1];
-          wikiItems.push({
-            wikiId : fetchedWikiId
-          });
-          console.log("my values are: "+i+" "+value.label+" "+value.description);
-          console.log("My Id: "+fetchedWikiId);
-        });
-
-      }
-    );
   });
 
 });
