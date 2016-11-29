@@ -1,8 +1,8 @@
 $(document).ready(function(){
   var theTags=[];
   $("#submit").click( function() {
+      // console.log("asfdlkjsafdjkladfjs");
       jQuery.support.cors = true;
-
       var resultTagIds = $('#tags').val();
       if(resultTagIds != ""){
         resultTagIds = resultTagIds.split(",");
@@ -19,15 +19,14 @@ $(document).ready(function(){
           label : result[0].name
         });
       });
-      //console.log(resultTags);
-      return;
+
       var topic = {
           name: $('#name').val(),
-          relates_to: $('#relates_to').val(),
+          relates_to: [{topic_id : $('#relates_to').val(), rel_name : $('#relationships-name').val()}],
           tags: resultTags,
-          postAdd: $("#postCheckBox").prop("checked"),
-          post: {text: $("postText").val(), tags:$('#tags2').val()} ,
-          relationships_name: $('#relationships-name').val()
+          postAdd: $("#postCheckbox").prop("checked"),
+          post: {the_text: $("#postText").val(), tags:$('#tags2').val()}
+          // relationships_name: $('#relationships-name').val()
       };
       $.ajax({
           url: 'add',

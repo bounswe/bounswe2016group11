@@ -258,6 +258,7 @@ def show_topic(request, id):
 
 @csrf_exempt
 def add_topic(request):
+    print("add_topic'e girdi")
     template = loader.get_template('topicAdd.html')
     try:
         topic = serializers.serialize("json", Topic.objects.filter())
@@ -266,35 +267,69 @@ def add_topic(request):
     context = {
         'topics': topic
     }
-    #User.objects.create(first_name="Ali", last_name="Veli", email="a@b", password="1234");
+
     if request.method == "POST":
         data = JSONParser().parse(request)
+
+        print(data)
+        # Add topic to database.
         try:
             Topic.objects.get(name=data["name"])
+            print("topic exists")
             return HttpResponse("This topic exists")
         except ObjectDoesNotExist:
+            print("except'e girdi")
             user = User.objects.first()
             name = data["name"]
             topicObject = Topic.objects.create(name=name, user=user)
-            tags = data["tags"].split(",");
-            for tag in tags:
+            print("topic object: ", topicObject)
+            for tag in data["tags"]:
+                tag_name = tag['label']
+                if tag_name == '':
+                    continue
+                tag_wiki_id = tag['id']
                 try:
-                    tagObject = Tag.objects.get(name=tag)
+                    tagObject = Tag.objects.get(wikidataID=tag_wiki_id)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag, user=user, topic_id=topicObject.id)
+                    tagObject = Tag.objects.create(name=tag_name, wikidataID=tag_wiki_id)
+                    tagObject.save()
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
                 topicObject.tags.add(tagObject)
                 context = {
                 }
-            try:
-                relatedTopicObject = Topic.objects.get(name=data["relates_to"])
-                label = data["relationships_name"]
-                Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
-            except ObjectDoesNotExist:
-                return HttpResponse("Related topic does not exist");
-        except MultipleObjectsReturned:
-            return HttpResponse("This topic exists")
+            # end of add topic to database.
+
+            # Add relationship to database.
+            relates_to = data["relates_to"]
+            for relation in data["relates_to"]:
+                if relation['topic_id'] == '':
+                    continue
+                try:
+                    relatedTopicObject = Topic.objects.get(pk=relation['topic_id'])
+                    label = relation['rel_name']
+                    print("topic object : ", topicObject)
+                    print("related topic object : ", relatedTopicObject)
+                    print("relation name : ", relation)
+                    relationObject = Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
+                except ObjectDoesNotExist:
+                    print("error")
+                    return HttpResponse("Related topic does not exist");
+                except MultipleObjectsReturned:
+                    print("error")
+                    return HttpResponse("This topic exists")
+            # End of add relationship to database.
+
+
+            # Adding a post to new created topic
+
+            if data["postAdd"] == True:
+                postObject = data["post"]
+                content = postObject["the_text"]
+                user = User.objects.first() # user
+                Post.objects.create(content=content, user=user, topic=topicObject)
+            # End of adding a post to new created topic
+
         return HttpResponse(template.render(context, request))
     return HttpResponse(template.render(context, request))
 
