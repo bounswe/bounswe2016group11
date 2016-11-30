@@ -70,10 +70,8 @@ $(document).ready(function(){
   });
 
 
-
   var relations=[];
   topicsList= JSON.parse(topicsList);
-
 
   //relations = relations.join(",");
   $('#relates_to').selectize({
@@ -96,7 +94,6 @@ $(document).ready(function(){
       }
   });
 
-  var relations2=[];
   $('#relates_to2').selectize({
       maxItems: 1,
       maxOptions: 3,
@@ -107,17 +104,10 @@ $(document).ready(function(){
       create: false,
       load: function(query, callback) {
         if (!query.length) return callback();
-        $.each(topicsList,function(i,value){
-          relations2.push({
-            id: value.pk,
-            name: value.fields.name
-          });
-        });
-        callback(relations2);
+        callback(relations);
       }
   });
 
-  var relations3=[];
   $('#relates_to3').selectize({
       maxItems: 1,
       maxOptions: 3,
@@ -128,13 +118,7 @@ $(document).ready(function(){
       create: false,
       load: function(query, callback) {
         if (!query.length) return callback();
-        $.each(topicsList,function(i,value){
-          relations3.push({
-            id: value.pk,
-            name: value.fields.name
-          });
-        });
-        callback(relations3);
+        callback(relations);
       }
   });
 
