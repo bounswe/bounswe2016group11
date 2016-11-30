@@ -25,6 +25,13 @@ $(document).ready(function(){
           post: {the_text: $("#postText").val(), tags:$('#tags2').val()}
           // relationships_name: $('#relationships-name').val()
       };
+      if($('#relates_to2').val()){
+          topic.relates_to.push({topic_id : $('#relates_to2').val(), rel_name : $('#relationships-name2').val()});
+      }
+      if($('#relates_to3').val()){
+          topic.relates_to.push({topic_id : $('#relates_to3').val(), rel_name : $('#relationships-name3').val()});
+      }
+
       $.ajax({
           url: 'add',
           type: 'POST',
