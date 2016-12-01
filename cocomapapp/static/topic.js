@@ -62,7 +62,8 @@ $(document).ready(function(){
         var post_tags = obj.tags;
         var user = obj.user;
         //for accuracy first positive then negative
-        var accuracy = [obj.positive_reaction_count,obj.negative_reaction_count];
+
+        var accuracy = (obj.positive_reaction_count+obj.negative_reaction_count)>0?(obj.positive_reaction_count/(obj.positive_reaction_count+obj.negative_reaction_count))*100:0;
         var tagsAsStr="";
         $.each(post_tags, function(i,val){
             tagsAsStr +="<a><b>#</b>"+val.name +"</a>";
@@ -79,10 +80,10 @@ $(document).ready(function(){
               +tagsAsStr
               <!-- Thumbs up, down -->
               +'<div class="pull-right">'
-                +'<a href="#" id="'+ obj.id +'" onclick="upVote('+ obj.id+');"><span class="glyphicon glyphicon-thumbs-up" style="color: blue;"></span></a><span id="t'+obj.id+'"style="color:green;">'+0+' </span>'
-                +'<a href="#" id="-'+ obj.id +'" onclick="downVote('+ (-1*obj.id)+');"><span class="glyphicon glyphicon-thumbs-down" style="color: red"></span></a><span id="d'+obj.id+'" style="color:red;">'+0+' </span>'
+                +'<a href="#" id="'+ obj.id +'" onclick="upVote('+ obj.id+');"><span class="glyphicon glyphicon-thumbs-up" style="color: blue;"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
+                +'<a href="#" id="-'+ obj.id +'" onclick="downVote('+ obj.id+');"><span class="glyphicon glyphicon-thumbs-down" style="color: red"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
                 +'  Accuracy: '
-                +'<span id="a'+obj.id+'">'+0.0+'% </span>'
+                +'<span id="a'+obj.id+'">'+accuracy.toFixed(2)+'% </span>'
               +'</div>'
             +'</div>'
           +'</div>'
