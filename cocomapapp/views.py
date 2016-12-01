@@ -135,31 +135,31 @@ def wikidata_query(request, str):
 def search_by_tags(request):
     resultTopics = []
     resultPosts = []
-    try:
-        if request.method == 'POST':
-            data = JSONParser().parse(request)
-            for tag in data["tags"]:
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        for tag in data["tags"]:
+            try:
                 tagObject = Tag.objects.get(wikidataID=tag)
-                topics = tagObject.topics.all()
-                posts = tagObject.posts.all()
-                for topic in topics:
-                    if topic not in resultTopics:
-                        resultTopics.append(topic)
-                for post in posts:
-                    if post not in resultPosts:
-                        resultPosts.append(post)
+            except Tag.DoesNotExist:
+                continue;
+            topics = tagObject.topics.all()
+            posts = tagObject.posts.all()
+            for topic in topics:
+                if topic not in resultTopics:
+                    resultTopics.append(topic)
+            for post in posts:
+                if post not in resultPosts:
+                    resultPosts.append(post)
 
-            TopicSerializer.Meta.depth = 0
-            PostSerializer.Meta.depth = 0
+        TopicSerializer.Meta.depth = 0
+        PostSerializer.Meta.depth = 0
 
-            topicSerializer = TopicSerializer(resultTopics, many=True)
-            #topicSerializer.Meta.depth = 1
-            postSerializer = PostSerializer(resultPosts, many=True)
-            #postSerializer.Meta.depth = 1
+        topicSerializer = TopicSerializer(resultTopics, many=True)
+        #topicSerializer.Meta.depth = 1
+        postSerializer = PostSerializer(resultPosts, many=True)
+        #postSerializer.Meta.depth = 1
 
-            return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
-    except Tag.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
 
 
 def index(request):
