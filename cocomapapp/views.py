@@ -231,14 +231,14 @@ def show_topic(request, id):
         postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
         tags = request.POST.get("tags", "").split(",");
         for tag in tags:
-           try:
-               tagObject = Tag.objects.get(name=tag)
-           except ObjectDoesNotExist:
-                tagObject = Tag.objects.create(name=tag, user=user, post_id=postObject.id)
-
-           except MultipleObjectsReturned:
-               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
-           postObject.tags.add(tagObject)
+           if len(tag)>0:
+               try:
+                   tagObject = Tag.objects.get(wikidataID=tag)
+               except ObjectDoesNotExist:
+                   tagObject = Tag.objects.create(wikidataID=tag, name='Unknown')
+               except MultipleObjectsReturned:
+                   return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+               postObject.tags.add(tagObject)
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     try:
         topic = Topic.objects.get(id=id)
