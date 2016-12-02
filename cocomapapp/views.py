@@ -17,6 +17,11 @@ from rest_framework import status
 from .forms import RegisterForm, LoginForm
 from .models import User
 from django.template import RequestContext
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+
+
+
 
 
 import requests
@@ -78,6 +83,7 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+
 @api_view(['PUT'])
 def post_upvote(request, pk):
     try:
@@ -91,6 +97,8 @@ def post_upvote(request, pk):
         serializer = PostSerializer(post)
         return Response(serializer.data)
 
+
+@ensure_csrf_cookie
 @api_view(['PUT'])
 def post_downvote(request, pk):
     try:
@@ -124,7 +132,7 @@ def topic_get_hot(request):
 def wikidata_query(request, str):
     url_head = 'https://query.wikidata.org/sparql?query=PREFIX%20entity:%20<http://www.wikidata.org/entity/>%20SELECT%20?propUrl%20?propLabel%20?valUrl%20?valLabel%20?picture%20WHERE%20{%20hint:Query%20hint:optimizer%20%27None%27%20.%20{%20BIND(entity:';
     url_second = '%20AS%20?valUrl)%20.%20BIND("N/A"%20AS%20?propUrl%20)%20.%20BIND("identity"@en%20AS%20?propLabel%20)%20.%20}%20UNION%20{%20entity:';
-    url_tail = '%20?propUrl%20?valUrl%20.%20?property%20?ref%20?propUrl%20.%20?property%20a%20wikibase:Property%20.%20?property%20rdfs:label%20?propLabel%20}%20?valUrl%20rdfs:label%20?valLabel%20FILTER%20(LANG(?valLabel)%20=%20%27en%27)%20.%20OPTIONAL{%20?valUrl%20wdt:P18%20?picture%20.}%20FILTER%20(lang(?propLabel)%20=%20%27en%27%20)%20}%20LIMIT%20200&format=json'
+    url_tail = '%20?propUrl%20?valUrl%20.%20?property%20?ref%20?propUrl%20.%20?property%20a%20wikibase:Property%20.%20?property%20rdfs:label%20?propLabel%20}%20?valUrl%20rdfs:label%20?valLabel%20FILTER%20(LANG(?valLabel)%20=%20%27en%27)%20.%20OPTIONAL{%20?valUrl%20wdt:P18%20?picture%20.}%20FILTER%20(lang(?propLabel)%20=%20%27en%27%20)%20}&format=json'
 
     if request.method == 'GET':
         r = requests.get(url_head+str+url_second+str+url_tail);
@@ -151,8 +159,8 @@ def search_by_tags(request):
                 if post not in resultPosts:
                     resultPosts.append(post)
 
-        TopicSerializer.Meta.depth = 0
-        PostSerializer.Meta.depth = 0
+        TopicSerializer.Meta.depth = 1
+        PostSerializer.Meta.depth = 1
 
         topicSerializer = TopicSerializer(resultTopics, many=True)
         #topicSerializer.Meta.depth = 1

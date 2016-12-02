@@ -91,4 +91,33 @@ $(document).ready(function(){
         );
 
       });
+      var theTags=[];
+      $('#tags').selectize({
+          maxOptions: 6,
+          valueField: 'id',
+          labelField: 'name',
+          searchField: ['name'],
+          plugins: ['remove_button'],
+          options: [],
+          create: false,
+          load: function(query, callback) {
+              if(query.length <2 ){
+                return [];
+              }
+              $.getJSON("/cocomapapp/wikidataSearch/" +query+ "/"
+              ).fail( function() {
+                console.log("error in wikidata");
+              }).done( function(data) {
+                  $.each(data,function(i,value){
+                      theTags.push({
+                        id : value.id,
+                        name : (value.label +" "+ value.description)
+                      });
+                      console.log("my values are: "+i+" "+value.label+" "+value.description);
+                  });
+                  callback(theTags);
+              });
+
+            }
+      });
 });
