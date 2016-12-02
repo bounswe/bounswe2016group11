@@ -68,7 +68,9 @@ $(document).ready(function(){
         $.each(post_tags, function(i,val){
             tagsAsStr +="<a><b>#</b>"+val.name +"</a>";
         });
-
+        if(tagsAsStr == ""){
+          tagsAsStr = "<a> </a>";
+        }
         $(".panelContainer").append(
 
           '<div class="panel panel-default panel-margined">'
@@ -80,10 +82,13 @@ $(document).ready(function(){
               +tagsAsStr
               <!-- Thumbs up, down -->
               +'<div class="pull-right">'
+              //+'<span><div align="right">'
                 +'<a href="#" id="'+ obj.id +'" onclick="upVote('+ obj.id+');"><span class="glyphicon glyphicon-thumbs-up" style="color: blue;"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
                 +'<a href="#" id="-'+ obj.id +'" onclick="downVote('+ obj.id+');"><span class="glyphicon glyphicon-thumbs-down" style="color: red"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
                 +'  Accuracy: '
                 +'<span id="a'+obj.id+'">'+accuracy.toFixed(2)+'% </span>'
+              //+'</div></span>'
+                +'</div><div class="clearfix"></div>'
               +'</div>'
             +'</div>'
           +'</div>'
