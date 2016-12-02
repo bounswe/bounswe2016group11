@@ -28,6 +28,13 @@ $(document).ready(function(){
           post: {the_text: $("#postText").val(), tags:$('#tags2').val()}
           // relationships_name: $('#relationships-name').val()
       };
+      if($('#relates_to2').val()){
+          topic.relates_to.push({topic_id : $('#relates_to2').val(), rel_name : $('#relationships-name2').val()});
+      }
+      if($('#relates_to3').val()){
+          topic.relates_to.push({topic_id : $('#relates_to3').val(), rel_name : $('#relationships-name3').val()});
+      }
+
       $.ajax({
           url: 'add',
           type: 'POST',
@@ -66,10 +73,8 @@ $(document).ready(function(){
   });
 
 
-
   var relations=[];
   topicsList= JSON.parse(topicsList);
-
 
   //relations = relations.join(",");
   $('#relates_to').selectize({
@@ -82,7 +87,6 @@ $(document).ready(function(){
       create: false,
       load: function(query, callback) {
         if (!query.length) return callback();
-
         $.each(topicsList,function(i,value){
           relations.push({
             id: value.pk,
@@ -91,9 +95,35 @@ $(document).ready(function(){
         });
         callback(relations);
       }
-
   });
 
+  $('#relates_to2').selectize({
+      maxItems: 1,
+      maxOptions: 3,
+      valueField: 'id',
+      labelField: 'name',
+      searchField: ['name'],
+      options: [],
+      create: false,
+      load: function(query, callback) {
+        if (!query.length) return callback();
+        callback(relations);
+      }
+  });
+
+  $('#relates_to3').selectize({
+      maxItems: 1,
+      maxOptions: 3,
+      valueField: 'id',
+      labelField: 'name',
+      searchField: ['name'],
+      options: [],
+      create: false,
+      load: function(query, callback) {
+        if (!query.length) return callback();
+        callback(relations);
+      }
+  });
 
   $('#tags').selectize({
       maxOptions: 6,
