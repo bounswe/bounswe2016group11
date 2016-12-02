@@ -36,7 +36,7 @@ $(function(){
               var green = Math.max(Math.round((1-seed)*50),0);
               var blue = Math.round((1-seed)*255);
               console.log("red: "+ red+"    , blue:"+blue);
-              dict1.push({id: json_array[i]['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,100,0)'},
+              dict1.push({id: json_array[i]['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
               label: json_array[i]['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
             }
             var nodes = new vis.DataSet(dict1);
