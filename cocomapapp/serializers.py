@@ -37,4 +37,4 @@ class HotTopicsSerializer(serializers.ModelSerializer):
 class RelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relation
-        fields = ('id', 'topic_from','topic_to','label')
+        fields = ('id', 'topic_from','topic_to','label', 'positive_reaction_count', 'negative_reaction_count',)
