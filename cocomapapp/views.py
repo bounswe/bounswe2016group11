@@ -119,6 +119,34 @@ def post_downvote(request, pk):
         serializer = PostSerializer(post)
         return Response(serializer.data)
 
+@api_view(['PUT'])
+def relation_upvote(request, pk):
+    try:
+        relation = Relation.objects.get(pk=pk)
+    except Relation.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        relation.positive_reaction_count += 1
+        relation.save()
+        serializer = RelationSerializer(relation)
+        return Response(serializer.data)
+
+
+@ensure_csrf_cookie
+@api_view(['PUT'])
+def relation_downvote(request, pk):
+    try:
+        relation = Relation.objects.get(pk=pk)
+    except Relation.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PUT':
+        relation.negative_reaction_count += 1
+        relation.save()
+        serializer = RelationSerializer(relation)
+        return Response(serializer.data)
+
 @api_view(['GET'])
 def wikidata_search(request, str):
     url_head = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search='

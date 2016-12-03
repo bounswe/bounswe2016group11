@@ -21,6 +21,8 @@ from .views import (
 	TagRetrieve,
 	post_upvote,
 	post_downvote,
+	relation_upvote,
+	relation_downvote,
 	wikidata_search,
 	topic_get_hot,
     wikidata_query,
@@ -52,6 +54,9 @@ urlpatterns = [
 
 	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+
+	url(r'relationUpvote/(?P<pk>[0-9]+)/',  relation_upvote),
+	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),
 
 	url(r'wikidataSearch/(?P<str>.+)/', wikidata_search),
 	url(r'getHotTopics/', topic_get_hot),

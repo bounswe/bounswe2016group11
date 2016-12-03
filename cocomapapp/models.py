@@ -62,6 +62,8 @@ class Relation(models.Model):
     topic_from = models.ForeignKey(Topic, related_name='relates_to', on_delete=models.CASCADE)
     topic_to = models.ForeignKey(Topic, on_delete=models.CASCADE)
     label = models.TextField()
+    positive_reaction_count = models.PositiveIntegerField(default=0)
+    negative_reaction_count = models.PositiveIntegerField(default=0)
 
     def save(self, *args, **kwargs):
       return super(Relation, self).save(*args, **kwargs)
