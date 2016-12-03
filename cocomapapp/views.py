@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
@@ -69,8 +70,15 @@ class RelationRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     serializer_class = RelationSerializer
 
 class RelationList(ReadNestedWriteFlatMixin,generics.ListAPIView):
-    queryset = Relation.objects.all()
     serializer_class = RelationSerializer
+    def get_queryset(self, *args, **kwargs):
+        queryset_list = Relation.objects.all()
+        query = self.request.GET.get("topic_id")
+        if query:
+            queryset_list = queryset_list.filter(Q(topic_to__id=query) | Q(topic_from__id=query))
+
+        return queryset_list
+
 
 class RelationCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = RelationSerializer
