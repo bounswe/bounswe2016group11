@@ -1,9 +1,10 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import User, Tag, Topic, Post, Relation
+from cocomapapp.models import Tag, Topic, Post, Relation
+from django.contrib.auth.models import User
 from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer
 from rest_framework import generics
 
@@ -15,10 +16,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .forms import RegisterForm, LoginForm
-from .models import User
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
-
 
 
 
@@ -182,59 +181,62 @@ def index(request):
     }
     return HttpResponse(template.render(context, request))
 
-def login(request):
+# def login(request):
 
-    if request.method =='POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            user = User()
-            user.email = form.cleaned_data['email']
-            user.password = form.cleaned_data['password']
-            checkUser = User.objects.get(email=user.email)
-            if checkUser == User.DoesNotExist:
-                return HttpResponseRedirect('/cocomapapp/login')
-            if checkUser.password == user.password:
-                request.session['username'] = checkUser.first_name
-                return HttpResponseRedirect('/cocomapapp/')
-            return HttpResponseRedirect('/cocomapapp/login')
-    else:
-        template = loader.get_template('login.html')
-        registerForm = RegisterForm()
-        loginForm = LoginForm()
-        context = {
-            'loginForm': loginForm,
-            'registerForm': registerForm,
-        }
-    return HttpResponse(template.render(context, request))
+#     if request.method =='POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             user = User()
+#             user.email = form.cleaned_data['email']
+#             user.password = form.cleaned_data['password']
+#             checkUser = User.objects.get(email=user.email)
+#             if checkUser == User.DoesNotExist:
+#                 return HttpResponseRedirect('/cocomapapp/login')
+#             if checkUser.password == user.password:
+#                 request.session['username'] = checkUser.first_name
+#                 return HttpResponseRedirect('/cocomapapp/')
+#             return HttpResponseRedirect('/cocomapapp/login')
+#     else:
+#         template = loader.get_template('login.html')
+#         registerForm = RegisterForm()
+#         loginForm = LoginForm()
+#         context = {
+#             'loginForm': loginForm,
+#             'registerForm': registerForm,
+#         }
+#     return HttpResponse(template.render(context, request))
 
-def signup(request):
+# def signup(request):
 
-    if request.method =='POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            newuser = User()
-            newuser.email = form.cleaned_data['email']
-            newuser.first_name = form.cleaned_data['first_name']
-            newuser.last_name = form.cleaned_data['last_name']
-            newuser.password = form.cleaned_data['password']
-            newuser.save()
-            return HttpResponseRedirect('/cocomapapp/login')
-    else:
-        template = loader.get_template('signup.html')
-        registerForm = RegisterForm()
-        loginForm = LoginForm()
-        context = {
-            'loginForm': loginForm,
-            'registerForm': registerForm,
-        }
-    return HttpResponse(template.render(context, request))
+#     if request.method =='POST':
+#         form = RegisterForm(request.POST)
+#         if form.is_valid():
+#             newuser = User()
+#             newuser.email = form.cleaned_data['email']
+#             newuser.first_name = form.cleaned_data['first_name']
+#             newuser.last_name = form.cleaned_data['last_name']
+#             newuser.password = form.cleaned_data['password']
+#             newuser.save()
+#             return HttpResponseRedirect('/cocomapapp/login')
+#     else:
+#         template = loader.get_template('signup.html')
+#         registerForm = RegisterForm()
+#         loginForm = LoginForm()
+#         context = {
+#             'loginForm': loginForm,
+#             'registerForm': registerForm,
+#         }
+#     return HttpResponse(template.render(context, request))
 
 
 @csrf_exempt
 def show_topic(request, id):
     template = loader.get_template('topic.html')
     if request.method == "POST":
-        user = User.objects.first()
+        try:
+            user = User.objects.get(username=request.user)
+        except ObjectDoesNotExist:
+            return HttpResponse("You should login to post!")
         requested_topic = Topic.objects.get(id=id)
         postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
         tags = request.POST.get("tags", "").split(",");
@@ -286,8 +288,10 @@ def add_topic(request):
             print("topic exists")
             return HttpResponse("This topic exists")
         except ObjectDoesNotExist:
-            print("except'e girdi")
-            user = User.objects.first()
+            try:
+                user = User.objects.get(username=request.user)
+            except ObjectDoesNotExist:
+                return JsonResponse({'status':'false','message':'You should login to create a topic!'}, status=401)
             name = data["name"]
             topicObject = Topic.objects.create(name=name, user=user)
             print("topic object: ", topicObject)
