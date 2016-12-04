@@ -35,7 +35,7 @@ public class SignUpActivity extends BaseActivity {
 
         emailEditText = (EditText) findViewById(R.id.etEmail);
 
-        getBaseApplication().getNetComponent().inject(this);
+        /*getBaseApplication().getNetComponent().inject(this);
 
         Call<IpResponse> ip = retrofit.create(RestApi.class).getIp();
 
@@ -50,7 +50,7 @@ public class SignUpActivity extends BaseActivity {
                 emailEditText.setText(t.getMessage().toString());
             }
         });
-
+*/
 
     }
 
