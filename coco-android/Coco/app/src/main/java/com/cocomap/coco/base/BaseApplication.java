@@ -21,7 +21,7 @@ public class BaseApplication extends Application {
 
         mNetComponent = DaggerNetComponent.builder()
                 .appModule(new AppModule(this))
-                .netModule(new NetModule("https://api.ipify.org/"))
+                .netModule(new NetModule("http://ec2-54-186-167-76.us-west-2.compute.amazonaws.com:8000/cocomapapp/"))
                 .build();
     }
 
