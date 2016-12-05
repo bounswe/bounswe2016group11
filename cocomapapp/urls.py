@@ -28,6 +28,8 @@ from .views import (
     wikidata_query,
 	search_by_tags,
 	search,
+	RecommendedTopics,
+	RecommendedPosts,
 )
 
 urlpatterns = [
@@ -40,10 +42,12 @@ urlpatterns = [
 	url(r'topicList',  TopicList.as_view()),
 	url(r'topicCreate',  TopicCreate.as_view()),
 	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view()),
+	url(r'recommendedTopics',  RecommendedTopics.as_view()),
 
 	url(r'postCreate', PostCreate.as_view()),
 	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
 	url(r'postUpdate/(?P<pk>[0-9]+)/',  PostUpdate.as_view()),
+	url(r'recommendedPosts',  RecommendedPosts.as_view()),
 
 	url(r'relationCreate',  RelationCreate.as_view()),
 	url(r'relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view()),
