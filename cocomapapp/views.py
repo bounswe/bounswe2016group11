@@ -79,6 +79,44 @@ class RelationList(ReadNestedWriteFlatMixin,generics.ListAPIView):
 
         return queryset_list
 
+class RecommendedTopics(ReadNestedWriteFlatMixin,generics.ListAPIView):
+    serializer_class = TopicSerializer
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get("user_id")
+        if query:
+            last_5_posts = Post.objects.filter(Q(user__id=query)).order_by('-created_at')[:5]
+            last_5_topic_ids = []
+            for post in last_5_posts:
+                last_5_topic_ids.append(post.topic.id)
+
+            queryset_list = Topic.objects.filter(id__in=last_5_topic_ids)
+        else:
+            queryset_list = Topic.objects.order_by('-updated_at')[:5]
+
+        return queryset_list
+
+class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
+    serializer_class = PostSerializer
+    def get_queryset(self, *args, **kwargs):
+        query = self.request.GET.get("user_id")
+        if query:
+            last_5_posts = Post.objects.filter(Q(user__id=query)).order_by('-created_at')[:5]
+            last_5_topic_ids = []
+            for post in last_5_posts:
+                last_5_topic_ids.append(post.topic.id)
+
+            recommended_topics = Topic.objects.filter(id__in=last_5_topic_ids)
+            recommended_post_ids = []
+            for topic in recommended_topics:
+                recommended_post_ids.append((topic.posts.order_by('positive_reaction_count')[:1]).id)
+
+            queryset_list = Post.objects.filter(id__in=recommended_post_ids)
+
+        else:
+            queryset_list = Post.objects.order_by('-positive_reaction_count')[:5]
+
+        return queryset_list
+
 
 class RelationCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = RelationSerializer
