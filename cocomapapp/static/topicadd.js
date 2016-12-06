@@ -18,6 +18,32 @@ $(document).ready(function(){
           id : value,
           label : result[0].name
         });
+        $.getJSON("/cocomapapp/wikidataQuery/" +value + "/"
+        ).fail( function() {
+          console.log("error in wikidata");
+        }).done( function(data) {
+            var hidden_tags=[];
+
+            $.each(data,function(i,value){
+              var temp_url = value.propUrl.value;
+              var cond = temp_url.endsWith("P31");
+              if(cond){
+                console.log("Burdaaaa.");
+              }
+              return;
+              var toRegex = value.valUrl.value;
+              var theRegex = /.*\/([a-z]+?\d+?)$/im ;
+              var fetchedWikiId = theRegex.exec(toRegex)[1];
+              wikiItems.push(fetchedWikiId);
+            });
+            console.log(wikiItems);
+          }
+        );
+
+
+
+
+
       });
 
       var topic = {
