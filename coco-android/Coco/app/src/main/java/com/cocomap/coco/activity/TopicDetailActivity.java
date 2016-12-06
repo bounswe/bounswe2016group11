@@ -2,11 +2,14 @@ package com.cocomap.coco.activity;
 
 
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.cocomap.coco.R;
+import com.cocomap.coco.adapter.MyReceyclerAdapter;
 import com.cocomap.coco.base.BaseActivity;
 import com.cocomap.coco.pojo.CreatePostRequest;
 import com.cocomap.coco.pojo.TagModel;
@@ -32,13 +35,31 @@ public class TopicDetailActivity extends BaseActivity {
 
     EditText postEditText;
 
+    RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_detail);
 
+        MyReceyclerAdapter myAdapter = new MyReceyclerAdapter(this);
+
         postEditText = (EditText) findViewById(R.id.postEditText);
+        recyclerView = (RecyclerView) findViewById(R.id.recycler);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(myAdapter);
         getBaseApplication().getNetComponent().inject(this);
+
+        ArrayList<String> posts = new ArrayList<>();
+
+        posts.add("Ahmet");
+        posts.add("Sinan");
+        posts.add("Emrah");
+
+        myAdapter.setList(posts);
+
+
 
 
     }
