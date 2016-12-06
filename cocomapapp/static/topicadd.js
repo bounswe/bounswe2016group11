@@ -1,4 +1,5 @@
 function get_tags(wikiId,theTags){
+  var waitNum;
   var resultTag;
   var hidden_tags=[];
   var props=["P31","P610","P37","P36", "P30","P190","P17","P190",
@@ -12,6 +13,7 @@ function get_tags(wikiId,theTags){
   }).done( function(data) {
     hidden_tags=get_hidden_tags(props,data);
     var occupation = get_hidden_tags(["P106"],data);
+    waitNum = occupation.length;
     $.each(occupation,function(i,value){
       $.ajax({
         url : "/cocomapapp/wikidataQuery/" +value + "/" ,
@@ -24,13 +26,14 @@ function get_tags(wikiId,theTags){
       });
     });
     var result = $.grep(theTags, function(e){ return e.id == wikiId; });
-    resultTags = {
-      id : wikiId,
-      label : result[0].name ,
-      hidden_tags: hidden_tags
+
+    resultTag = {
+      "id" : wikiId,
+      "label" : result[0].name ,
+      "hidden_tags": hidden_tags
     };
-    return resultTag;
   });
+  return resultTag;
 }
 
 $(document).ready(function(){
@@ -52,7 +55,6 @@ $(document).ready(function(){
         resultTags.push(get_tags(value,theTags));
       });
         console.log(resultTags);
-        return;
         var topic = {
             name: $('#name').val(),
             relates_to: [{topic_id : $('#relates_to').val(), rel_name : $('#relationships-name').val()}],
