@@ -4,6 +4,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.GlobalViewActivity">
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@color/colorPrimaryDark"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create Topic"
+            android:textColor="#fff"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/activity_margin_16"
+            android:onClick="onClickCreateTopic"/>
+    </RelativeLayout>
+    <RelativeLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
     <TextView
         android:id="@+id/focusTopicTextView"
         android:layout_width="match_parent"
@@ -12,6 +34,7 @@
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/text_size_20"
         android:gravity="center"
+        android:onClick="onFocusClick"
         />
 
     <GridView
@@ -24,5 +47,5 @@
         android:verticalSpacing="@dimen/activity_margin_16"
         android:stretchMode="columnWidth"
         android:gravity="center"/>
-
+   </RelativeLayout>
 </RelativeLayout>

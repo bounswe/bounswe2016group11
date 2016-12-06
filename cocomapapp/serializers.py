@@ -13,23 +13,23 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ('wikidataID', 'name', 'topics', 'posts', 'created_at', 'updated_at')
 
 class PostSerializer(serializers.ModelSerializer):
-    #tags = TagSerializer(many=True)
-    #user = UserSerializer()
+    tags = TagSerializer(many=True)
+    user = UserSerializer()
     class Meta:
         model = Post
         fields = ('id', 'content', 'user', 'tags', 'topic', 'positive_reaction_count', 'negative_reaction_count', 'created_at', 'updated_at')
 
 class TopicSerializer(serializers.ModelSerializer):
-    #posts = PostSerializer(many=True, read_only=True)
-    #tags = TagSerializer(many=True)
-    #user = UserSerializer()
+    posts = PostSerializer(many=True, read_only=True)
+    tags = TagSerializer(many=True)
+    user = UserSerializer()
     class Meta:
         model = Topic
         fields = ('id', 'name', 'user', 'relates_to', 'tags', 'posts', 'created_at', 'updated_at')
 
 class HotTopicsSerializer(serializers.ModelSerializer):
-    #tags = TagSerializer(many=True)
-    #user = UserSerializer()
+    tags = TagSerializer(many=True)
+    user = UserSerializer()
     class Meta:
         model = Topic
         fields = ('id', 'name', 'user', 'tags', 'created_at', 'updated_at')
