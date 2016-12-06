@@ -212,6 +212,7 @@ def wikidata_query(request, str):
         return Response(r.json()['results']['bindings'])
      #print r
 
+
 @api_view(['POST'])
 def search_by_tags(request):
     resultTopics = []

@@ -1,3 +1,38 @@
+function get_tags(wikiId,theTags){
+  var resultTag;
+  var hidden_tags=[];
+  var props=["P31","P610","P37","P36", "P30","P190","P17","P190",
+  "P27", "P425","P279"];
+  $.ajax({
+    url : "/cocomapapp/wikidataQuery/" +wikiId + "/" ,
+    async:false,
+    dataType:"json"
+  }).fail( function() {
+    console.log("error in wikidata");
+  }).done( function(data) {
+    hidden_tags=get_hidden_tags(props,data);
+    var occupation = get_hidden_tags(["P106"],data);
+    $.each(occupation,function(i,value){
+      $.ajax({
+        url : "/cocomapapp/wikidataQuery/" +value + "/" ,
+        async:false,
+        dataType:"json"
+      }).fail( function() {
+        console.log("error in wikidata");
+      }).done( function(data2) {
+        hidden_tags = hidden_tags.concat(get_hidden_tags(["P425"],data2) );
+      });
+    });
+    var result = $.grep(theTags, function(e){ return e.id == wikiId; });
+    resultTags = {
+      id : wikiId,
+      label : result[0].name ,
+      hidden_tags: hidden_tags
+    };
+    return resultTag;
+  });
+}
+
 $(document).ready(function(){
   var theTags=[];
   $("#submit").click( function() {
@@ -11,69 +46,44 @@ $(document).ready(function(){
         resultTagIds = [];
       }
       var resultTags =[];
+      console.log(resultTags);
       console.log(resultTagIds);
       $.each(resultTagIds,function(i,value){
-        var result = $.grep(theTags, function(e){ return e.id == value; });
-        resultTags.push({
-          id : value,
-          label : result[0].name
+        resultTags.push(get_tags(value,theTags));
+      });
+        console.log(resultTags);
+        return;
+        var topic = {
+            name: $('#name').val(),
+            relates_to: [{topic_id : $('#relates_to').val(), rel_name : $('#relationships-name').val()}],
+            tags: resultTags,
+            postAdd: $("#postCheckbox").prop("checked"),
+            post: {the_text: $("#postText").val(), tags:$('#tags2').val()}
+            // relationships_name: $('#relationships-name').val()
+        };
+        if($('#relates_to2').val()){
+            topic.relates_to.push({topic_id : $('#relates_to2').val(), rel_name : $('#relationships-name2').val()});
+        }
+        if($('#relates_to3').val()){
+            topic.relates_to.push({topic_id : $('#relates_to3').val(), rel_name : $('#relationships-name3').val()});
+        }
+
+        $.ajax({
+            url: 'add',
+            type: 'POST',
+            data:JSON.stringify(topic),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                window.location.href = "/cocomapapp";
+            },
+            error: function (x, y, z) {
+                alert(x + '\n' + y + '\n' + z);
+            }
         });
-        $.getJSON("/cocomapapp/wikidataQuery/" +value + "/"
-        ).fail( function() {
-          console.log("error in wikidata");
-        }).done( function(data) {
-            var hidden_tags=[];
 
-            $.each(data,function(i,value){
-              var temp_url = value.propUrl.value;
-              var cond = temp_url.endsWith("P31");
-              if(cond){
-                console.log("Burdaaaa.");
-              }
-              return;
-              var toRegex = value.valUrl.value;
-              var theRegex = /.*\/([a-z]+?\d+?)$/im ;
-              var fetchedWikiId = theRegex.exec(toRegex)[1];
-              wikiItems.push(fetchedWikiId);
-            });
-            console.log(wikiItems);
-          }
-        );
+});
 
 
-
-
-
-      });
-
-      var topic = {
-          name: $('#name').val(),
-          relates_to: [{topic_id : $('#relates_to').val(), rel_name : $('#relationships-name').val()}],
-          tags: resultTags,
-          postAdd: $("#postCheckbox").prop("checked"),
-          post: {the_text: $("#postText").val(), tags:$('#tags2').val()}
-          // relationships_name: $('#relationships-name').val()
-      };
-      if($('#relates_to2').val()){
-          topic.relates_to.push({topic_id : $('#relates_to2').val(), rel_name : $('#relationships-name2').val()});
-      }
-      if($('#relates_to3').val()){
-          topic.relates_to.push({topic_id : $('#relates_to3').val(), rel_name : $('#relationships-name3').val()});
-      }
-
-      $.ajax({
-          url: 'add',
-          type: 'POST',
-          data:JSON.stringify(topic),
-          contentType: "application/json;charset=utf-8",
-          success: function (data) {
-              window.location.href = "/cocomapapp";
-          },
-          error: function (x, y, z) {
-              alert(x + '\n' + y + '\n' + z);
-          }
-      });
-  });
   //disfunctional code
   $("#name1").on("keyup",function(){
 
@@ -215,3 +225,27 @@ $(document).ready(function(){
   });
 
 });
+
+function get_hidden_tags(props,the_json){
+  var hidden_tags=[];
+  var sem_att_list=props;
+  $.each(the_json,function(i,value){
+    var temp_url = value.propUrl.value;
+    var cond=false;
+    for(var j=0; j<sem_att_list.length;j++){
+      if(temp_url.endsWith(sem_att_list[j])){
+        cond=true;
+        //console.log(value.propLabel.value);
+        break;
+      }
+    }
+    if(cond){
+      var toRegex = value.valUrl.value;
+      var theRegex = /.*\/([a-z]+?\d+?)$/im ;
+      var fetchedWikiId = theRegex.exec(toRegex)[1];
+      hidden_tags.push(fetchedWikiId);
+    }
+  });
+  //console.log(hidden_tags);
+  return hidden_tags;
+}
