@@ -214,18 +214,26 @@ def wikidata_query(request, str):
 
 
 @api_view(['POST'])
+@csrf_exempt
 def search_by_tags(request):
     resultTopics = []
     resultPosts = []
     if request.method == 'POST':
         data = JSONParser().parse(request)
+        search_query = data["query"]
         for tag in data["tags"]:
             try:
                 tagObject = Tag.objects.get(wikidataID=tag)
             except Tag.DoesNotExist:
                 continue;
-            topics = tagObject.topics.all()
-            posts = tagObject.posts.all()
+            tag_topics = tagObject.topics.all()
+            query_topics = Topic.objects.filter(name__icontains=query)
+            topics = tag_topics | query_topics
+
+            tag_posts = tagObject.posts.all()
+            query_posts = Post.objects.filter(content__icontains=query)
+            posts = tag_posts | query_posts
+
             for topic in topics:
                 if topic not in resultTopics:
                     resultTopics.append(topic)
