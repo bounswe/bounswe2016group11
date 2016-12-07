@@ -30,6 +30,7 @@ from .views import (
 	search,
 	RecommendedTopics,
 	RecommendedPosts,
+	add_relation,
 )
 
 urlpatterns = [
@@ -68,4 +69,5 @@ urlpatterns = [
 	url(r'searchByTags', search_by_tags),
 
 	url(r'search', search),
+	url(r'addRelation/(?P<id>[0-9]+)/', add_relation),
 ]
