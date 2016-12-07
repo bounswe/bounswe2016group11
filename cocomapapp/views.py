@@ -461,9 +461,9 @@ def search(request):
 def add_relation(request,id):
     template = loader.get_template('addRelation.html')
     requested_topic = Topic.objects.get(id=id)
-    
+
     context = {
-        'asd': 'asd',
+        'requested_topic': requested_topic,
     }
     return HttpResponse(template.render(context, request))
 

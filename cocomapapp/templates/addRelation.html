@@ -3,8 +3,8 @@
 
     <script src="/static/selectize.js" type="text/javascript"></script>
     <script src="/static/typeahead.bundle.js" type="text/javascript"></script>
-  <!--  <script src="/static/topicadd.js" type="text/javascript"></script> -->
-  <!--  <link href="/static/topicAdd.css" rel="stylesheet"/>-->
+    <script src="/static/topicadd.js" type="text/javascript"></script>
+    <link href="/static/topicAdd.css" rel="stylesheet"/>
 		<link href="/static/selectize.default.css" rel="stylesheet"/>
 
   <div class="col-sm-9 col-md-9 main">
@@ -16,7 +16,9 @@
           <div class="col-md-10">
               <div class="img-circle" style="background-color: #DDA0DD;">
                   <div class="img-circle-content form-inline">
-                      <h1>Name of the topic here</h1>
+
+                      <h1> {{ requested_topic.name }} </h1> 
+
                       <h2>Add Relationships</h2>
                       <div class="form-group newRelation">
                         <table class="">
