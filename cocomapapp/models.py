@@ -22,7 +22,8 @@ from django.contrib.auth.models import User
 @python_2_unicode_compatible
 class Tag(models.Model):
   wikidataID = models.TextField(primary_key = True)
-  name = models.TextField()
+  name = models.TextField(null=True, blank=True)
+  hidden = models.BooleanField(default=False)
   #user = models.ForeignKey(User, on_delete=models.CASCADE)
   #topic = models.ForeignKey(Topic, related_name='tags', null=True, blank=True)
   #post = models.ForeignKey(Post, related_name='tags', null=True, blank=True)
@@ -33,7 +34,10 @@ class Tag(models.Model):
     return super(Tag, self).save(*args, **kwargs)
 
   def __str__(self):
-    return (str(self.wikidataID) + ' ' + self.name)
+    if self.name:
+      return (str(self.wikidataID) + ' ' + self.name)
+    else:
+      return (str(self.wikidataID) + ' - hidden')
 
   def __unicode__(self):
     return (str(self.wikidataID) + ' ' + self.name)

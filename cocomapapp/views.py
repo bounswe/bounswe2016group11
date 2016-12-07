@@ -217,6 +217,7 @@ def wikidata_query(request, str):
      #print r
 
 
+@csrf_exempt
 @api_view(['POST'])
 def search_by_tags(request):
     resultTopics = []
@@ -364,7 +365,6 @@ def show_topic(request, id):
 
 @csrf_exempt
 def add_topic(request):
-    print("add_topic'e girdi")
     template = loader.get_template('topicAdd.html')
     try:
         topic = serializers.serialize("json", Topic.objects.filter())
@@ -377,7 +377,6 @@ def add_topic(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
 
-        print(data)
         # Add topic to database.
         try:
             Topic.objects.get(name=data["name"])
@@ -390,8 +389,16 @@ def add_topic(request):
                 return JsonResponse({'status':'false','message':'You should login to create a topic!'}, status=401)
             name = data["name"]
             topicObject = Topic.objects.create(name=name, user=user)
-            print("topic object: ", topicObject)
             for tag in data["tags"]:
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    for hidden_tag in unique_hidden_tags:
+                        try:
+                            hiddenTagObject = Tag.objects.get(wikidataID=hidden_tag)
+                        except ObjectDoesNotExist:
+                            hiddenTagObject = Tag.objects.create(wikidataID=hidden_tag, hidden=True)
+                            hiddenTagObject.save()
+                        topicObject.tags.add(hiddenTagObject)
                 tag_name = tag['label']
                 if tag_name == '':
                     continue
@@ -399,7 +406,7 @@ def add_topic(request):
                 try:
                     tagObject = Tag.objects.get(wikidataID=tag_wiki_id)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag_name, wikidataID=tag_wiki_id)
+                    tagObject = Tag.objects.create(name=tag_name, wikidataID=tag_wiki_id, hidden=False)
                     tagObject.save()
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
@@ -416,9 +423,6 @@ def add_topic(request):
                 try:
                     relatedTopicObject = Topic.objects.get(pk=relation['topic_id'])
                     label = relation['rel_name']
-                    print("topic object : ", topicObject)
-                    print("related topic object : ", relatedTopicObject)
-                    print("relation name : ", relation)
                     relationObject = Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
                 except ObjectDoesNotExist:
                     print("error")
