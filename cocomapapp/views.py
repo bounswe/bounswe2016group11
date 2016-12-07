@@ -467,6 +467,16 @@ def search(request):
     }
     return HttpResponse(template.render(context, request))
 
+@csrf_exempt
+def add_relation(request,id):
+    template = loader.get_template('addRelation.html')
+    requested_topic = Topic.objects.get(id=id)
+
+    context = {
+        'requested_topic': requested_topic,
+    }
+    return HttpResponse(template.render(context, request))
+
 # def second_topic(request):
 #     template = loader.get_template('secondTopic.html')
 #     context = {
