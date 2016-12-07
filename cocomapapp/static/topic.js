@@ -129,11 +129,8 @@ $(document).ready(function(){
         var accuracy = (obj.positive_reaction_count+obj.negative_reaction_count)>0?(obj.positive_reaction_count/(obj.positive_reaction_count+obj.negative_reaction_count))*100:0;
         var tagsAsStr="";
         $.each(post_tags, function(i,val){
-            tagsAsStr +="<a><b>#</b>"+val.name +"</a>";
+            tagsAsStr +="<span style='display: inline-block;' class='label "+option_labels[i%option_labels.length] +"'>" +val.name +"</span>";
         });
-        if(tagsAsStr == ""){
-          tagsAsStr = "<a> </a>";
-        }
         $(".panelContainer").append(
 
           '<div class="panel panel-default panel-margined">'
