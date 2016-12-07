@@ -5,17 +5,34 @@
 {% block head_title %}{% trans "Signup" %}{% endblock %}
 
 {% block content %}
-<h1>{% trans "Sign Up" %}</h1>
+<link href="/static/signin.css" rel="stylesheet"/>
+<div class="container-fluid " >
+<h1 class="text-center">{% trans "Sign Up" %}</h1>
 
-<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
-
-<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+<form class="signup form-signin" id="signup_form" method="post" action="{% url 'account_signup' %}">
   {% csrf_token %}
   {{ form.as_p }}
   {% if redirect_field_value %}
-  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  <!--<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />-->
   {% endif %}
-  <button type="submit">{% trans "Sign Up" %} &raquo;</button>
+  <button class="btn btn-lg btn-success btn-block" type="submit">{% trans "Sign Up" %} &raquo;</button>
+  <div class="text-center" >
+    <h3>Or</h3>
+  </div>
+  <a class="btn btn-lg btn-primary btn-block" href="{{ login_url }}">{% trans "Sign In" %} &raquo;</a>
+  <!--<button class="primaryAction btn btn-lg btn-primary btn-block" type="submit">{% trans "Sign In" %}</button>-->
 </form>
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#sidebar").remove();
+    $("body").css("padding-top","0px");
+    $("#id_username ").addClass("form-control");
+    $("#id_email ").addClass("form-control");
+    $("#id_password1 ").addClass("form-control");
+    $("#id_password2 ").addClass("form-control");
+    $("form p label").remove();
+  });
 
+</script>
 {% endblock %}

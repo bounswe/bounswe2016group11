@@ -36,7 +36,7 @@ $(function(){
 
   function formatWiki(wikiItem){
 
-    var markup = "<div><p>" + wikiItem.text+"</p></div>";
+    var markup = "<div><p>" + wikiItem.text+" "+ wikiItem.desc + "</p></div>";
     return markup;
   }
   function formatWikiSelection(wikiItem){
@@ -60,7 +60,7 @@ $(function(){
          params.page = params.page || 1;
         var items =[];
         $.each(data,function(i,value){
-          items.push({id:value.id, text: value.label +" "+ value.description});
+          items.push({id:value.id, text: value.label , desc: value.description});
 
         });
         return {
@@ -80,8 +80,10 @@ $(function(){
   });
 
   $("#search_field").on("select2:select",function(e){
+    console.log(e.params);
+    //return;
     var searchId = e.params.data.id;
-    var search_url = "/cocomapapp/search/"+searchId+"/";
+    var search_url = "/cocomapapp/search/"+searchId+"++"+e.params.data.text+"/";
     window.location.href = search_url;
     return;
 
