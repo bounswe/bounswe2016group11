@@ -3,7 +3,8 @@
 
     <script src="/static/selectize.js" type="text/javascript"></script>
     <script src="/static/typeahead.bundle.js" type="text/javascript"></script>
-
+  <!--  <script src="/static/topicadd.js" type="text/javascript"></script> -->
+  <!--  <link href="/static/topicAdd.css" rel="stylesheet"/>-->
 		<link href="/static/selectize.default.css" rel="stylesheet"/>
 
   <div class="col-sm-9 col-md-9 main">
@@ -17,24 +18,24 @@
                   <div class="img-circle-content form-inline">
                       <h1>Name of the topic here</h1>
                       <h2>Add Relationships</h2>
-  										<div class="form-group newRelation">
-												<table class="">
-													<tr>
-														<th><input type="text" id="relationships-name" class="form-control makeinline" placeholder="Relationship Name"></th>
-														<th><input id="relates_to" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left;"></th>
+                      <div class="form-group newRelation">
+                        <table class="">
+                          <tr>
+                            <th><input type="text" id="relationships-name" class="form-control makeinline" placeholder="Relationship Name"></th>
+                            <th><input id="relates_to" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left;"></th>
                                                         <th><a id="rel_add1" onclick={document.getElementById('rel2').style.display='table-row';document.getElementById('rel_add1').style.display='none';}>Add another relation</a></th>
-													</tr>
+                          </tr>
                                                     <tr id="rel2" style="display: none;">
                                                         <th><input type="text" id="relationships-name2" class="form-control makeinline" placeholder="Relationship Name" ></th>
-                                                        <th><input id="relates_to2" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left; display: none;"></th>
+                                                        <th><input id="relates_to2" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left; "></th>
                                                         <th><a id="rel_add2" onclick={document.getElementById('rel3').style.display='table-row';document.getElementById('rel_add2').style.display='none';}>Add another relation</a></th>
                                                     </tr>
                                                     <tr id="rel3" style="display: none;">
                                                         <th><input type="text" id="relationships-name3" class="form-control makeinline" placeholder="Relationship Name"></th>
                                                         <th><input id="relates_to3" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left;"></th>
                                                     </tr>
-												</table>
-  										</div>
+                        </table>
+                      </div>
                   </div>
               </div>
 
