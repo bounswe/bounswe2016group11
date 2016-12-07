@@ -112,9 +112,10 @@ $(document).ready(function(){
   var posts = topic.posts;
 
   $("#theTitle").text(title);
+  var option_labels=["label-primary","label-success","label-info","label-warning","label-danger"];
   $.each(topic_tags, function(i,val){
     $("#topicTags").append(
-      "<a><b>#</b>"+val.name +"</a>"
+      "<span style='display: inline-block;' class='label "+option_labels[i%option_labels.length]+"'>" +val.name +"</span>"
     );
   });
   $.each(posts, function(i, obj) {
