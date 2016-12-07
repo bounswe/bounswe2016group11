@@ -1,3 +1,23 @@
+jQuery.fn.shake = function() {
+    this.each(function(i) {
+        $(this).css({
+            "position" : "relative"
+        });
+        for (var x = 1; x <= 3; x++) {
+            $(this).animate({
+                left : -25
+            }, 10).animate({
+                left : 0
+            }, 50).animate({
+                left : 25
+            }, 10).animate({
+                left : 0
+            }, 50);
+        }
+    });
+    return this;
+}
+
 function get_tags(wikiId,theTags){
   var waitNum;
   var resultTag;
@@ -40,6 +60,10 @@ $(document).ready(function(){
   var theTags=[];
   $("#submit").click( function() {
       // console.log("asfdlkjsafdjkladfjs");
+      if($("#name").val()== ""){
+        $("#name").shake();
+        return;
+      }
       jQuery.support.cors = true;
       var resultTagIds = $('#tags').val();
       if(resultTagIds != ""){
