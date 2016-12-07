@@ -227,11 +227,10 @@ def search_by_tags(request):
                 continue;
             tag_topics = tagObject.topics.all()
             tag_posts = tagObject.posts.all()
-
-            for topic in topics:
+            for topic in tag_topics:
                 if topic not in resultTopics:
                     resultTopics.append(topic)
-            for post in posts:
+            for post in tag_posts:
                 if post not in resultPosts:
                     resultPosts.append(post)
         query_topics = Topic.objects.filter(name__icontains=search_query)
