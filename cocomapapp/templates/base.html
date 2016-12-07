@@ -11,6 +11,7 @@
 		<script src="/static/typeahead.bundle.js" type="text/javascript"></script>
 		<link href="/static/selectize.default.css" rel="stylesheet"/>
 		<script src="/static/base.js"></script>
+		<script src="/static/recommend.js" type="text/javascript"></script>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="/static/style.css" />
     <link rel="stylesheet" type="text/css" href="/static/main.css" />
@@ -72,11 +73,11 @@
 
   {% block content %}
   {% endblock %}
-  <div class="col-sm-3 col-md-3 sidebar" id="sidebar">
-		<div class="text-center">POST FROM USERS YOU FOLLOW</div>
+  <div class="col-sm-3 col-md-3 sidebar">
+		<div class="text-center">RECOMMENDED POSTS</div>
 		</br>
-		<ul class="nav nav-sidebar list-group list-following-posts">
-			<li class="list-group-item">
+		<ul class="nav nav-sidebar list-group list-following-posts" id="recommendedposts">
+			<!--<li class="list-group-item">
       	<a href="#">Ozgur posted to Security in Ce... <span class="sr-only">(current)</span></a>
       	<p>Threatpost, is an independent news site which is a leading source of information about IT ...</p>
       </li>
@@ -95,15 +96,15 @@
       <li class="list-group-item">
       	<a href="#">Emrah posted to Champions League</a>
       	<p>Thanks for joining today, the live blog will return tomorrow morning. Head over to the UEFA</p>
-      </li>
+      </li> -->
     </ul>
     </br>
     </br>
-    <div class="text-center">POPULAR TOPICS</div>
+    <div class="text-center">RECOMMENDED TOPICS</div>
 		</br>
     <div class="panel panel-default">
-	    <ul class="nav nav-sidebar">
-	      <li class="">
+	    <ul class="nav nav-sidebar" id="recommendedTopics">
+	    <!--  <li class="">
 	      	<a href="#">First Flight in Turkey <span class="sr-only">(current)</span></a>
 	      </li>
 	      <li class="">
@@ -114,7 +115,7 @@
 	      </li>
 	      <li class="">
 	      	<a href="#">Debate2016</a>
-	      </li>
+	      </li>-->
 	    </ul>
 		</div>
   </div>

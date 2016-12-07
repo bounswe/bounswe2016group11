@@ -1,0 +1,42 @@
+[
+  {
+  "topics":
+  [
+    {
+      "name": "Name of Topic1",
+      "id": 1
+    },
+    {
+      "name": "Name of Topic2",
+      "id": 2
+    },
+    {
+      "name": "Name of Topic3",
+      "id": 3
+    }
+  ]
+  },
+  {
+  "posts":
+  [
+    {
+      "name": "Content of the post1",
+      "topicId": 1,
+      "topicName":"name of post's topic1",
+      "username":"Ayşegül"
+    },
+    {
+      "name": "Content of the post2",
+      "topicId": 1,
+      "topicName":"name of post's topic1",
+      "username":"Ahmet"
+    },
+    {
+      "name": "Content of the post3",
+      "topicId": 2,
+      "topicName":"name of post's topic1",
+      "username":"Selin"
+    }
+  ]
+  }
+]
