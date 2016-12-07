@@ -137,7 +137,7 @@ $(document).ready(function(){
 
           '<div class="panel panel-default panel-margined">'
             +'<div class="panel-body">'
-              +'<p><a href="#">'+ user.first_name + ' '+ user.last_name +': </a><br />'+text+'</p>'
+              +'<p><a href="#">'+ user.username+': </a><br />'+text+'</p>'
             +'</div>'
             +'<div class="panel-footer">'
               <!-- Tags -->
