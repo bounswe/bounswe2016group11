@@ -175,7 +175,6 @@ def wikidata_query(request, str):
      #print r
 
 @api_view(['POST'])
-@csrf_exempt
 def search_by_tags(request):
     resultTopics = []
     resultPosts = []
@@ -188,12 +187,7 @@ def search_by_tags(request):
             except Tag.DoesNotExist:
                 continue;
             tag_topics = tagObject.topics.all()
-            query_topics = Topic.objects.filter(name__icontains=query)
-            topics = tag_topics | query_topics
-
             tag_posts = tagObject.posts.all()
-            query_posts = Post.objects.filter(content__icontains=query)
-            posts = tag_posts | query_posts
 
             for topic in topics:
                 if topic not in resultTopics:
@@ -201,6 +195,22 @@ def search_by_tags(request):
             for post in posts:
                 if post not in resultPosts:
                     resultPosts.append(post)
+        query_topics = Topic.objects.filter(name__icontains=search_query)
+        query_posts = Post.objects.filter(content__icontains=search_query)
+        for topic in query_topics:
+            if topic not in resultTopics:
+                resultTopics.append(topic)
+        for post in query_posts:
+            if post not in resultPosts:
+                resultPosts.append(post)
+
+        all_relations = Relation.objects.all()
+        for topic in resultTopics:
+            for relation in all_relations:
+                if (topic == relation.topic_from) and (relation.topic_to not in resultTopics):
+                    resultTopics.append(relation.topic_to)
+                if (topic == relation.topic_to) and (relation.topic_from not in resultTopics):
+                    resultTopics.append(relation.topic_from)
 
         TopicSerializer.Meta.depth = 1
         PostSerializer.Meta.depth = 1
