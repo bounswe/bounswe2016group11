@@ -31,6 +31,7 @@ from .views import (
 	RecommendedTopics,
 	RecommendedPosts,
 	add_relation,
+    infocus,
 )
 
 urlpatterns = [
