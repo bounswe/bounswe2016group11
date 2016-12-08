@@ -35,7 +35,7 @@ from .views import (
 
 urlpatterns = [
     url(r'^$', index),
-    url(r'^accounts/', include('allauth.urls')),
+    #url(r'^accounts/', include('allauth.urls')),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
     url(r'topics/postAdd', add_post),
@@ -70,4 +70,6 @@ urlpatterns = [
 
 	url(r'search', search),
 	url(r'addRelation/(?P<id>[0-9]+)/', add_relation),
+
+	url(r'infocus/(?P<id>\d+)/$', infocus),
 ]
