@@ -64,7 +64,7 @@ urlpatterns = [
 	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),
 
 	url(r'wikidataSearch/(?P<str>.+)/', wikidata_search),
-	url(r'getHotTopics/', topic_get_hot),
+	url(r'getHotTopics/(?P<limit>[0-9]+)/', topic_get_hot),
     url(r'wikidataQuery/(?P<str>.+)/', wikidata_query),
 	url(r'searchByTags', search_by_tags),
 

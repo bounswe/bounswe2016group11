@@ -25,7 +25,7 @@ class TopicSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Topic
-        fields = ('id', 'name', 'user', 'relates_to', 'tags', 'posts', 'created_at', 'updated_at')
+        fields = ('id', 'name', 'user', 'relates_to', 'tags', 'posts', 'hotness', 'created_at', 'updated_at')
 
 class HotTopicsSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)

@@ -47,6 +47,17 @@ class Topic(models.Model):
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
 
+  @property
+  def hotness(self):
+    creation_time = (timezone.now()-self.created_at).total_seconds()
+    post_count = self.posts.count()
+    if post_count is 0:
+        latest_post_time = creation_time
+    else:
+        latest_post = self.posts.latest('created_at')
+        latest_post_time = (timezone.now()-latest_post.created_at).total_seconds()
+    return post_count - 2 * latest_post_time/3600 - creation_time/3600
+
   class Meta:
     ordering = ('pk',)
 

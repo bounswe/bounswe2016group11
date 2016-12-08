@@ -128,7 +128,7 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
-
+#@csrf_exempt
 @api_view(['PUT'])
 def post_upvote(request, pk):
     try:
@@ -143,7 +143,7 @@ def post_upvote(request, pk):
         return Response(serializer.data)
 
 
-@ensure_csrf_cookie
+#@csrf_exempt
 @api_view(['PUT'])
 def post_downvote(request, pk):
     try:
@@ -195,9 +195,13 @@ def wikidata_search(request, str):
      #print r
 
 @api_view(['GET'])
-def topic_get_hot(request):
+def topic_get_hot(request, limit):
     if request.method == 'GET':
-        hot_topics = Topic.objects.order_by('-updated_at')[:5]
+        all_topics = Topic.objects.all()
+
+        hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
+
+        #hot_topics = Topic.objects.order_by('hotness')[:5]
         serializer = TopicSerializer(hot_topics, many=True)
         return Response(serializer.data)
 
