@@ -57,6 +57,7 @@ function get_tags(wikiId,theTags){
 }
 
 $(document).ready(function(){
+  $(".sidebar").remove();
   var theTags=[];
   $("#submit").click( function() {
       // console.log("asfdlkjsafdjkladfjs");
