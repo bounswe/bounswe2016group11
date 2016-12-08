@@ -478,7 +478,7 @@ def add_relation(request,id):
 
 
 def infocus(request, id):
-    template = loader.get_template('global.html')
+    template = loader.get_template('infocus.html')
     hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
     random_topic = serializers.serialize("json", Topic.objects.order_by('?')[:1])
 
