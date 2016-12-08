@@ -25,10 +25,10 @@
 	  		<hr style="margin-top: 0; margin-bottom: 0;">
 			<div class="panel panelmb0; panelContainer" style="margin-bottom:0; background-color:#dfe3ee;"></div>
     		{% if user.is_authenticated %}
-				<form class="panel" style="background-color:#F8F9FC; padding: 0;" action="" method="post">{% csrf_token %}
+				<div class="panel" style="background-color:#F8F9FC; padding: 0;">
 					<div class="panel-body">
-						<textarea class="form-control" name="content"></textarea>
-						<form class="bs-example bs-example-form" method="">
+						<textarea class="form-control" id="content"></textarea>
+						<form id="content" class="bs-example bs-example-form" >
 
 							<div class="input-group" align="center">
 								<span class="input-group-addon">
@@ -39,7 +39,7 @@
 						</form>
 						<button id="submit" class="btn btn-primary btn-lg btn-block">Post</button>
 					</div>
-				</form>
+				</div>
     		{% endif %}
 			</div>
 	</div>
