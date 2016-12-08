@@ -19,10 +19,8 @@ from rest_framework import status
 from .forms import RegisterForm, LoginForm
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
-
-
-
-
+from functools import reduce
+import operator
 
 import requests
 
@@ -171,7 +169,6 @@ def relation_upvote(request, pk):
         return Response(serializer.data)
 
 
-@ensure_csrf_cookie
 @api_view(['PUT'])
 def relation_downvote(request, pk):
     try:
@@ -217,7 +214,6 @@ def wikidata_query(request, str):
      #print r
 
 
-@csrf_exempt
 @api_view(['POST'])
 def search_by_tags(request):
     resultTopics = []
@@ -225,19 +221,31 @@ def search_by_tags(request):
     if request.method == 'POST':
         data = JSONParser().parse(request)
         search_query = data["query"]
-        for tag in data["tags"]:
-            try:
-                tagObject = Tag.objects.get(wikidataID=tag)
-            except Tag.DoesNotExist:
-                continue;
-            tag_topics = tagObject.topics.all()
-            tag_posts = tagObject.posts.all()
-            for topic in tag_topics:
-                if topic not in resultTopics:
-                    resultTopics.append(topic)
-            for post in tag_posts:
-                if post not in resultPosts:
-                    resultPosts.append(post)
+        data_tags = list(set(data["tags"]))
+        tagObjects = Tag.objects.filter(hidden_tags__contained_by=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
+        for tagObject in tagObjects:
+                tag_topics = tagObject.topics.all()
+                tag_posts = tagObject.posts.all()
+                for topic in tag_topics:
+                    if topic not in resultTopics:
+                        resultTopics.append(topic)
+                for post in tag_posts:
+                    if post not in resultPosts:
+                        resultPosts.append(post)
+        # for tag in data["tags"]:
+        #     try:
+        #         tagObjects = Tag.objects.filter(wikidataID=tag)
+        #     except Tag.DoesNotExist:
+        #         continue;
+        #     for tagObject in tagObjects:
+        #         tag_topics = tagObject.topics.all()
+        #         tag_posts = tagObject.posts.all()
+        #         for topic in tag_topics:
+        #             if topic not in resultTopics:
+        #                 resultTopics.append(topic)
+        #         for post in tag_posts:
+        #             if post not in resultPosts:
+        #                 resultPosts.append(post)
         query_topics = Topic.objects.filter(name__icontains=search_query)
         query_posts = Post.objects.filter(content__icontains=search_query)
         for topic in query_topics:
@@ -264,7 +272,6 @@ def search_by_tags(request):
         #postSerializer.Meta.depth = 1
 
         return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
-
 
 def index(request):
     template = loader.get_template('global.html')
@@ -390,15 +397,6 @@ def add_topic(request):
             name = data["name"]
             topicObject = Topic.objects.create(name=name, user=user)
             for tag in data["tags"]:
-                unique_hidden_tags = list(set(tag['hidden_tags']))
-                if unique_hidden_tags:
-                    for hidden_tag in unique_hidden_tags:
-                        try:
-                            hiddenTagObject = Tag.objects.get(wikidataID=hidden_tag)
-                        except ObjectDoesNotExist:
-                            hiddenTagObject = Tag.objects.create(wikidataID=hidden_tag, hidden=True)
-                            hiddenTagObject.save()
-                        topicObject.tags.add(hiddenTagObject)
                 tag_name = tag['label']
                 if tag_name == '':
                     continue
@@ -406,11 +404,24 @@ def add_topic(request):
                 try:
                     tagObject = Tag.objects.get(wikidataID=tag_wiki_id)
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(name=tag_name, wikidataID=tag_wiki_id, hidden=False)
-                    tagObject.save()
+                    tagObject = Tag.objects.create(name=tag_name, wikidataID=tag_wiki_id)
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+
+                #hidden tags
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
+                    # for hidden_tag in unique_hidden_tags:
+                    #     try:
+                    #         hiddenTagObject = Tag.objects.get(wikidataID=hidden_tag)
+                    #     except ObjectDoesNotExist:
+                    #         hiddenTagObject = Tag.objects.create(wikidataID=hidden_tag, hidden=True)
+                    #         hiddenTagObject.save()
+                tagObject.save()
                 topicObject.tags.add(tagObject)
+                print(tagObject.hidden_tags)
+                print('topicObject.tags')
                 context = {
                 }
             # end of add topic to database.

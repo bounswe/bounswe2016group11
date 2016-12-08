@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.auth.models import User
+from django.contrib.postgres.fields import ArrayField
 
 # @python_2_unicode_compatible
 # class User(models.Model):
@@ -23,10 +24,8 @@ from django.contrib.auth.models import User
 class Tag(models.Model):
   wikidataID = models.TextField(primary_key = True)
   name = models.TextField(null=True, blank=True)
-  hidden = models.BooleanField(default=False)
-  #user = models.ForeignKey(User, on_delete=models.CASCADE)
-  #topic = models.ForeignKey(Topic, related_name='tags', null=True, blank=True)
-  #post = models.ForeignKey(Post, related_name='tags', null=True, blank=True)
+  #hidden = models.BooleanField(default=False)
+  hidden_tags= ArrayField(models.CharField(max_length=15, blank=True), null=True, blank=True)
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
 
