@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cocomap.coco.R;
+import com.cocomap.coco.pojo.PostModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Sinan on 06.12.2016.
@@ -17,7 +19,14 @@ import java.util.ArrayList;
 public class MyReceyclerAdapter extends RecyclerView.Adapter<MyReceyclerAdapter.ViewHolder>{
 
     Context context;
-    private ArrayList<String> list;
+    private List<PostModel> list;
+
+    public List<PostModel> getList() {
+        if(list == null) {
+            list = new ArrayList<>();
+        }
+        return list;
+    }
 
     public MyReceyclerAdapter(Context context) {
 
@@ -35,16 +44,16 @@ public class MyReceyclerAdapter extends RecyclerView.Adapter<MyReceyclerAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.text.setText(list.get(position));
+        holder.text.setText(list.get(position).getContent());
 
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return getList().size();
     }
 
-    public void setList(ArrayList<String> list) {
+    public void setList(List<PostModel> list) {
         this.list = list;
         notifyDataSetChanged();
     }

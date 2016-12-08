@@ -6,18 +6,18 @@ import java.util.List;
  * Created by Emrah on 04/12/2016.
  */
 public class TagModel {
-    Integer wikidataID;
+    String wikidataID;
     String name;
     List<Integer> topics;
     List<Integer> posts;
     String created_at;
     String updated_at;
 
-    public Integer getWikidataID() {
+    public String getWikidataID() {
         return wikidataID;
     }
 
-    public void setWikidataID(Integer wikidataID) {
+    public void setWikidataID(String wikidataID) {
         this.wikidataID = wikidataID;
     }
 
