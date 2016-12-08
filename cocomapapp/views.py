@@ -23,6 +23,7 @@ from functools import reduce
 import operator
 
 import requests
+from io import StringIO
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
@@ -219,11 +220,14 @@ def search_by_tags(request):
     resultTopics = []
     resultPosts = []
     if request.method == 'POST':
-        data = JSONParser().parse(request)
-        search_query = data["query"]
-        data_tags = list(set(data["tags"]))
-        tagObjects = Tag.objects.filter(hidden_tags__contained_by=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
+        data = request.data
+        print(data)
+        search_query = data['query']
+        data_tags = list(set(data['tags']))
+        print(data_tags)
+        tagObjects = Tag.objects.filter(hidden_tags__overlap=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
         for tagObject in tagObjects:
+                print("LOL")
                 tag_topics = tagObject.topics.all()
                 tag_posts = tagObject.posts.all()
                 for topic in tag_topics:
@@ -246,6 +250,9 @@ def search_by_tags(request):
         #         for post in tag_posts:
         #             if post not in resultPosts:
         #                 resultPosts.append(post)
+        print(resultTopics);
+        print(resultPosts);
+
         query_topics = Topic.objects.filter(name__icontains=search_query)
         query_posts = Post.objects.filter(content__icontains=search_query)
         for topic in query_topics:
