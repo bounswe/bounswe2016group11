@@ -91,8 +91,27 @@ class Post(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   topic = models.ForeignKey(Topic, related_name ='posts', null=True, blank=True)
   tags = models.ManyToManyField(Tag,related_name = 'posts', null=True, blank=True)
-  positive_reaction_count = models.PositiveIntegerField(default=0)
-  negative_reaction_count = models.PositiveIntegerField(default=0)
+  #positive_reaction_count = models.PositiveIntegerField(default=0)
+  #negative_reaction_count = models.PositiveIntegerField(default=0)
+
+  @property
+  def positive_reaction_count(self):
+     if self.votes.count == 0:
+         return 0
+     return len(self.votes.filter(is_positive=True))
+
+  @property
+  def negative_reaction_count(self):
+     if self.votes.count == 0:
+         return 0
+     return len(self.votes.filter(is_positive=False))
+
+  @property
+  def accuracy(self):
+      if (self.positive_reaction_count + self.negative_reaction_count) == 0:
+          return 0
+      return self.positive_reaction_count / (self.positive_reaction_count + self.negative_reaction_count) * 100
+
   created_at = models.DateTimeField(auto_now_add=True)
   updated_at = models.DateTimeField(auto_now=True)
 
@@ -101,3 +120,15 @@ class Post(models.Model):
 
   def __str__(self):
     return (str(self.id) + ' ' + self.content)
+
+@python_2_unicode_compatible
+class Vote(models.Model):
+    user = models.ForeignKey(User, related_name='votes', on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name ='votes')
+    is_positive = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        return super(Vote, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return (str(self.id) + ' ' + self.is_positive)

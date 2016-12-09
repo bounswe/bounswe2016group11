@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import Tag, Topic, Post, Relation
+from cocomapapp.models import Tag, Topic, Post, Relation, Vote
 from django.contrib.auth.models import User
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer, VoteSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -107,12 +107,12 @@ class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
             recommended_topics = Topic.objects.filter(id__in=last_5_topic_ids)
             recommended_post_ids = []
             for topic in recommended_topics:
-                recommended_post_ids.append((topic.posts.order_by('positive_reaction_count')[:1]).id)
+                recommended_post_ids.append(sorted(topic.posts, key=lambda t: t.positive_reaction_count)[:1])
 
             queryset_list = Post.objects.filter(id__in=recommended_post_ids)
 
         else:
-            queryset_list = Post.objects.order_by('-positive_reaction_count')[:5]
+            queryset_list = sorted(Post.objects.all(), key=lambda t: -t.positive_reaction_count)[:5]
 
         return queryset_list
 
@@ -128,33 +128,49 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     serializer_class = TagSerializer
 
 #@csrf_exempt
-@api_view(['PUT'])
-def post_upvote(request, pk):
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+@api_view(['POST'])
+def post_vote(request):
+    if request.method == 'POST':
+        user = request.user
+        post_id = request.data['post_id']
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'PUT':
-        post.positive_reaction_count += 1
-        post.save()
+        is_positive = request.data['is_positive'].title() == "True"
+        try:
+            oldVote = Vote.objects.get(user = user, post = post)
+            if oldVote.is_positive == is_positive:
+                oldVote.delete()
+                #return Response(oldVote.delete())
+            else:
+                oldVote.is_positive = is_positive
+                oldVote.save()
+                newVote = oldVote
+
+        except Vote.DoesNotExist:
+            newVote = Vote.objects.create(user=user, post=post, is_positive=is_positive)
+
         serializer = PostSerializer(post)
         return Response(serializer.data)
+        #serializer = VoteSerializer(newVote)
+        #return Response(serializer.data)
 
 
 #@csrf_exempt
-@api_view(['PUT'])
-def post_downvote(request, pk):
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+#@api_view(['PUT'])
+#def post_downvote(request, pk):
+#    try:
+#        post = Post.objects.get(pk=pk)
+#    except Post.DoesNotExist:
+#        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'PUT':
-        post.negative_reaction_count += 1
-        post.save()
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
+#    if request.method == 'PUT':
+#        post.negative_reaction_count += 1
+#        post.save()
+#        serializer = PostSerializer(post)
+#        return Response(serializer.data)
 
 @api_view(['PUT'])
 def relation_upvote(request, pk):
@@ -349,7 +365,7 @@ def show_topic(request, id):
         except ObjectDoesNotExist:
             return HttpResponse("You should login to post!")
         requested_topic = Topic.objects.get(id=id)
-        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""))
         tags = request.POST.get("tags", "").split(",");
         for tag in tags:
            if len(tag)>0:

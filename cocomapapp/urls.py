@@ -19,8 +19,9 @@ from .views import (
 	RelationList,
 	TagCreate,
 	TagRetrieve,
-	post_upvote,
-	post_downvote,
+	#post_upvote,
+	#post_downvote,
+	post_vote,
 	relation_upvote,
 	relation_downvote,
 	wikidata_search,
@@ -57,8 +58,9 @@ urlpatterns = [
 	url(r'tagCreate',  TagCreate.as_view()),
 	url(r'tagRetrieve/(?P<pk>Q[0-9]+)/',  TagRetrieve.as_view()),
 
-	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
-	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+	#url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
+	#url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+	url(r'postVote/',  post_vote),
 
 	url(r'relationUpvote/(?P<pk>[0-9]+)/',  relation_upvote),
 	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),
