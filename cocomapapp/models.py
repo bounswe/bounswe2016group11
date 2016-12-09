@@ -3,6 +3,7 @@ from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import ArrayField
+from django.db.models import Count
 
 # @python_2_unicode_compatible
 # class User(models.Model):
@@ -59,7 +60,10 @@ class Topic(models.Model):
     else:
         latest_post = self.posts.latest('created_at')
         latest_post_time = (timezone.now()-latest_post.created_at).total_seconds()
-    return post_count - 2 * latest_post_time/3600 - creation_time/3600
+
+    like_counts = self.posts.aggregate( votes = Count('votes') )['votes']
+    visit_count = self.visits.count()
+    return post_count + like_counts + visit_count  - 2 * latest_post_time/3600 - creation_time/3600
 
   class Meta:
     ordering = ('pk',)
