@@ -177,7 +177,7 @@ def getRecommendedTopics(request, limit):
             else:
                 last_neighbor_visit = topic.created_at
 
-            relevance_score = neighbor_visits_count - (timezone.now()-last_neighbor_visit).total_seconds()/3600
+            relevance_score = 5*neighbor_visits_count - (timezone.now()-last_neighbor_visit).total_seconds()/3600
             recommendation = relevance_score + topic.hotness
 
             scores[topic] = recommendation;
@@ -219,7 +219,7 @@ def listTopicRelevance(request):
 
             row['post_count'] = len(topic.posts.filter(user=user))
             row['like_count'] = len(topic.posts.filter(votes__user=user))
-            row['relevance_score'] = row['neighbor_visits_count'] - (timezone.now()-row['last_neighbor_visit']).total_seconds()/3600
+            row['relevance_score'] = 5*row['neighbor_visits_count'] - (timezone.now()-row['last_neighbor_visit']).total_seconds()/3600
             row['recommendation'] = row['relevance_score'] + topic.hotness
 
             data.append(row)
