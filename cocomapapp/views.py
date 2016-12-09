@@ -182,6 +182,12 @@ def listTopicRelevance(request):
             else:
                 row['last_visit'] = topic.created_at
 
+            user_posts = len(topic.posts.filter(user=user))
+
+            user_likes = len(topic.posts.filter(votes__user=user))
+
+            row['post_count'] = user_posts
+            row['like_count'] = user_likes
             data.append(row)
 
         print(data)
