@@ -78,7 +78,7 @@ $(function(){
                 var clickedNode = params['nodes'][0];
                 if(clickedNode != undefined){
                     var clickedTopic =nodes.get(clickedNode);
-                    window.location.href = ("topics/"+clickedTopic["id"]);
+                    window.location.href = ("/cocomapapp/infocus/"+clickedTopic["id"]);
                     //when clicked to a topic node, the user is directed
                     //to that topics view page
                 }
