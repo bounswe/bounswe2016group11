@@ -15,8 +15,15 @@ function GetArrow(pk) {
 }
 
 $(function(){
+
+    var searchItem = window.location.pathname;
+    console.log(searchItem);
+    var theRegex = /([0-9])+/igm;
+    var searchId = theRegex.exec(searchItem)[1];
+    console.log("id: "+searchId);
+
     $.ajax({
-        url: 'topicList',
+        url: '/cocomapapp/relationList?topic_id='+searchId,
         type: 'GET',
         dataType: 'json',
         success: function (data) {
@@ -29,15 +36,36 @@ $(function(){
               //console.log({id: i+1, label: json_array[i]['name'] })
               //Math.random should be replaced
               //Future FIX
-              var seed = Math.random();
+              if(json_array[i]['topic_from']['id']!=searchId || i==0)
+              {
+                  console.log("from: "+json_array[i]['topic_from']['name']);
 
-              console.log(seed);
-              var red = Math.round(seed*255);
-              var green = Math.max(Math.round((1-seed)*50),0);
-              var blue = Math.round((1-seed)*255);
-              console.log("red: "+ red+"    , blue:"+blue);
-              dict1.push({id: json_array[i]['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
-              label: json_array[i]['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+                  var seed = Math.random();
+                  console.log(seed);
+                  var red = Math.round(seed*255);
+                  var green = Math.max(Math.round((1-seed)*50),0);
+                  var blue = Math.round((1-seed)*255);
+                  console.log("red: "+ red+"    , blue:"+blue);
+                  if(json_array[i]['topic_from']['id']==searchId) seed=0.9;
+                  dict1.push({id: json_array[i]['topic_from']['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
+                  label: json_array[i]['topic_from']['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+              }
+
+              if(json_array[i]['topic_to']['id']!=searchId || i==0)
+              {
+                  console.log("from: "+json_array[i]['topic_to']['name']);
+
+                  var seed = Math.random();
+                  console.log(seed);
+                  var red = Math.round(seed*255);
+                  var green = Math.max(Math.round((1-seed)*50),0);
+                  var blue = Math.round((1-seed)*255);
+                  console.log("red: "+ red+"    , blue:"+blue);
+                  if(json_array[i]['topic_to']['id']==searchId) seed=0.9;
+                  dict1.push({id: json_array[i]['topic_to']['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
+                  label: json_array[i]['topic_to']['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+              }
+
             }
             var nodes = new vis.DataSet(dict1);
 
@@ -45,17 +73,11 @@ $(function(){
             // create an array with edges
             var dict2 = [];
             for(var i = 0; i < json_array.length; i++){
-              // this code will be replaced ..............
-              for(var j = 0; j < json_array[i]['relates_to'].length; j++){
-
                   //length of arrow
-                  console.log(seed);
+                  seed = 0;
                   var arrow_length = Math.round((1-seed)*100+200);
 
-                  dict2.push({ from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length });
-                  //dict2.push({from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label']  });
-
-              }
+                  dict2.push({ from: json_array[i]['topic_from']['id'], to: json_array[i]['topic_to']['id'], arrows:'to',label:json_array[i]['label'],length: arrow_length });
             }
             var edges = new vis.DataSet(dict2);
 
