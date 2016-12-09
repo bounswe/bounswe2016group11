@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  $('#relates_to4').selectize({
+  $('#relates_to4').select2({
       maxItems: 1,
       maxOptions: 3,
       valueField: 'id',
@@ -13,7 +13,7 @@ $(document).ready(function () {
       }*/
   });
 
-  $('#relates_to5').selectize({
+  $('#relates_to5').select2({
       maxItems: 1,
       maxOptions: 3,
       valueField: 'id',
@@ -27,7 +27,7 @@ $(document).ready(function () {
       }*/
   });
 
-  $('#relates_to6').selectize({
+  $('#relates_to6').select2({
       maxItems: 1,
       maxOptions: 3,
       valueField: 'id',
