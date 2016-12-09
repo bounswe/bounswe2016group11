@@ -67,44 +67,99 @@ $(function(){
               }
 
             }
-            var nodes = new vis.DataSet(dict1);
+            if(json_array.length==0){
+                $.ajax({
+                    url:'/cocomapapp/topicRetrieve/'+searchId,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data2) {
+                        var json_array2 = data2;
+                        console.log(data2);
+                        var seed = Math.random();
+                        var red = Math.round(seed*255);
+                        var green = Math.max(Math.round((1-seed)*50),0);
+                        var blue = Math.round((1-seed)*255);
+                        console.log("red: "+ red+"    , blue:"+blue);
+                        seed=0.9;
+                        dict1.push({id: searchId, size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
+                        label: json_array2['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+                        console.log("searchName:"+dict1[0]['label']);
+                        var nodes = new vis.DataSet(dict1);
+                        var edges = new vis.DataSet(dict2);
 
 
-            // create an array with edges
-            var dict2 = [];
-            for(var i = 0; i < json_array.length; i++){
-                  //length of arrow
-                  seed = 0;
-                  var arrow_length = Math.round((1-seed)*100+200);
+                        // create a network
+                        var container = document.getElementById('globalNetwork');
+                        var data = {
+                          nodes: nodes,
+                          edges: edges
+                        };
+                        var options = {autoResize: true,
+                          height: '100%',
+                          width: '100%'
+                        };
+                        var network = new vis.Network(container, data, options);
 
-                  dict2.push({ from: json_array[i]['topic_from']['id'], to: json_array[i]['topic_to']['id'], arrows:'to',label:json_array[i]['label'],length: arrow_length });
+                        network.on("click", function (params) {
+                            params.event = "[original event]";
+
+                            var clickedNode = params['nodes'][0];
+                            if(clickedNode != undefined){
+                                var clickedTopic =nodes.get(clickedNode);
+                                window.location.href = ("topics/"+clickedTopic["id"]);
+                                //when clicked to a topic node, the user is directed
+                                //to that topics view page
+                            }
+                        });
+
+                    }
+                });
             }
-            var edges = new vis.DataSet(dict2);
+            else{
+                console.log("print:"+dict1[0]['label']);
+                var nodes = new vis.DataSet(dict1);
+                // create an array with edges
+                var dict2 = [];
+                for(var i = 0; i < json_array.length; i++){
+                      //length of arrow
+                      seed = 0;
+                      var arrow_length = Math.round((1-seed)*100+200);
 
-
-            // create a network
-            var container = document.getElementById('globalNetwork');
-            var data = {
-              nodes: nodes,
-              edges: edges
-            };
-            var options = {autoResize: true,
-              height: '100%',
-              width: '100%'
-            };
-            var network = new vis.Network(container, data, options);
-
-            network.on("click", function (params) {
-                params.event = "[original event]";
-
-                var clickedNode = params['nodes'][0];
-                if(clickedNode != undefined){
-                    var clickedTopic =nodes.get(clickedNode);
-                    window.location.href = ("topics/"+clickedTopic["id"]);
-                    //when clicked to a topic node, the user is directed
-                    //to that topics view page
+                      dict2.push({ from: json_array[i]['topic_from']['id'], to: json_array[i]['topic_to']['id'], arrows:'to',label:json_array[i]['label'],length: arrow_length });
                 }
-            });
+                var edges = new vis.DataSet(dict2);
+
+
+                // create a network
+                var container = document.getElementById('globalNetwork');
+                var data = {
+                  nodes: nodes,
+                  edges: edges
+                };
+                var options = {autoResize: true,
+                  height: '100%',
+                  width: '100%'
+                };
+                var network = new vis.Network(container, data, options);
+
+                network.on("click", function (params) {
+                    params.event = "[original event]";
+
+                    var clickedNode = params['nodes'][0];
+                    if(clickedNode != undefined){
+                        var clickedTopic =nodes.get(clickedNode);
+                        if(clickedTopic["id"]==searchId)
+                            window.location.href = ("/cocomapapp/topics/"+clickedTopic["id"]);
+                        else
+                            window.location.href = ("/cocomapapp/infocus/"+clickedTopic["id"]);
+                        //when clicked to a topic node, the user is directed
+                        //to that topics view page
+                    }
+                });
+            }
+
+
+
         },
         error: function (x, y, z) {
             alert(x + '\n' + y + '\n' + z);
