@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from cocomapapp.models import Tag, Topic, Post, Relation
+from cocomapapp.models import Tag, Topic, Post, Relation, Vote
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'last_login', 'is_superuser', 'username', 'first_name', 'last_name', 'email', 'is_staff')
+        fields = ('id', 'last_login', 'is_superuser', 'username', 'first_name', 'last_name', 'email', 'is_staff', 'votes')
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -17,7 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     class Meta:
         model = Post
-        fields = ('id', 'content', 'user', 'tags', 'topic', 'positive_reaction_count', 'negative_reaction_count', 'created_at', 'updated_at')
+        fields = ('id', 'content', 'user', 'tags', 'topic', 'positive_reaction_count', 'negative_reaction_count', 'accuracy', 'votes', 'created_at', 'updated_at')
 
 class TopicSerializer(serializers.ModelSerializer):
     posts = PostSerializer(many=True, read_only=True)
@@ -37,4 +37,11 @@ class HotTopicsSerializer(serializers.ModelSerializer):
 class RelationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Relation
-        fields = ('id', 'topic_from','topic_to','label', 'positive_reaction_count', 'negative_reaction_count',)
+        fields = ('id', 'topic_from','topic_to','label', 'positive_reaction_count', 'negative_reaction_count')
+
+class VoteSerializer(serializers.ModelSerializer):
+    posts = PostSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = Vote
+        fields = ('id', 'user', 'post', 'is_positive')

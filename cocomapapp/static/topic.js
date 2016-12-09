@@ -89,20 +89,43 @@ function get_hidden_tags(props,the_json){
   return hidden_tags;
 }
 
-function upVote(id){  //For upvoting
-
+function vote(user_id, post_id, is_positive){  //For upvoting
+    var vote_data = {
+        user_id: user_id,
+        post_id: post_id,
+        is_positive: is_positive
+        // relationships_name: $('#relationships-name').val()
+    };
   //console.log("upVote deyim");
   $.ajax({
-    url: '/cocomapapp/postUpvote/'+id+'/',
-    type: 'PUT',
+    url: '/cocomapapp/postVote/',
+    type: 'POST',
+    data: vote_data,
     success: function (data) {
       //console.log('success: ', data);
+      var upColor = "grey";
+      var downColor = "grey";
+      $.each(data.votes, function(j, obj2){
+          var vote_user = obj2.user;
+          if (user_id == vote_user){
+              if (obj2.is_positive){
+                  upColor = "blue";
+              }
+              else{
+                  downColor = "blue"
+              }
+          }
+      });
 
-      $('#t'+id).hide();
-      $('#'+id).after('<span id="t'+id+'" style="color:green;">'+ data.positive_reaction_count +'</span>');
-      var accuracy = (data.positive_reaction_count/(data.positive_reaction_count+data.negative_reaction_count))*100;
+      $('#t'+post_id).hide();
+      $('#'+post_id).replaceWith('<a href="#" id="'+ post_id +'" onclick="vote('+user_id +','+ post_id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a>')
+      $('#'+post_id).after('<span id="t'+post_id+'" style="color:green;">'+ data.positive_reaction_count +'</span>');
+      $('#d'+post_id).hide();
+      $('#-'+post_id).replaceWith('<a href="#" id="-'+ post_id +'" onclick="vote('+user_id +','+ post_id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a>')
+      $('#-'+post_id).after('<span id="d'+post_id+'" style="color:red;">'+ data.negative_reaction_count +'</span>');
+      var accuracy = data.accuracy;//(data.positive_reaction_count+data.negative_reaction_count)>0?(data.positive_reaction_count/(data.positive_reaction_count+data.negative_reaction_count))*100:0;
 
-      $('#a'+id).replaceWith('<span id="a'+id+'">'+accuracy.toFixed(2)+'% </span>');
+      $('#a'+post_id).replaceWith('<span id="a'+post_id+'">'+accuracy.toFixed(2)+'% </span>');
 
 
     },
@@ -111,6 +134,7 @@ function upVote(id){  //For upvoting
     }
   });
 }
+/*
 function downVote(id){   //For downvoting
   //console.log("downVote deyim");
   $.ajax({
@@ -131,8 +155,9 @@ function downVote(id){   //For downvoting
     }
   });
 }
-
+*/
 $(document).ready(function(){
+  console.log(topic)
   topic = JSON.parse(topic);
   hot_topics = JSON.parse(hot_topics);
   console.log(topic);
@@ -155,8 +180,23 @@ $(document).ready(function(){
         var user = obj.user;
         //for accuracy first positive then negative
 
-        var accuracy = (obj.positive_reaction_count+obj.negative_reaction_count)>0?(obj.positive_reaction_count/(obj.positive_reaction_count+obj.negative_reaction_count))*100:0;
+        var accuracy = obj.accuracy;//(obj.positive_reaction_count+obj.negative_reaction_count)>0?(obj.positive_reaction_count/(obj.positive_reaction_count+obj.negative_reaction_count))*100:0;
         var tagsAsStr="";
+
+        var upColor = "grey";
+        var downColor = "grey";
+        $.each(obj.votes, function(j, obj2){
+            var vote_user = obj2.user;
+            if (user.id == vote_user){
+                if (obj2.is_positive){
+                    upColor = "blue";
+                }
+                else{
+                    downColor = "blue"
+                }
+            }
+        });
+
         $.each(post_tags, function(i,val){
             tagsAsStr +="<span style='display: inline-block;' class='label "+option_labels[i%option_labels.length] +"'>" +val.name +"</span>";
         });
@@ -172,8 +212,8 @@ $(document).ready(function(){
               <!-- Thumbs up, down -->
               +'<div class="pull-right">'
               //+'<span><div align="right">'
-                +'<a href="#" id="'+ obj.id +'" onclick="upVote('+ obj.id+');"><span class="glyphicon glyphicon-thumbs-up" style="color: blue;"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
-                +'<a href="#" id="-'+ obj.id +'" onclick="downVote('+ obj.id+');"><span class="glyphicon glyphicon-thumbs-down" style="color: red"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
+                +'<a href="#" id="'+ obj.id +'" onclick="vote('+user.id +','+ obj.id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
+                +'<a href="#" id="-'+ obj.id +'" onclick="vote('+user.id +','+ obj.id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
                 +'  Accuracy: '
                 +'<span id="a'+obj.id+'">'+accuracy.toFixed(2)+'% </span>'
               //+'</div></span>'
