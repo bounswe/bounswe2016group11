@@ -21,6 +21,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
 from functools import reduce
 import operator
+from django.utils import timezone
 
 import requests
 from io import StringIO
@@ -161,6 +162,32 @@ def post_vote(request):
         #serializer = VoteSerializer(newVote)
         #return Response(serializer.data)
 
+@api_view(['GET'])
+def getRecommendedTopics(request, limit):
+    if request.method == 'GET':
+        user = request.user;
+        scores = {};
+        for topic in Topic.objects.all():
+
+            neighbor_visits = Visit.objects.filter(user=user, topic__relates_to__topic_to=topic)
+
+            neighbor_visits_count = len(neighbor_visits);
+            if neighbor_visits_count > 0:
+                last_neighbor_visit = neighbor_visits.order_by('-visit_date')[0].visit_date;
+            else:
+                last_neighbor_visit = topic.created_at
+
+            relevance_score = neighbor_visits_count - (timezone.now()-last_neighbor_visit).total_seconds()/3600
+            recommendation = relevance_score + topic.hotness
+
+            scores[topic] = recommendation;
+
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        recommended_topics = [key for key, value in sorted_scores]
+        #print(recommended_topics)
+        serializer = TopicNestedSerializer(recommended_topics, many=True);
+        return Response(serializer.data)
+
 
 @api_view(['GET'])
 def listTopicRelevance(request):
@@ -182,12 +209,19 @@ def listTopicRelevance(request):
             else:
                 row['last_visit'] = topic.created_at
 
-            user_posts = len(topic.posts.filter(user=user))
+            neighbor_visits = Visit.objects.filter(user=user, topic__relates_to__topic_to=topic)
 
-            user_likes = len(topic.posts.filter(votes__user=user))
+            row['neighbor_visits_count'] = len(neighbor_visits);
+            if row['neighbor_visits_count'] > 0:
+                row['last_neighbor_visit'] = neighbor_visits.order_by('-visit_date')[0].visit_date;
+            else:
+                row['last_neighbor_visit'] = topic.created_at
 
-            row['post_count'] = user_posts
-            row['like_count'] = user_likes
+            row['post_count'] = len(topic.posts.filter(user=user))
+            row['like_count'] = len(topic.posts.filter(votes__user=user))
+            row['relevance_score'] = row['neighbor_visits_count'] - (timezone.now()-row['last_neighbor_visit']).total_seconds()/3600
+            row['recommendation'] = row['relevance_score'] + topic.hotness
+
             data.append(row)
 
         print(data)
