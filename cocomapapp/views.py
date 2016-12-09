@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import Tag, Topic, Post, Relation, Vote
+from cocomapapp.models import Tag, Topic, Post, Relation, Vote, Visit
 from django.contrib.auth.models import User
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer, VoteSerializer
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer, VoteSerializer, VisitSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -51,7 +51,7 @@ class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
 
 class TopicRetrieve(ReadNestedWriteFlatMixin, generics.RetrieveAPIView):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
 
 class PostCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = PostSerializer
@@ -127,6 +127,9 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+class VisitCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+    serializer_class = VisitSerializer
+
 #@csrf_exempt
 @api_view(['POST'])
 def post_vote(request):
@@ -153,10 +156,36 @@ def post_vote(request):
             newVote = Vote.objects.create(user=user, post=post, is_positive=is_positive)
 
         serializer = PostSerializer(post)
+        serializer.Meta.depth = 1;
         return Response(serializer.data)
         #serializer = VoteSerializer(newVote)
         #return Response(serializer.data)
 
+
+@api_view(['GET'])
+def listTopicRelevance(request):
+    if request.method == 'GET':
+        user = request.user;
+        data = [];
+        for topic in Topic.objects.all():
+            row = {};
+
+            topicSerializer = TopicNestedSerializer(topic)
+            topicSerializer.Meta.depth = 1;
+            #row['topic'] = topicSerializer.data;
+            user_visits = topic.visits.filter(user=user)
+            visitSerializer = VisitSerializer(user_visits, many=True)
+            #visitSerializer.Meta.depth = 1;
+            row['visit_count'] = len(user_visits);
+            if row['visit_count'] > 0:
+                row['last_visit']  = user_visits.order_by('-visit_date')[0].visit_date
+            else:
+                row['last_visit'] = topic.created_at
+
+            data.append(row)
+
+        print(data)
+        return Response(data)
 
 #@csrf_exempt
 #@api_view(['PUT'])
@@ -379,7 +408,7 @@ def show_topic(request, id):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     try:
         topic = Topic.objects.get(id=id)
-        serialized_topic = TopicSerializer(topic)
+        serialized_topic = TopicNestedSerializer(topic)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
