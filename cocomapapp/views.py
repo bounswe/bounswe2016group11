@@ -131,12 +131,7 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
 @api_view(['POST'])
 def post_vote(request):
     if request.method == 'POST':
-        user_id = request.data['user_id']
-        try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
+        user = request.user
         post_id = request.data['post_id']
         try:
             post = Post.objects.get(pk=post_id)
@@ -370,7 +365,7 @@ def show_topic(request, id):
         except ObjectDoesNotExist:
             return HttpResponse("You should login to post!")
         requested_topic = Topic.objects.get(id=id)
-        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""))
         tags = request.POST.get("tags", "").split(",");
         for tag in tags:
            if len(tag)>0:

@@ -89,9 +89,8 @@ function get_hidden_tags(props,the_json){
   return hidden_tags;
 }
 
-function vote(user_id, post_id, is_positive){  //For upvoting
+function vote(currUser, post_id, is_positive){  //For upvoting
     var vote_data = {
-        user_id: user_id,
         post_id: post_id,
         is_positive: is_positive
         // relationships_name: $('#relationships-name').val()
@@ -107,7 +106,7 @@ function vote(user_id, post_id, is_positive){  //For upvoting
       var downColor = "grey";
       $.each(data.votes, function(j, obj2){
           var vote_user = obj2.user;
-          if (user_id == vote_user){
+          if (currUser == vote_user){
               if (obj2.is_positive){
                   upColor = "blue";
               }
@@ -118,10 +117,10 @@ function vote(user_id, post_id, is_positive){  //For upvoting
       });
 
       $('#t'+post_id).hide();
-      $('#'+post_id).replaceWith('<a href="#" id="'+ post_id +'" onclick="vote('+user_id +','+ post_id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a>')
+      $('#'+post_id).replaceWith('<a href="#" id="'+ post_id +'" onclick="vote('+currUser+','+ post_id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a>')
       $('#'+post_id).after('<span id="t'+post_id+'" style="color:green;">'+ data.positive_reaction_count +'</span>');
       $('#d'+post_id).hide();
-      $('#-'+post_id).replaceWith('<a href="#" id="-'+ post_id +'" onclick="vote('+user_id +','+ post_id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a>')
+      $('#-'+post_id).replaceWith('<a href="#" id="-'+ post_id +'" onclick="vote('+currUser+','+ post_id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a>')
       $('#-'+post_id).after('<span id="d'+post_id+'" style="color:red;">'+ data.negative_reaction_count +'</span>');
       var accuracy = data.accuracy;//(data.positive_reaction_count+data.negative_reaction_count)>0?(data.positive_reaction_count/(data.positive_reaction_count+data.negative_reaction_count))*100:0;
 
@@ -157,7 +156,8 @@ function downVote(id){   //For downvoting
 }
 */
 $(document).ready(function(){
-  console.log(topic)
+  var currUser = document.getElementById("userId").value;;
+  console.log( currUser )
   topic = JSON.parse(topic);
   hot_topics = JSON.parse(hot_topics);
   console.log(topic);
@@ -187,7 +187,8 @@ $(document).ready(function(){
         var downColor = "grey";
         $.each(obj.votes, function(j, obj2){
             var vote_user = obj2.user;
-            if (user.id == vote_user){
+            //console.log(user.id+" "+vote_user)
+            if (currUser == vote_user){
                 if (obj2.is_positive){
                     upColor = "blue";
                 }
@@ -212,8 +213,8 @@ $(document).ready(function(){
               <!-- Thumbs up, down -->
               +'<div class="pull-right">'
               //+'<span><div align="right">'
-                +'<a href="#" id="'+ obj.id +'" onclick="vote('+user.id +','+ obj.id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
-                +'<a href="#" id="-'+ obj.id +'" onclick="vote('+user.id +','+ obj.id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
+                +'<a href="#" id="'+ obj.id +'" onclick="vote('+currUser+','+ obj.id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
+                +'<a href="#" id="-'+ obj.id +'" onclick="vote('+currUser+','+ obj.id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
                 +'  Accuracy: '
                 +'<span id="a'+obj.id+'">'+accuracy.toFixed(2)+'% </span>'
               //+'</div></span>'
