@@ -124,11 +124,23 @@ class Post(models.Model):
 @python_2_unicode_compatible
 class Vote(models.Model):
     user = models.ForeignKey(User, related_name='votes', on_delete=models.CASCADE)
-    post = models.ForeignKey(Post, related_name ='votes')
+    post = models.ForeignKey(Post, related_name ='votes', on_delete=models.CASCADE)
     is_positive = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         return super(Vote, self).save(*args, **kwargs)
 
     def __str__(self):
-        return (str(self.id) + ' ' + self.is_positive)
+        return (str(self.id) + ' ' + str(self.is_positive))
+
+@python_2_unicode_compatible
+class Visit(models.Model):
+    user = models.ForeignKey(User, related_name='visits', on_delete=models.CASCADE)
+    topic = models.ForeignKey(Topic, related_name ='visits', on_delete=models.CASCADE)
+    visit_date = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        return super(Visit, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return (str(self.id) + ' ' + str(self.visit_date))

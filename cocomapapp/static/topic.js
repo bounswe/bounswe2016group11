@@ -156,8 +156,27 @@ function downVote(id){   //For downvoting
 }
 */
 $(document).ready(function(){
-  var currUser = document.getElementById("userId").value;;
-  console.log( currUser )
+  var currUser = document.getElementById("userId").value;
+  var url = document.baseURI.split('/');
+  var lastSegment = '';
+  while(lastSegment.length == 0){
+      lastSegment = url.pop()
+  }
+  console.log(lastSegment)
+  var visitData = {
+      user: currUser,
+      topic: lastSegment,
+  };
+  $.ajax({
+    url: '/cocomapapp/visitCreate/',
+    type: 'POST',
+    contentType: "application/json;charset=utf-8",
+    data: JSON.stringify(visitData),
+    success: function (data) {
+      console.log('Visit recorded')
+    }
+    });
+  //console.log( currUser )
   topic = JSON.parse(topic);
   hot_topics = JSON.parse(hot_topics);
   console.log(topic);

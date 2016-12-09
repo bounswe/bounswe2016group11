@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import Tag, Topic, Post, Relation, Vote
+from cocomapapp.models import Tag, Topic, Post, Relation, Vote, Visit
 from django.contrib.auth.models import User
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer, VoteSerializer
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer, VoteSerializer, VisitSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -21,6 +21,7 @@ from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
 from functools import reduce
 import operator
+from django.utils import timezone
 
 import requests
 from io import StringIO
@@ -51,7 +52,7 @@ class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
 
 class TopicRetrieve(ReadNestedWriteFlatMixin, generics.RetrieveAPIView):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
 
 class PostCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = PostSerializer
@@ -127,6 +128,9 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
+class VisitCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+    serializer_class = VisitSerializer
+
 #@csrf_exempt
 @api_view(['POST'])
 def post_vote(request):
@@ -153,10 +157,75 @@ def post_vote(request):
             newVote = Vote.objects.create(user=user, post=post, is_positive=is_positive)
 
         serializer = PostSerializer(post)
+        serializer.Meta.depth = 1;
         return Response(serializer.data)
         #serializer = VoteSerializer(newVote)
         #return Response(serializer.data)
 
+@api_view(['GET'])
+def getRecommendedTopics(request, limit):
+    if request.method == 'GET':
+        user = request.user;
+        scores = {};
+        for topic in Topic.objects.all():
+
+            neighbor_visits = Visit.objects.filter(user=user, topic__relates_to__topic_to=topic)
+
+            neighbor_visits_count = len(neighbor_visits);
+            if neighbor_visits_count > 0:
+                last_neighbor_visit = neighbor_visits.order_by('-visit_date')[0].visit_date;
+            else:
+                last_neighbor_visit = topic.created_at
+
+            relevance_score = neighbor_visits_count - (timezone.now()-last_neighbor_visit).total_seconds()/3600
+            recommendation = relevance_score + topic.hotness
+
+            scores[topic] = recommendation;
+
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        recommended_topics = [key for key, value in sorted_scores]
+        #print(recommended_topics)
+        serializer = TopicNestedSerializer(recommended_topics, many=True);
+        return Response(serializer.data)
+
+
+@api_view(['GET'])
+def listTopicRelevance(request):
+    if request.method == 'GET':
+        user = request.user;
+        data = [];
+        for topic in Topic.objects.all():
+            row = {};
+
+            topicSerializer = TopicNestedSerializer(topic)
+            topicSerializer.Meta.depth = 1;
+            #row['topic'] = topicSerializer.data;
+            user_visits = topic.visits.filter(user=user)
+            visitSerializer = VisitSerializer(user_visits, many=True)
+            #visitSerializer.Meta.depth = 1;
+            row['visit_count'] = len(user_visits);
+            if row['visit_count'] > 0:
+                row['last_visit']  = user_visits.order_by('-visit_date')[0].visit_date
+            else:
+                row['last_visit'] = topic.created_at
+
+            neighbor_visits = Visit.objects.filter(user=user, topic__relates_to__topic_to=topic)
+
+            row['neighbor_visits_count'] = len(neighbor_visits);
+            if row['neighbor_visits_count'] > 0:
+                row['last_neighbor_visit'] = neighbor_visits.order_by('-visit_date')[0].visit_date;
+            else:
+                row['last_neighbor_visit'] = topic.created_at
+
+            row['post_count'] = len(topic.posts.filter(user=user))
+            row['like_count'] = len(topic.posts.filter(votes__user=user))
+            row['relevance_score'] = row['neighbor_visits_count'] - (timezone.now()-row['last_neighbor_visit']).total_seconds()/3600
+            row['recommendation'] = row['relevance_score'] + topic.hotness
+
+            data.append(row)
+
+        print(data)
+        return Response(data)
 
 #@csrf_exempt
 #@api_view(['PUT'])
@@ -379,7 +448,7 @@ def show_topic(request, id):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
     try:
         topic = Topic.objects.get(id=id)
-        serialized_topic = TopicSerializer(topic)
+        serialized_topic = TopicNestedSerializer(topic)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
