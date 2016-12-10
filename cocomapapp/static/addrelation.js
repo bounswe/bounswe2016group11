@@ -71,7 +71,7 @@ $(document).ready(function () {
     if(relations.length ==0){
       return;
     }
-    
+
     $.ajax({
         url: 'add',
         type: 'POST',
@@ -91,6 +91,7 @@ $(document).ready(function () {
   });
 
 });
+
 
 function get_topic_list(){
   $.ajax({
