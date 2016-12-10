@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.cocomap.coco.adapter.GridViewAdapter;
 import com.cocomap.coco.R;
+import com.cocomap.coco.pojo.PostRetrieveResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -27,17 +28,37 @@ public class GlobalViewActivity extends AppCompatActivity {
 
     TextView focus;
     String json;
+    GridViewAdapter adapter;
+    int focusedTopicId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_global_view);
+        request(3);
+
+
+        focus = (TextView) findViewById(R.id.focusTopicTextView);
+
+        GridView gridview = (GridView) findViewById(R.id.gridview);
+
+        adapter = new GridViewAdapter(GlobalViewActivity.this);
+        gridview.setAdapter(adapter);
+        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                request(adapter.getRelatedTopics().get(position).getTopic_to());
+            }
+        });
+    }
+
+    private void request(int topicId){
 
         OkHttpClient client = new OkHttpClient();
 
 
         Request request = new Request.Builder()
-                .url("http://ec2-54-186-167-76.us-west-2.compute.amazonaws.com:8000/cocomapapp/topicList")
+                .url("http://ec2-54-186-167-76.us-west-2.compute.amazonaws.com:8000/cocomapapp/topicRetrieve/"+topicId)
                 .addHeader("Content-Type", "application/json")
                 .get()
                 .build();
@@ -53,19 +74,23 @@ public class GlobalViewActivity extends AppCompatActivity {
             public void onResponse(Call call, Response response) throws IOException {
 
                 json = response.body().string();
+                Log.d("1", json);
+
+                Gson gson = new Gson();
 
 
-            }
-        });
+                final PostRetrieveResponse retrieved_post = gson.fromJson(json, PostRetrieveResponse.class);
 
-        final String[] thumbnailUrls = {"Dolar", "Hillary", "Bahçeli"};
-        focus = (TextView) findViewById(R.id.focusTopicTextView);
-        GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new GridViewAdapter(this, thumbnailUrls));
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                focus.setText(thumbnailUrls[position]);
+
+
+                GlobalViewActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.setRelatedTopics(retrieved_post.getRelated_to());
+                        focus.setText(retrieved_post.getName());
+                        focusedTopicId = retrieved_post.getId();
+                    }
+                });
             }
         });
     }
@@ -80,6 +105,7 @@ public class GlobalViewActivity extends AppCompatActivity {
 
     public void onFocusClick(View view) {
         Intent intent = new Intent(GlobalViewActivity.this, TopicDetailActivity.class);
+        intent.putExtra("focused_topic_id", focusedTopicId);
         startActivity(intent);
 
     }

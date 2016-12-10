@@ -44,7 +44,12 @@ public class MyReceyclerAdapter extends RecyclerView.Adapter<MyReceyclerAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.text.setText(list.get(position).getContent());
+        String content = list.get(position).getContent();
+        for(int i = 0; i < list.get(position).getTags().size(); i++){
+            content +=" #"+ list.get(position).getTags().get(i).getName();
+        }
+        holder.text.setText(content);
+        holder.usernameTextView.setText("@" + list.get(position).getUser().getUsername());
 
     }
 
@@ -60,10 +65,12 @@ public class MyReceyclerAdapter extends RecyclerView.Adapter<MyReceyclerAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView text;
+        TextView usernameTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             text = (TextView) itemView.findViewById(R.id.text);
+            usernameTextView = (TextView) itemView.findViewById(R.id.usernameTextView);
         }
     }
 }

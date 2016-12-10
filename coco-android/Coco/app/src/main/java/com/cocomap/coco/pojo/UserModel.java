@@ -5,12 +5,45 @@ package com.cocomap.coco.pojo;
  */
 public class UserModel {
     int id;
-    String first_name;
-    String last_name;
-    String email;
-    String password;
-    String created_at;
-    String updated_at;
+    private String last_login;
+    private boolean is_superuser;
+    private String username;
+    private String first_name;
+    private String last_name;
+    private String email;
+    private boolean is_staff;
+
+    public String getLast_login() {
+        return last_login;
+    }
+
+    public void setLast_login(String last_login) {
+        this.last_login = last_login;
+    }
+
+    public boolean is_superuser() {
+        return is_superuser;
+    }
+
+    public void setIs_superuser(boolean is_superuser) {
+        this.is_superuser = is_superuser;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean is_staff() {
+        return is_staff;
+    }
+
+    public void setIs_staff(boolean is_staff) {
+        this.is_staff = is_staff;
+    }
 
     public int getId() {
         return id;
@@ -44,27 +77,5 @@ public class UserModel {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
-    }
-
-    public String getUpdated_at() {
-        return updated_at;
-    }
-
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
-    }
 }

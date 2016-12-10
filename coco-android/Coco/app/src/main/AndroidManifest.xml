@@ -16,7 +16,7 @@
         </activity>
         <activity
             android:name=".activity.TopicDetailActivity"
-            android:label="Trump">
+            >
 
         </activity>
         <activity android:name=".activity.GlobalViewActivity"

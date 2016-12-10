@@ -62,11 +62,14 @@ public class TopicDetailActivity extends BaseActivity {
 
         posts = new ArrayList<>();
 
+
+        int topic_id = getIntent().getIntExtra("focused_topic_id", -1);
+
         OkHttpClient client = new OkHttpClient();
 
 
         Request request = new Request.Builder()
-                .url("http://ec2-54-186-167-76.us-west-2.compute.amazonaws.com:8000/cocomapapp/topicRetrieve/1") // TOPIC ID DEĞİŞECEK
+                .url("http://ec2-54-186-167-76.us-west-2.compute.amazonaws.com:8000/cocomapapp/topicRetrieve/"+topic_id) // TOPIC ID DEĞİŞECEK
                 .addHeader("Content-Type", "application/json")
                 .get()
                 .build();
@@ -93,6 +96,7 @@ public class TopicDetailActivity extends BaseActivity {
                     @Override
                     public void run() {
                         myAdapter.setList(retrieved_post.getPosts());
+                        getSupportActionBar().setTitle(retrieved_post.getName());
                     }
                 });
 

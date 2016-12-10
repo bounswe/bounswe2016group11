@@ -6,15 +6,31 @@ import java.util.List;
  * Created by Emrah on 08/12/2016.
  */
 public class PostModel {
-    int id;
-    String content;
-    int positive_reaction_count;
-    int negative_reaction_count;
-    String created_at;
-    String updated_at;
-    int user;
-    int topic;
-    List<TagModel> tags;
+    private int id;
+    private String content;
+    private int positive_reaction_count;
+    private int negative_reaction_count;
+    private String created_at;
+    private String updated_at;
+    private UserModel user;
+    private List<TagModel> tags;
+    private TopicModel topic;
+
+    public UserModel getUser() {
+        return user;
+    }
+
+    public void setUser(UserModel user) {
+        this.user = user;
+    }
+
+    public TopicModel getTopic() {
+        return topic;
+    }
+
+    public void setTopic(TopicModel topic) {
+        this.topic = topic;
+    }
 
     public int getId() {
         return id;
@@ -64,21 +80,7 @@ public class PostModel {
         this.updated_at = updated_at;
     }
 
-    public int getUser() {
-        return user;
-    }
 
-    public void setUser(int user) {
-        this.user = user;
-    }
-
-    public int getTopic() {
-        return topic;
-    }
-
-    public void setTopic(int topic) {
-        this.topic = topic;
-    }
 
     public List<TagModel> getTags() {
         return tags;

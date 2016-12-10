@@ -11,10 +11,19 @@ public class PostRetrieveResponse {
     private String name;
     private UserModel user;
     private List<TagModel> tags;
-    private List<RelatesToModel> related_to;
+    private List<RelatesToModel> relates_to;
     private List<PostModel> posts;
     private String created_at;
     private String updated_at;
+    private double hotness;
+
+    public double getHotness() {
+        return hotness;
+    }
+
+    public void setHotness(double hotness) {
+        this.hotness = hotness;
+    }
 
     public int getId() {
         return id;
@@ -49,11 +58,11 @@ public class PostRetrieveResponse {
     }
 
     public List<RelatesToModel> getRelated_to() {
-        return related_to;
+        return relates_to;
     }
 
     public void setRelated_to(List<RelatesToModel> related_to) {
-        this.related_to = related_to;
+        this.relates_to = related_to;
     }
 
     public List<PostModel> getPosts() {
