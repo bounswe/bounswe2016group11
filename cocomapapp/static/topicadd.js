@@ -57,6 +57,7 @@ function get_tags(wikiId,theTags){
 }
 
 $(document).ready(function(){
+  $(".sidebar").remove();
   var theTags=[];
   $("#submit").click( function() {
       // console.log("asfdlkjsafdjkladfjs");
@@ -190,27 +191,28 @@ $(document).ready(function(){
   $('#tags').selectize({
       maxOptions: 6,
       valueField: 'id',
-      labelField: 'name',
-      searchField: ['name'],
+      labelField: 'description',
+      searchField: ['description'],
       plugins: ['remove_button'],
       options: [],
       create: false,
       load: function(query, callback) {
-          if(query.length <2 ){
-            return [];
-          }
-          $.getJSON("/cocomapapp/wikidataSearch/" +query+ "/"
-          ).fail( function() {
-            console.log("error in wikidata");
-          }).done( function(data) {
-              $.each(data,function(i,value){
-                  theTags.push({
-                    id : value.id,
-                    name : (value.label +" "+ value.description)
-                  });
-                  console.log("my values are: "+i+" "+value.label+" "+value.description);
-              });
-              callback(theTags);
+        if(query.length <2 ){
+          return [];
+        }
+        $.getJSON("/cocomapapp/wikidataSearch/" +query+ "/"
+        ).fail( function() {
+          console.log("error in wikidata");
+        }).done( function(data) {
+            $.each(data,function(i,value){
+                theTags.push({
+                  id : value.id,
+                  name : value.label,
+                  description: (value.label +" "+ value.description)
+                });
+                console.log("my values are: "+i+" "+value.label+" "+value.description);
+            });
+            callback(theTags);
           });
 
         }

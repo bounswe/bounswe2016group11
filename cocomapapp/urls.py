@@ -19,8 +19,12 @@ from .views import (
 	RelationList,
 	TagCreate,
 	TagRetrieve,
-	post_upvote,
-	post_downvote,
+	VisitCreate,
+	#post_upvote,
+	#post_downvote,
+	post_vote,
+	listTopicRelevance,
+	getRecommendedTopics,
 	relation_upvote,
 	relation_downvote,
 	wikidata_search,
@@ -39,7 +43,7 @@ urlpatterns = [
     #url(r'^accounts/', include('allauth.urls')),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
-    url(r'topics/postAdd', add_post),
+    url(r'topics/(?P<id>\d+)/postAdd', add_post),
 
 	url(r'topicList',  TopicList.as_view()),
 	url(r'topicCreate',  TopicCreate.as_view()),
@@ -58,14 +62,19 @@ urlpatterns = [
 	url(r'tagCreate',  TagCreate.as_view()),
 	url(r'tagRetrieve/(?P<pk>Q[0-9]+)/',  TagRetrieve.as_view()),
 
-	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
-	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+	url(r'visitCreate/',  VisitCreate.as_view()),
+
+	#url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
+	#url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+	url(r'postVote/',  post_vote),
+	url(r'listTopicRelevance/', listTopicRelevance),
+	url(r'getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics),
 
 	url(r'relationUpvote/(?P<pk>[0-9]+)/',  relation_upvote),
 	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),
 
 	url(r'wikidataSearch/(?P<str>.+)/', wikidata_search),
-	url(r'getHotTopics/', topic_get_hot),
+	url(r'getHotTopics/(?P<limit>[0-9]+)/', topic_get_hot),
     url(r'wikidataQuery/(?P<str>.+)/', wikidata_query),
 	url(r'searchByTags', search_by_tags),
 
