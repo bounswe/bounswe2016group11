@@ -293,12 +293,11 @@ $(document).ready(function(){
         });
 
         post.tags=resultTags;
-        console.log(post);
-        return;
         $.ajax({
-          url: 'topics/postAdd/',
+          url: 'postAdd/',
           type: 'POST',
-          data: '',
+          contentType: "application/json;charset=utf-8",
+          data: JSON.stringify(post),
           success: function (data) {
             location.reload();
           },

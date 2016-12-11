@@ -437,15 +437,20 @@ def show_topic(request, id):
         postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""))
         tags = request.POST.get("tags", "").split(",");
         for tag in tags:
-           if len(tag)>0:
-               try:
-                   tagObject = Tag.objects.get(wikidataID=tag)
-               except ObjectDoesNotExist:
-                   tagObject = Tag.objects.create(wikidataID=tag, name='Unknown')
-               except MultipleObjectsReturned:
+            if len(tag)>0:
+                try:
+                    tagObject = Tag.objects.get(wikidataID=tag)
+                except ObjectDoesNotExist:
+                    tagObject = Tag.objects.create(wikidataID=tag, name='Unknown')
+                except MultipleObjectsReturned:
                    return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
-               postObject.tags.add(tagObject)
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
+
+                tagObject.save()
+                postObject.tags.add(tagObject)
     try:
         topic = Topic.objects.get(id=id)
         serialized_topic = TopicNestedSerializer(topic)
@@ -512,8 +517,6 @@ def add_topic(request):
                     #         hiddenTagObject.save()
                 tagObject.save()
                 topicObject.tags.add(tagObject)
-                print(tagObject.hidden_tags)
-                print('topicObject.tags')
                 context = {
                 }
             # end of add topic to database.
@@ -549,22 +552,46 @@ def add_topic(request):
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
-def add_post(request):
-    template = loader.get_template('postAdd.html')
+def add_post(request, id):
+    template = loader.get_template('topic.html')
     if request.method == "POST":
-        postObject = Post.objects.create(content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
-        tags = request.POST.get("tags", "").split(",");
-        for tag in tags:
-            try:
-                tagObject = Tag.objects.get(name=tag)
-            except ObjectDoesNotExist:
-                tagObject = Tag.objects.create(name=tag)
-            except MultipleObjectsReturned:
-                return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
-            postObject.tags.add(tagObject)
+        data = JSONParser().parse(request)
+        try:
+            user = User.objects.get(username=request.user)
+        except ObjectDoesNotExist:
+            return HttpResponse("You should login to post!")
+        requested_topic = Topic.objects.get(id=data["topic_id"])
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=data["content"])
+        for tag in data["tags"]:
+            if len(tag)>0:
+                if tag['label'] == '':
+                    continue
+                try:
+                    tagObject = Tag.objects.get(wikidataID=tag['id'])
+                except ObjectDoesNotExist:
+                    tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                except MultipleObjectsReturned:
+                   return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
 
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
+
+                tagObject.save()
+                postObject.tags.add(tagObject)
+    try:
+        topic = Topic.objects.get(id=id)
+        serialized_topic = TopicNestedSerializer(topic)
+        topic_json = JSONRenderer().render(serialized_topic.data)
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+
+    hot_topics = Topic.objects.order_by('-updated_at')[:5]
+    serialized_hot_topics = HotTopicsSerializer(hot_topics, many=True)
+    hot_topics_json = JSONRenderer().render(serialized_hot_topics.data)
     context = {
-        'asd': 'asd',
+        'topic': topic_json,
+        'hot_topics': hot_topics_json
     }
     return HttpResponse(template.render(context, request))
 
