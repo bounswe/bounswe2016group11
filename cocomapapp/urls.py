@@ -42,7 +42,7 @@ urlpatterns = [
     url(r'^accounts/', include('allauth.urls')),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
-    url(r'topics/postAdd', add_post),
+    url(r'topics/(?P<id>\d+)/postAdd', add_post),
 
 	url(r'topicList',  TopicList.as_view()),
 	url(r'topicCreate',  TopicCreate.as_view()),

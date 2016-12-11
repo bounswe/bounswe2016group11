@@ -249,8 +249,8 @@ $(document).ready(function(){
       $('#tags').selectize({
           maxOptions: 6,
           valueField: 'id',
-          labelField: 'name',
-          searchField: ['name'],
+          labelField: 'description',
+          searchField: ['description'],
           plugins: ['remove_button'],
           options: [],
           create: false,
@@ -265,7 +265,8 @@ $(document).ready(function(){
                   $.each(data,function(i,value){
                       theTags.push({
                         id : value.id,
-                        name : (value.label +" "+ value.description)
+                        name : value.label,
+                        description: (value.label +" "+ value.description)
                       });
                       console.log("my values are: "+i+" "+value.label+" "+value.description);
                   });
@@ -273,5 +274,36 @@ $(document).ready(function(){
               });
 
             }
+      });
+      $("#submit").click(function(){
+        var post={};
+        post.content=$("#content").val();
+        post.topic_id=topic.id;
+
+        var resultTagIds = $("#tags").val();
+        if(resultTagIds != ""){
+          resultTagIds = resultTagIds.split(",");
+        }
+        else{
+          resultTagIds = [];
+        }
+        var resultTags = [];
+        $.each(resultTagIds,function(i,value){
+          resultTags.push(get_tags(value,theTags));
+        });
+
+        post.tags=resultTags;
+        $.ajax({
+          url: 'postAdd/',
+          type: 'POST',
+          contentType: "application/json;charset=utf-8",
+          data: JSON.stringify(post),
+          success: function (data) {
+            location.reload();
+          },
+          error: function (x, y, z) {
+              console.log("error");
+          }
+        });
       });
 });
