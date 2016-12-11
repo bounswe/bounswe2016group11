@@ -1,3 +1,4 @@
+
 function get_tags(wikiId,theTags){
   var waitNum;
   var resultTag;
