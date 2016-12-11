@@ -293,12 +293,15 @@ $(document).ready(function(){
         });
 
         post.tags=resultTags;
+        console.log(post);
         $.ajax({
           url: 'postAdd/',
           type: 'POST',
           contentType: "application/json;charset=utf-8",
           data: JSON.stringify(post),
           success: function (data) {
+            $("#content").val("");
+            $("#tags").val("");
             location.reload();
           },
           error: function (x, y, z) {
