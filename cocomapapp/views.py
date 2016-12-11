@@ -19,7 +19,7 @@ from rest_framework import status
 from .forms import RegisterForm, LoginForm
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
-
+from django.utils.decorators import method_decorator
 
 
 
@@ -116,6 +116,7 @@ class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
             queryset_list = Post.objects.order_by('-positive_reaction_count')[:5]
 
         return queryset_list
+
 
 
 class RelationCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):

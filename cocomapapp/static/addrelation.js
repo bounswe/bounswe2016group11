@@ -73,12 +73,12 @@ $(document).ready(function () {
     }
 
     $.ajax({
-        url: 'add',
+        url: '/cocomapapp/relationCreate',
         type: 'POST',
-        data:JSON.stringify(topic),
+        data:JSON.stringify(relations),
         contentType: "application/json;charset=utf-8",
         success: function (data) {
-            window.location.href = "/cocomapapp";
+            window.location.href = "/cocomapapp/infocus/"+topic_id;
         },
         error: function (x, y, z) {
             alert(x + '\n' + y + '\n' + z);
