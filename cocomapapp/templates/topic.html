@@ -14,7 +14,7 @@
 		<div class="panel panel-default panelmb0" style="background-color:#B7C0D7;">
 		  	<div class="panel-body panelmb0" style="padding: 0;">
 		    	<div class="panel panel-default panel-modest panelmb0 pull-right" style="background-color:#F8F9FC;">
-		      	<a href="/cocomapapp"><b>Zoom Out</b></a>
+		      	<a onclick={searchItem=window.location.pathname;theRegex=/([0-9])+/igm;searchId=theRegex.exec(searchItem)[0];console.log("hello"+searchId);window.location.href=("/cocomapapp/infocus/"+searchId);}><b>Zoom Out</b></a>
 		    	</div>
 		    	<h1 id="theTitle" style= "text-align:center;"></h1>
 		    	<div id="topicTags" style="margin:3%; font-size:20px;" >
