@@ -8,6 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.cocomap.coco.R;
+import com.cocomap.coco.pojo.RelatesToModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -16,11 +20,27 @@ import com.cocomap.coco.R;
 public class GridViewAdapter extends BaseAdapter {
 
     private Context context;
-    private final String[] thumbnailUrls;
+    private List<RelatesToModel> relatedTopics;
 
-    public GridViewAdapter(Context context, String[] thumbnailUrls) {
+    public GridViewAdapter(Context context) {
         this.context = context;
-        this.thumbnailUrls = thumbnailUrls;
+
+
+    }
+
+
+    public List<RelatesToModel> getRelatedTopics() {
+        if(this.relatedTopics == null){
+
+            relatedTopics = new ArrayList<>();
+        }
+
+        return relatedTopics;
+    }
+
+    public void setRelatedTopics(List<RelatesToModel> relatedTopics) {
+        this.relatedTopics = relatedTopics;
+        notifyDataSetChanged();
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -46,7 +66,7 @@ public class GridViewAdapter extends BaseAdapter {
         TextView textView = (TextView) gridView
                 .findViewById(R.id.gridItemTextView);
 
-        textView.setText(thumbnailUrls[position]);
+        textView.setText(relatedTopics.get(position).getLabel());
 
 
         return gridView;
@@ -54,12 +74,12 @@ public class GridViewAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return thumbnailUrls.length;
+        return getRelatedTopics().size();
     }
 
     @Override
     public Object getItem(int position) {
-        return thumbnailUrls[position];
+        return getRelatedTopics().get(position);
     }
 
     @Override

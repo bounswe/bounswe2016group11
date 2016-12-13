@@ -30,7 +30,6 @@
         android:id="@+id/focusTopicTextView"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:text="TRUMP"
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/text_size_20"
         android:gravity="center"
