@@ -41,7 +41,7 @@ $(function(){
                   console.log("from: "+json_array[i]['topic_from']['name']);
 
                   var seed = Math.random();
-                  if(json_array[i]['topic_from']['id']==searchId) seed=1;
+                  if(json_array[i]['topic_from']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
                   var green = Math.max(Math.round((1-seed)*50),0);
@@ -56,7 +56,7 @@ $(function(){
                   console.log("from: "+json_array[i]['topic_to']['name']);
 
                   var seed = Math.random();
-                  if(json_array[i]['topic_to']['id']==searchId) seed=1;
+                  if(json_array[i]['topic_to']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
                   var green = Math.max(Math.round((1-seed)*50),0);
@@ -76,7 +76,7 @@ $(function(){
                         var json_array2 = data2;
                         console.log(data2);
                         var seed = Math.random();
-                        seed=1;
+                        seed=0.99;
                         var red = Math.round(seed*255);
                         var green = Math.max(Math.round((1-seed)*50),0);
                         var blue = Math.round((1-seed)*255);
