@@ -614,6 +614,26 @@ def add_relation(request,id):
     }
     return HttpResponse(template.render(context, request))
 
+@csrf_exempt
+def infocus(request, id):
+    template = loader.get_template('infocus.html')
+    try:
+        topic = Topic.objects.get(id=id)
+        serialized_topic = TopicSerializer(topic)
+        topic_json = JSONRenderer().render(serialized_topic.data)
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
+    random_topic = serializers.serialize("json", Topic.objects.order_by('?')[:1])
+
+    context = {
+        'hot_topics': hot_topics,
+        'random_topic': random_topic,
+        'request': request,
+    }
+    return HttpResponse(template.render(context, request))
+
+
 # def second_topic(request):
 #     template = loader.get_template('secondTopic.html')
 #     context = {
