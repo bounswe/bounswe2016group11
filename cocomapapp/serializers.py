@@ -42,7 +42,7 @@ class TopicSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'user', 'relates_to', 'tags', 'posts', 'hotness', 'visits', 'created_at', 'updated_at')
 
 class TopicNestedSerializer(serializers.ModelSerializer):
-    posts = PostSerializer(many=True, read_only=True)
+    posts = PostNestedSerializer(many=True, read_only=True)
     tags = TagSerializer(many=True)
     user = UserSerializer()
     class Meta:

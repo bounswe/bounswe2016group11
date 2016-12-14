@@ -82,4 +82,7 @@ urlpatterns = [
 	url(r'addRelation/(?P<id>[0-9]+)/', add_relation),
 
 	url(r'infocus/(?P<id>\d+)/$', infocus),
+
+	url(r'^accounts/', include('allauth.urls')),
+
 ]

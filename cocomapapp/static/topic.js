@@ -159,9 +159,9 @@ $(document).ready(function(){
   var currUser = document.getElementById("userId").value;
   var url = document.baseURI.split('/');
   var lastSegment = '';
-  while(lastSegment.length == 0){
-      lastSegment = url.pop()
-  }
+  lastSegment = url.pop()
+  lastSegment = url.pop()
+
   console.log(lastSegment)
   var visitData = {
       user: currUser,
