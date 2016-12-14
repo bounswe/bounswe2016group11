@@ -23,15 +23,25 @@ $(function(){
             var json_array = data;
             console.log(data)
             // create an array with nodes
+            var range = json_array[json_array.length-1].hotness-json_array[0].hotness;
+
+            var minHot = json_array[0].hotness;
+            var maxHot = json_array[json_array.length-1].hotness;
+
             var dict1 = [];
 
             for(var i = 0; i < json_array.length; i++){
               //console.log({id: i+1, label: json_array[i]['name'] })
               //Math.random should be replaced
               //Future FIX
-              var seed = Math.random();
+              /*var seed = Math.random();
 
-              console.log(seed);
+              console.log(seed);*/
+
+              var topicHot = json_array[i].hotness;
+              var seed = (topicHot-minHot)/range;
+              console.log("seed: "+seed);
+
               var red = Math.round(seed*255);
               var green = Math.max(Math.round((1-seed)*50),0);
               var blue = Math.round((1-seed)*255);
@@ -41,16 +51,45 @@ $(function(){
             }
             var nodes = new vis.DataSet(dict1);
 
+            //////
+            var range = json_array[json_array.length-1].hotness-json_array[0].hotness;
 
+            var minHot = json_array[0].hotness;
+            //var maxHot = json_array[json_array.length-1].hotness;
             // create an array with edges
             var dict2 = [];
             for(var i = 0; i < json_array.length; i++){
               // this code will be replaced ..............
+              var maxHot = json_array[i].hotness;
+              console.log("topicc "+json_array[i].name);
               for(var j = 0; j < json_array[i]['relates_to'].length; j++){
 
+                var topicHot = json_array[i].hotness;
+                var seed = (topicHot-minHot)/range;
+
+                console.log(json_array[i]['relates_to']);  //relation
+                relatedTopicId = json_array[i]['relates_to'][j]['topic_to'];
+
+                if(relatedTopicId == json_array[i].id)
+                  relatedTopicId = json_array[i]['relates_to'][j]['topic_from'];
+
+
+                  //related topic in hotness ını alıyor(json_arrayinin içinden bu topic için search)
+                  for(var k = 0; k < json_array.length; k++){
+                    if(relatedTopicId == json_array[k].id){
+                      //console.log("related topic   "+json_array[k].name);
+                      if(json_array[k] > maxHot){
+                        maxHot = json_array[k];
+                      }
+                    }
+                  }
+
+                  seed = (maxHot-minHot)/range;
                   //length of arrow
                   console.log(seed);
                   var arrow_length = Math.round((1-seed)*100+200);
+                  console.log(arrow_length);
+
 
                   dict2.push({ from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length });
                   //dict2.push({from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label']  });
