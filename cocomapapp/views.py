@@ -4,9 +4,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.template import loader
 import json
 
-from cocomapapp.models import Tag, Topic, Post, Relation
+from cocomapapp.models import Tag, Topic, Post, Relation, Vote, Visit
 from django.contrib.auth.models import User
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer, VoteSerializer, VisitSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -19,12 +19,12 @@ from rest_framework import status
 from .forms import RegisterForm, LoginForm
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
-
-
-
-
+from functools import reduce
+import operator
+from django.utils import timezone
 
 import requests
+from io import StringIO
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
@@ -52,7 +52,7 @@ class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
 
 class TopicRetrieve(ReadNestedWriteFlatMixin, generics.RetrieveAPIView):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
 
 class PostCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = PostSerializer
@@ -108,12 +108,12 @@ class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
             recommended_topics = Topic.objects.filter(id__in=last_5_topic_ids)
             recommended_post_ids = []
             for topic in recommended_topics:
-                recommended_post_ids.append((topic.posts.order_by('positive_reaction_count')[:1]).id)
+                recommended_post_ids.append(sorted(topic.posts, key=lambda t: t.positive_reaction_count)[:1])
 
             queryset_list = Post.objects.filter(id__in=recommended_post_ids)
 
         else:
-            queryset_list = Post.objects.order_by('-positive_reaction_count')[:5]
+            queryset_list = sorted(Post.objects.all(), key=lambda t: -t.positive_reaction_count)[:5]
 
         return queryset_list
 
@@ -128,34 +128,118 @@ class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
-#@csrf_exempt
-@api_view(['PUT'])
-def post_upvote(request, pk):
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+class VisitCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+    serializer_class = VisitSerializer
 
-    if request.method == 'PUT':
-        post.positive_reaction_count += 1
-        post.save()
+#@csrf_exempt
+@api_view(['POST'])
+def post_vote(request):
+    if request.method == 'POST':
+        user = request.user
+        post_id = request.data['post_id']
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        is_positive = request.data['is_positive'].title() == "True"
+        try:
+            oldVote = Vote.objects.get(user = user, post = post)
+            if oldVote.is_positive == is_positive:
+                oldVote.delete()
+                #return Response(oldVote.delete())
+            else:
+                oldVote.is_positive = is_positive
+                oldVote.save()
+                newVote = oldVote
+
+        except Vote.DoesNotExist:
+            newVote = Vote.objects.create(user=user, post=post, is_positive=is_positive)
+
         serializer = PostSerializer(post)
+        serializer.Meta.depth = 1;
+        return Response(serializer.data)
+        #serializer = VoteSerializer(newVote)
+        #return Response(serializer.data)
+
+@api_view(['GET'])
+def getRecommendedTopics(request, limit):
+    if request.method == 'GET':
+        user = request.user;
+        scores = {};
+        for topic in Topic.objects.all():
+
+            neighbor_visits = Visit.objects.filter(user=user, topic__relates_to__topic_to=topic)
+
+            neighbor_visits_count = len(neighbor_visits);
+            if neighbor_visits_count > 0:
+                last_neighbor_visit = neighbor_visits.order_by('-visit_date')[0].visit_date;
+            else:
+                last_neighbor_visit = topic.created_at
+
+            relevance_score = 5*neighbor_visits_count - (timezone.now()-last_neighbor_visit).total_seconds()/3600
+            recommendation = relevance_score + topic.hotness
+
+            scores[topic] = recommendation;
+
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        recommended_topics = [key for key, value in sorted_scores]
+        #print(recommended_topics)
+        serializer = TopicNestedSerializer(recommended_topics, many=True);
         return Response(serializer.data)
 
 
-#@csrf_exempt
-@api_view(['PUT'])
-def post_downvote(request, pk):
-    try:
-        post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+@api_view(['GET'])
+def listTopicRelevance(request):
+    if request.method == 'GET':
+        user = request.user;
+        data = [];
+        for topic in Topic.objects.all():
+            row = {};
 
-    if request.method == 'PUT':
-        post.negative_reaction_count += 1
-        post.save()
-        serializer = PostSerializer(post)
-        return Response(serializer.data)
+            topicSerializer = TopicNestedSerializer(topic)
+            topicSerializer.Meta.depth = 1;
+            #row['topic'] = topicSerializer.data;
+            user_visits = topic.visits.filter(user=user)
+            visitSerializer = VisitSerializer(user_visits, many=True)
+            #visitSerializer.Meta.depth = 1;
+            row['visit_count'] = len(user_visits);
+            if row['visit_count'] > 0:
+                row['last_visit']  = user_visits.order_by('-visit_date')[0].visit_date
+            else:
+                row['last_visit'] = topic.created_at
+
+            neighbor_visits = Visit.objects.filter(user=user, topic__relates_to__topic_to=topic)
+
+            row['neighbor_visits_count'] = len(neighbor_visits);
+            if row['neighbor_visits_count'] > 0:
+                row['last_neighbor_visit'] = neighbor_visits.order_by('-visit_date')[0].visit_date;
+            else:
+                row['last_neighbor_visit'] = topic.created_at
+
+            row['post_count'] = len(topic.posts.filter(user=user))
+            row['like_count'] = len(topic.posts.filter(votes__user=user))
+            row['relevance_score'] = 5*row['neighbor_visits_count'] - (timezone.now()-row['last_neighbor_visit']).total_seconds()/3600
+            row['recommendation'] = row['relevance_score'] + topic.hotness
+
+            data.append(row)
+
+        print(data)
+        return Response(data)
+
+#@csrf_exempt
+#@api_view(['PUT'])
+#def post_downvote(request, pk):
+#    try:
+#        post = Post.objects.get(pk=pk)
+#    except Post.DoesNotExist:
+#        return Response(status=status.HTTP_404_NOT_FOUND)
+
+#    if request.method == 'PUT':
+#        post.negative_reaction_count += 1
+#        post.save()
+#        serializer = PostSerializer(post)
+#        return Response(serializer.data)
 
 @api_view(['PUT'])
 def relation_upvote(request, pk):
@@ -171,7 +255,6 @@ def relation_upvote(request, pk):
         return Response(serializer.data)
 
 
-@ensure_csrf_cookie
 @api_view(['PUT'])
 def relation_downvote(request, pk):
     try:
@@ -222,21 +305,39 @@ def search_by_tags(request):
     resultTopics = []
     resultPosts = []
     if request.method == 'POST':
-        data = JSONParser().parse(request)
-        search_query = data["query"]
-        for tag in data["tags"]:
-            try:
-                tagObject = Tag.objects.get(wikidataID=tag)
-            except Tag.DoesNotExist:
-                continue;
-            tag_topics = tagObject.topics.all()
-            tag_posts = tagObject.posts.all()
-            for topic in tag_topics:
-                if topic not in resultTopics:
-                    resultTopics.append(topic)
-            for post in tag_posts:
-                if post not in resultPosts:
-                    resultPosts.append(post)
+        data = request.data
+        print(data)
+        search_query = data['query']
+        data_tags = list(set(data['tags']))
+        print(data_tags)
+        tagObjects = Tag.objects.filter(hidden_tags__overlap=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
+        for tagObject in tagObjects:
+                print("LOL")
+                tag_topics = tagObject.topics.all()
+                tag_posts = tagObject.posts.all()
+                for topic in tag_topics:
+                    if topic not in resultTopics:
+                        resultTopics.append(topic)
+                for post in tag_posts:
+                    if post not in resultPosts:
+                        resultPosts.append(post)
+        # for tag in data["tags"]:
+        #     try:
+        #         tagObjects = Tag.objects.filter(wikidataID=tag)
+        #     except Tag.DoesNotExist:
+        #         continue;
+        #     for tagObject in tagObjects:
+        #         tag_topics = tagObject.topics.all()
+        #         tag_posts = tagObject.posts.all()
+        #         for topic in tag_topics:
+        #             if topic not in resultTopics:
+        #                 resultTopics.append(topic)
+        #         for post in tag_posts:
+        #             if post not in resultPosts:
+        #                 resultPosts.append(post)
+        print(resultTopics);
+        print(resultPosts);
+
         query_topics = Topic.objects.filter(name__icontains=search_query)
         query_posts = Post.objects.filter(content__icontains=search_query)
         for topic in query_topics:
@@ -263,7 +364,6 @@ def search_by_tags(request):
         #postSerializer.Meta.depth = 1
 
         return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
-
 
 def index(request):
     template = loader.get_template('global.html')
@@ -334,21 +434,26 @@ def show_topic(request, id):
         except ObjectDoesNotExist:
             return HttpResponse("You should login to post!")
         requested_topic = Topic.objects.get(id=id)
-        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=request.POST.get("content", ""))
         tags = request.POST.get("tags", "").split(",");
         for tag in tags:
-           if len(tag)>0:
-               try:
-                   tagObject = Tag.objects.get(wikidataID=tag)
-               except ObjectDoesNotExist:
-                   tagObject = Tag.objects.create(wikidataID=tag, name='Unknown')
-               except MultipleObjectsReturned:
+            if len(tag)>0:
+                try:
+                    tagObject = Tag.objects.get(wikidataID=tag)
+                except ObjectDoesNotExist:
+                    tagObject = Tag.objects.create(wikidataID=tag, name='Unknown')
+                except MultipleObjectsReturned:
                    return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
-               postObject.tags.add(tagObject)
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
+
+                tagObject.save()
+                postObject.tags.add(tagObject)
     try:
         topic = Topic.objects.get(id=id)
-        serialized_topic = TopicSerializer(topic)
+        serialized_topic = TopicNestedSerializer(topic)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
@@ -364,7 +469,6 @@ def show_topic(request, id):
 
 @csrf_exempt
 def add_topic(request):
-    print("add_topic'e girdi")
     template = loader.get_template('topicAdd.html')
     try:
         topic = serializers.serialize("json", Topic.objects.filter())
@@ -377,7 +481,6 @@ def add_topic(request):
     if request.method == "POST":
         data = JSONParser().parse(request)
 
-        print(data)
         # Add topic to database.
         try:
             Topic.objects.get(name=data["name"])
@@ -390,7 +493,6 @@ def add_topic(request):
                 return JsonResponse({'status':'false','message':'You should login to create a topic!'}, status=401)
             name = data["name"]
             topicObject = Topic.objects.create(name=name, user=user)
-            print("topic object: ", topicObject)
             for tag in data["tags"]:
                 tag_name = tag['label']
                 if tag_name == '':
@@ -400,9 +502,20 @@ def add_topic(request):
                     tagObject = Tag.objects.get(wikidataID=tag_wiki_id)
                 except ObjectDoesNotExist:
                     tagObject = Tag.objects.create(name=tag_name, wikidataID=tag_wiki_id)
-                    tagObject.save()
                 except MultipleObjectsReturned:
                     return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+
+                #hidden tags
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
+                    # for hidden_tag in unique_hidden_tags:
+                    #     try:
+                    #         hiddenTagObject = Tag.objects.get(wikidataID=hidden_tag)
+                    #     except ObjectDoesNotExist:
+                    #         hiddenTagObject = Tag.objects.create(wikidataID=hidden_tag, hidden=True)
+                    #         hiddenTagObject.save()
+                tagObject.save()
                 topicObject.tags.add(tagObject)
                 context = {
                 }
@@ -416,9 +529,6 @@ def add_topic(request):
                 try:
                     relatedTopicObject = Topic.objects.get(pk=relation['topic_id'])
                     label = relation['rel_name']
-                    print("topic object : ", topicObject)
-                    print("related topic object : ", relatedTopicObject)
-                    print("relation name : ", relation)
                     relationObject = Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
                 except ObjectDoesNotExist:
                     print("error")
@@ -442,22 +552,46 @@ def add_topic(request):
     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
-def add_post(request):
-    template = loader.get_template('postAdd.html')
+def add_post(request, id):
+    template = loader.get_template('topic.html')
     if request.method == "POST":
-        postObject = Post.objects.create(content=request.POST.get("content", ""), positive_reaction_count=0, negative_reaction_count=0)
-        tags = request.POST.get("tags", "").split(",");
-        for tag in tags:
-            try:
-                tagObject = Tag.objects.get(name=tag)
-            except ObjectDoesNotExist:
-                tagObject = Tag.objects.create(name=tag)
-            except MultipleObjectsReturned:
-                return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
-            postObject.tags.add(tagObject)
+        data = JSONParser().parse(request)
+        try:
+            user = User.objects.get(username=request.user)
+        except ObjectDoesNotExist:
+            return HttpResponse("You should login to post!")
+        requested_topic = Topic.objects.get(id=data["topic_id"])
+        postObject = Post.objects.create(user_id=user.id, topic_id=requested_topic.id,content=data["content"])
+        for tag in data["tags"]:
+            if len(tag)>0:
+                if tag['label'] == '':
+                    continue
+                try:
+                    tagObject = Tag.objects.get(wikidataID=tag['id'])
+                except ObjectDoesNotExist:
+                    tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                except MultipleObjectsReturned:
+                   return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
 
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
+
+                tagObject.save()
+                postObject.tags.add(tagObject)
+    try:
+        topic = Topic.objects.get(id=id)
+        serialized_topic = TopicNestedSerializer(topic)
+        topic_json = JSONRenderer().render(serialized_topic.data)
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+
+    hot_topics = Topic.objects.order_by('-updated_at')[:5]
+    serialized_hot_topics = HotTopicsSerializer(hot_topics, many=True)
+    hot_topics_json = JSONRenderer().render(serialized_hot_topics.data)
     context = {
-        'asd': 'asd',
+        'topic': topic_json,
+        'hot_topics': hot_topics_json
     }
     return HttpResponse(template.render(context, request))
 
@@ -479,6 +613,26 @@ def add_relation(request,id):
         'requested_topic': requested_topic,
     }
     return HttpResponse(template.render(context, request))
+
+@csrf_exempt
+def infocus(request, id):
+    template = loader.get_template('infocus.html')
+    try:
+        topic = Topic.objects.get(id=id)
+        serialized_topic = TopicSerializer(topic)
+        topic_json = JSONRenderer().render(serialized_topic.data)
+    except ObjectDoesNotExist:
+        return HttpResponse("This topic doesn't exists!")
+    hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
+    random_topic = serializers.serialize("json", Topic.objects.order_by('?')[:1])
+
+    context = {
+        'hot_topics': hot_topics,
+        'random_topic': random_topic,
+        'request': request,
+    }
+    return HttpResponse(template.render(context, request))
+
 
 # def second_topic(request):
 #     template = loader.get_template('secondTopic.html')

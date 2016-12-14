@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.cocomap.coco.R;
+import com.cocomap.coco.pojo.PostModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Sinan on 06.12.2016.
@@ -17,7 +19,14 @@ import java.util.ArrayList;
 public class MyReceyclerAdapter extends RecyclerView.Adapter<MyReceyclerAdapter.ViewHolder>{
 
     Context context;
-    private ArrayList<String> list;
+    private List<PostModel> list;
+
+    public List<PostModel> getList() {
+        if(list == null) {
+            list = new ArrayList<>();
+        }
+        return list;
+    }
 
     public MyReceyclerAdapter(Context context) {
 
@@ -35,26 +44,33 @@ public class MyReceyclerAdapter extends RecyclerView.Adapter<MyReceyclerAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
 
-        holder.text.setText(list.get(position));
+        String content = list.get(position).getContent();
+        for(int i = 0; i < list.get(position).getTags().size(); i++){
+            content +=" #"+ list.get(position).getTags().get(i).getName();
+        }
+        holder.text.setText(content);
+        holder.usernameTextView.setText("@" + list.get(position).getUser().getUsername());
 
     }
 
     @Override
     public int getItemCount() {
-        return 3;
+        return getList().size();
     }
 
-    public void setList(ArrayList<String> list) {
+    public void setList(List<PostModel> list) {
         this.list = list;
         notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView text;
+        TextView usernameTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
             text = (TextView) itemView.findViewById(R.id.text);
+            usernameTextView = (TextView) itemView.findViewById(R.id.usernameTextView);
         }
     }
 }

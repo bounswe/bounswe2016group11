@@ -19,8 +19,12 @@ from .views import (
 	RelationList,
 	TagCreate,
 	TagRetrieve,
-	post_upvote,
-	post_downvote,
+	VisitCreate,
+	#post_upvote,
+	#post_downvote,
+	post_vote,
+	listTopicRelevance,
+	getRecommendedTopics,
 	relation_upvote,
 	relation_downvote,
 	wikidata_search,
@@ -31,14 +35,15 @@ from .views import (
 	RecommendedTopics,
 	RecommendedPosts,
 	add_relation,
+    infocus,
 )
 
 urlpatterns = [
     url(r'^$', index),
-    url(r'^accounts/', include('allauth.urls')),
+    #url(r'^accounts/', include('allauth.urls')),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
-    url(r'topics/postAdd', add_post),
+    url(r'topics/(?P<id>\d+)/postAdd', add_post),
 
 	url(r'topicList',  TopicList.as_view()),
 	url(r'topicCreate',  TopicCreate.as_view()),
@@ -57,8 +62,13 @@ urlpatterns = [
 	url(r'tagCreate',  TagCreate.as_view()),
 	url(r'tagRetrieve/(?P<pk>Q[0-9]+)/',  TagRetrieve.as_view()),
 
-	url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
-	url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+	url(r'visitCreate/',  VisitCreate.as_view()),
+
+	#url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
+	#url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
+	url(r'postVote/',  post_vote),
+	url(r'listTopicRelevance/', listTopicRelevance),
+	url(r'getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics),
 
 	url(r'relationUpvote/(?P<pk>[0-9]+)/',  relation_upvote),
 	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),
@@ -70,4 +80,6 @@ urlpatterns = [
 
 	url(r'search', search),
 	url(r'addRelation/(?P<id>[0-9]+)/', add_relation),
+
+	url(r'infocus/(?P<id>\d+)/$', infocus),
 ]

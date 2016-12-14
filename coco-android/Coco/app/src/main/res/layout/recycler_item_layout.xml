@@ -1,19 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
+
+
+    <TextView
+        android:id="@+id/usernameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/activity_margin_8"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="@dimen/text_size_20"
+       />
+
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/activity_margin_8"
+        android:layout_below="@+id/usernameTextView"
         android:text="Trump is a nominee in the 2016 USA elections"
         android:textColor="@android:color/black"
         android:textSize="@dimen/text_size_20" />
+
+
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_margin="@dimen/activity_margin_8"
-        android:background="@android:color/black"/>
-</LinearLayout>
+        android:background="@android:color/black"
+        android:layout_alignParentBottom="true"/>
+</RelativeLayout>
