@@ -30,6 +30,10 @@ $(function(){
             var json_array = data;
             console.log(data)
             // create an array with nodes
+            var range = json_array[json_array.length-1].hotness-json_array[0].hotness;
+
+            var minHot = json_array[0].hotness;
+            var maxHot = json_array[json_array.length-1].hotness;
             var dict1 = [];
 
             for(var i = 0; i < json_array.length; i++){
@@ -40,7 +44,10 @@ $(function(){
               {
                   console.log("from: "+json_array[i]['topic_from']['name']);
 
-                  var seed = Math.random();
+                  //var seed = Math.random();
+                  var topicHot = json_array[i].hotness;
+                  var seed = (topicHot-minHot)/range;
+                  
                   if(json_array[i]['topic_from']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);

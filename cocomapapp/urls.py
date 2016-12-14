@@ -40,7 +40,7 @@ from .views import (
 
 urlpatterns = [
     url(r'^$', index),
-    #url(r'^accounts/', include('allauth.urls')),
+    url(r'^accounts/', include('allauth.urls')),
     url(r'topics/(?P<id>\d+)/$', show_topic),
     url(r'topics/add', add_topic),
     url(r'topics/(?P<id>\d+)/postAdd', add_post),
