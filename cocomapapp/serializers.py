@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from cocomapapp.models import Tag, Topic, Post, Relation, Vote, Visit
 from django.contrib.auth.models import User
+from rest_framework_bulk import (BulkListSerializer, BulkSerializerMixin)
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -61,6 +62,12 @@ class RelationSerializer(serializers.ModelSerializer):
         model = Relation
         fields = ('id', 'topic_from','topic_to','label', 'positive_reaction_count', 'negative_reaction_count')
 
+class RelationBulkSerializer(BulkSerializerMixin, serializers.ModelSerializer):
+    class Meta(object):
+        model = Relation
+        # only necessary in DRF3
+        list_serializer_class = BulkListSerializer
+        fields = ('id', 'topic_from','topic_to','label')
 
 class VisitSerializer(serializers.ModelSerializer):
     #topic = TopicSerializer()
