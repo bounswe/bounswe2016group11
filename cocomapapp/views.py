@@ -28,6 +28,7 @@ from io import StringIO
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
 
 
 class ReadNestedWriteFlatMixin(object):
@@ -43,6 +44,7 @@ class ReadNestedWriteFlatMixin(object):
             serializer_class.Meta.depth = 1
         return serializer_class
 
+
 class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
@@ -54,8 +56,18 @@ class TopicRetrieve(ReadNestedWriteFlatMixin, generics.RetrieveAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicNestedSerializer
 
-class PostCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+class PostCreate(generics.CreateAPIView):
     serializer_class = PostSerializer
+    def post(self, request, format=None):
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            obj = serializer.save()
+            newSerializer = PostNestedSerializer(obj)
+            return Response(newSerializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    #queryset = Post.objects.all()
+    #serializer_class = PostSerializer
 
 class PostRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Post.objects.all()
