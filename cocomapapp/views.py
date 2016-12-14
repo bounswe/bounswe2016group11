@@ -360,7 +360,7 @@ def search_by_tags(request):
 
         topicSerializer = TopicSerializer(resultTopics, many=True)
         #topicSerializer.Meta.depth = 1
-        postSerializer = PosNestedtSerializer(resultPosts, many=True)
+        postSerializer = PostNestedtSerializer(resultPosts, many=True)
         #postSerializer.Meta.depth = 1
 
         return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
@@ -429,6 +429,7 @@ def index(request):
 def show_topic(request, id):
     template = loader.get_template('topic.html')
     if request.method == "POST":
+        print("POSTING")
         try:
             user = User.objects.get(username=request.user)
         except ObjectDoesNotExist:
@@ -453,7 +454,9 @@ def show_topic(request, id):
                 postObject.tags.add(tagObject)
     try:
         topic = Topic.objects.get(id=id)
+        TopicNestedSerializer.Meta.depth = 1
         serialized_topic = TopicNestedSerializer(topic)
+        print(serialized_topic.data)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
