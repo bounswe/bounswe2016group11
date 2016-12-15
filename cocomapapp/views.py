@@ -86,7 +86,11 @@ class PostUpdate(ReadNestedWriteFlatMixin,generics.UpdateAPIView):
 class PostDelete(ReadNestedWriteFlatMixin,generics.DestroyAPIView):
     serializer_class = PostSerializer
     def get_queryset(self, *args, **kwargs):
-        user = self.request.user
+        data = JSONParser().parse(self.request)
+        if data['user_id']:
+            user = User.objects.get(id = data['user_id'])
+        else: 
+            user = self.request.user
         post = Post.objects.filter(id = self.kwargs['pk'], user = user)
         return post
 
@@ -288,15 +292,19 @@ def listTopicRelevance(request):
 
 @api_view(['PATCH'])
 def update_post(request, pk):
+    data = JSONParser().parse(request)
+
     if request.method == 'PATCH':
-        user = request.user
+        if data['user_id']:
+            user = User.objects.get(id = data['user_id'])
+        else: 
+            user = request.user
         try:
             postObject = Post.objects.filter(id=pk, user = user).first()
         except Post.DoesNotExist:
             content = {'user forbidden': 'you should be user of the requested post.'}
             return Response(content, status=status.HTTP_403_FORBIDDEN)
 
-    data = JSONParser().parse(request)
 
     postObject.content = data['content']
     postObject.tags.clear()
