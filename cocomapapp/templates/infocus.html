@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<script type="text/javascript">
+  var searchItem = window.location.pathname;
+  console.log(searchItem);
+  var theRegex = /([0-9])+/igm;
+  var searchId = theRegex.exec(searchItem)[0];
+  console.log("id: "+searchId);
+</script>
+
+{% if user.is_authenticated %}
+  <script type="text/javascript">
+    $(".navbarlist").append(
+    '<li><a href="/cocomapapp/addRelation/'+searchId +'/">Add Relationship</a></li>'
+    );
+  </script>
+{% endif %}
     <link href="//fonts.googleapis.com/css?family=Luckiest+Guy" rel="stylesheet">
     <script src="/static/recommend.js" type="text/javascript"></script>
     <script src="/static/infocus.js" type="text/javascript"></script>

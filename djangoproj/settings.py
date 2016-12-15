@@ -71,7 +71,7 @@ TEMPLATES = [
         },
     },
 ]
-
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #django-allauth settings
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, regardless of `allauth`

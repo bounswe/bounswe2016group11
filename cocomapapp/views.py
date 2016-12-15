@@ -6,7 +6,7 @@ import json
 
 from cocomapapp.models import Tag, Topic, Post, Relation, Vote, Visit
 from django.contrib.auth.models import User
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, PostNestedSerializer, RelationSerializer, VoteSerializer, VisitSerializer
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, PostNestedSerializer, RelationSerializer, VoteSerializer, VisitSerializer, RelationBulkSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -19,6 +19,7 @@ from rest_framework import status
 from .forms import RegisterForm, LoginForm
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
+
 from functools import reduce
 import operator
 from django.utils import timezone
@@ -29,6 +30,11 @@ from io import StringIO
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
+from rest_framework_bulk import (
+    BulkListSerializer,
+    BulkSerializerMixin,
+    ListBulkCreateUpdateDestroyAPIView,
+)
 
 
 class ReadNestedWriteFlatMixin(object):
@@ -129,9 +135,9 @@ class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
 
         return queryset_list
 
-
-class RelationCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
-    serializer_class = RelationSerializer
+class RelationCreate(ListBulkCreateUpdateDestroyAPIView):
+    queryset = Relation.objects.all()
+    serializer_class = RelationBulkSerializer
 
 class TagCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
     serializer_class = TagSerializer
@@ -391,7 +397,7 @@ def search_by_tags(request):
 
         topicSerializer = TopicSerializer(resultTopics, many=True)
         #topicSerializer.Meta.depth = 1
-        postSerializer = PostNestedtSerializer(resultPosts, many=True)
+        postSerializer = PostNestedSerializer(resultPosts, many=True)
         #postSerializer.Meta.depth = 1
 
         return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})

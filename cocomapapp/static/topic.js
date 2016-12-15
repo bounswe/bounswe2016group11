@@ -1,3 +1,4 @@
+
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -26,7 +27,6 @@ $.ajaxSetup({
         }
     }
 });
-
 function get_tags(wikiId,theTags){
   var waitNum;
   var resultTag;

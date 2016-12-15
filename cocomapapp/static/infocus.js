@@ -1,3 +1,5 @@
+
+
 function GetArrow(pk) {
     jQuery.support.cors = true;
     $.ajax({
@@ -15,13 +17,6 @@ function GetArrow(pk) {
 }
 
 $(function(){
-
-    var searchItem = window.location.pathname;
-    console.log(searchItem);
-    var theRegex = /([0-9])+/igm;
-    var searchId = theRegex.exec(searchItem)[0];
-    console.log("id: "+searchId);
-
     $.ajax({
         url: '/cocomapapp/relationList?topic_id='+searchId,
         type: 'GET',
@@ -40,7 +35,7 @@ $(function(){
               {
                   console.log("from: "+json_array[i]['topic_from']['name']);
 
-                  var seed = Math.random();
+                  var seed =0.3;
                   if(json_array[i]['topic_from']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
@@ -55,7 +50,7 @@ $(function(){
               {
                   console.log("from: "+json_array[i]['topic_to']['name']);
 
-                  var seed = Math.random();
+                  var seed = 0.3;
                   if(json_array[i]['topic_to']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
@@ -120,10 +115,11 @@ $(function(){
                 var nodes = new vis.DataSet(dict1);
                 // create an array with edges
                 var dict2 = [];
+                seed = 0.99;
                 for(var i = 0; i < json_array.length; i++){
                       //length of arrow
-                      seed = 0;
-                      var arrow_length = Math.round((1-seed)*100+200);
+
+                      var arrow_length = Math.round((1-seed)*100+450);
 
                       dict2.push({ from: json_array[i]['topic_from']['id'], to: json_array[i]['topic_to']['id'], arrows:'to',label:json_array[i]['label'],length: arrow_length });
                 }
