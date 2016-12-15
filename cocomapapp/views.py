@@ -19,6 +19,7 @@ from rest_framework import status
 from .forms import RegisterForm, LoginForm
 from django.template import RequestContext
 from django.views.decorators.csrf import ensure_csrf_cookie
+
 from functools import reduce
 import operator
 from django.utils import timezone

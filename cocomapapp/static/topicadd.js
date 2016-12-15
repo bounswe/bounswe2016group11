@@ -138,6 +138,12 @@ $(document).ready(function(){
 
   var relations=[];
   topicsList= JSON.parse(topicsList);
+  $.each(topicsList,function(i,value){
+    relations.push({
+      id: value.pk,
+      name: value.fields.name
+    });
+  });
 
   //relations = relations.join(",");
   $('#relates_to').selectize({
@@ -150,12 +156,6 @@ $(document).ready(function(){
       create: false,
       load: function(query, callback) {
         if (!query.length) return callback();
-        $.each(topicsList,function(i,value){
-          relations.push({
-            id: value.pk,
-            name: value.fields.name
-          });
-        });
         callback(relations);
       }
   });

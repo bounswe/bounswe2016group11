@@ -17,13 +17,6 @@ function GetArrow(pk) {
 }
 
 $(function(){
-
-    var searchItem = window.location.pathname;
-    console.log(searchItem);
-    var theRegex = /([0-9]+)/igm;
-    var searchId = theRegex.exec(searchItem)[0];
-    console.log("id: "+searchId);
-    $(".thenavbar").append('<li><a href="/cocomapapp/addRelation/'+searchId+'/">Add Relationship</a></li>');
     $.ajax({
         url: '/cocomapapp/relationList?topic_id='+searchId,
         type: 'GET',

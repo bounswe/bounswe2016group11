@@ -1,12 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <script src="/static/selectize.js" type="text/javascript"></script>
-    <script src="/static/typeahead.bundle.js" type="text/javascript"></script>
-    <script src="/static/addrelation.js" type="text/javascript"></script>
-    <link href="/static/topicAdd.css" rel="stylesheet"/>
-		<link href="/static/selectize.default.css" rel="stylesheet"/>
-
+<script src="/static/selectize.js" type="text/javascript"></script>
+<script src="/static/typeahead.bundle.js" type="text/javascript"></script>
+<link href="/static/selectize.default.css" rel="stylesheet"/>
+<script src="/static/addrelation.js" type="text/javascript"></script>
+<script src="/static/recommend.js" type="text/javascript"></script>
   <div class="col-sm-9 col-md-9 main">
 		<!-- title -->
 		<div class="mb-for-footer">
@@ -16,27 +15,29 @@
           <div class="col-md-10">
               <div class="img-circle" style="background-color: #DDA0DD;">
                   <div class="img-circle-content form-inline">
-
+                      <script type="text/javascript">
+                        var topic_id= {{ requested_topic.id }}
+                        console.log(topic_id);
+                      </script>
                       <h1> {{ requested_topic.name }} </h1>
-
                       <h2>Add Relationships</h2>
                       <div class="form-group newRelation">
                         <table class="">
-                          <tr>
-                            <th><input type="text" id="relationships-name" class="form-control makeinline" placeholder="Relationship Name"></th>
-                            <th><input id="relates_to4" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left;"></th>
+													<tr>
+														<th><input type="text" id="relationships-name" class="form-control makeinline" placeholder="Relationship Name"></th>
+														<th><input id="relates_to" class="makeinline" placeholder="Name of a Topic" style="min-width:600px; text-align:left;"></th>
                                                         <th><a id="rel_add1" onclick={document.getElementById('rel2').style.display='table-row';document.getElementById('rel_add1').style.display='none';}>Add another relation</a></th>
-                          </tr>
+													</tr>
                                                     <tr id="rel2" style="display: none;">
                                                         <th><input type="text" id="relationships-name2" class="form-control makeinline" placeholder="Relationship Name" ></th>
-                                                        <th><input id="relates_to5" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left; "></th>
+                                                        <th><input id="relates_to2" class="makeinline" placeholder="Name of a Topic" style="min-width:600px; text-align:left; display: none;"></th>
                                                         <th><a id="rel_add2" onclick={document.getElementById('rel3').style.display='table-row';document.getElementById('rel_add2').style.display='none';}>Add another relation</a></th>
                                                     </tr>
                                                     <tr id="rel3" style="display: none;">
                                                         <th><input type="text" id="relationships-name3" class="form-control makeinline" placeholder="Relationship Name"></th>
-                                                        <th><input id="relates_to6" class="makeinline" placeholder="Name of a Topic" style="min-width:50px; text-align:left;"></th>
+                                                        <th><input id="relates_to3" class="makeinline" placeholder="Name of a Topic" style="min-width:600px; text-align:left;"></th>
                                                     </tr>
-                        </table>
+												</table>
                       </div>
                   </div>
               </div>
@@ -47,7 +48,7 @@
           <div class="col-md-4"></div>
           <div class="col-md-4">
               <!-- <a href="/cocomapapp/topic/second" id="publish" style="width:100%" type="button" class="btn btn-primary">Publish</a> -->
-  						<button id="submit" style="width:100%" class="btn btn-primary">Add Relation</button>
+  						<button type="button" id="submit2" style="width:100%" onclick="" class="btn btn-primary">Add Relation</button>
           </div>
           <div class="col-md-4"></div>
           <div class="col-md-5"></div>
