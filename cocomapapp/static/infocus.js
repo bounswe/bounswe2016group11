@@ -18,7 +18,7 @@ $(function(){
 
     var searchItem = window.location.pathname;
     console.log(searchItem);
-    var theRegex = /([0-9])+/igm;
+    var theRegex = /([0-9]+)/igm;
     var searchId = theRegex.exec(searchItem)[0];
     console.log("id: "+searchId);
 
