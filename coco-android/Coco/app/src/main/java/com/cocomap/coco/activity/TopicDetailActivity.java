@@ -44,6 +44,8 @@ public class TopicDetailActivity extends BaseActivity {
 
     String json_string;
 
+    int topic_id;
+
     ArrayList<PostModel> posts;
 
     @Override
@@ -63,7 +65,8 @@ public class TopicDetailActivity extends BaseActivity {
         posts = new ArrayList<>();
 
 
-        int topic_id = getIntent().getIntExtra("focused_topic_id", -1);
+
+        topic_id = getIntent().getIntExtra("focused_topic_id", -1);
 
         OkHttpClient client = new OkHttpClient();
 
@@ -125,7 +128,7 @@ public class TopicDetailActivity extends BaseActivity {
         createPostRequest.setPositive_reaction_count(1);
         ArrayList<TagModel> tags = new ArrayList<>();
         createPostRequest.setTags(tags);
-        createPostRequest.setTopic(1);
+        createPostRequest.setTopic(topic_id);
 
 
         Gson gson = new Gson();
