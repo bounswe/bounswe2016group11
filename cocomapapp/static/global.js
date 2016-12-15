@@ -87,7 +87,7 @@ $(function(){
                   seed = (maxHot-minHot)/range;
                   //length of arrow
                   console.log(seed);
-                  var arrow_length = Math.round((1-seed)*100+200);
+                  var arrow_length = Math.round((1-seed)*100+300);
                   console.log(arrow_length);
 
 

@@ -18,7 +18,7 @@ $(function(){
 
     var searchItem = window.location.pathname;
     console.log(searchItem);
-    var theRegex = /([0-9])+/igm;
+    var theRegex = /([0-9]+)/igm;
     var searchId = theRegex.exec(searchItem)[0];
     console.log("id: "+searchId);
 
@@ -30,10 +30,6 @@ $(function(){
             var json_array = data;
             console.log(data)
             // create an array with nodes
-            var range = json_array[json_array.length-1].hotness-json_array[0].hotness;
-
-            var minHot = json_array[0].hotness;
-            var maxHot = json_array[json_array.length-1].hotness;
             var dict1 = [];
 
             for(var i = 0; i < json_array.length; i++){
@@ -44,10 +40,7 @@ $(function(){
               {
                   console.log("from: "+json_array[i]['topic_from']['name']);
 
-                  //var seed = Math.random();
-                  var topicHot = json_array[i].hotness;
-                  var seed = (topicHot-minHot)/range;
-                  
+                  var seed =0.3;
                   if(json_array[i]['topic_from']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
@@ -62,7 +55,7 @@ $(function(){
               {
                   console.log("from: "+json_array[i]['topic_to']['name']);
 
-                  var seed = Math.random();
+                  var seed = 0.3;
                   if(json_array[i]['topic_to']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
@@ -127,10 +120,11 @@ $(function(){
                 var nodes = new vis.DataSet(dict1);
                 // create an array with edges
                 var dict2 = [];
+                seed = 0.99;
                 for(var i = 0; i < json_array.length; i++){
                       //length of arrow
-                      seed = 0;
-                      var arrow_length = Math.round((1-seed)*100+200);
+
+                      var arrow_length = Math.round((1-seed)*100+450);
 
                       dict2.push({ from: json_array[i]['topic_from']['id'], to: json_array[i]['topic_to']['id'], arrows:'to',label:json_array[i]['label'],length: arrow_length });
                 }
