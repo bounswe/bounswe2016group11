@@ -6,18 +6,28 @@ import java.util.List;
  * Created by Emrah on 04/12/2016.
  */
 public class TagModel {
-    Integer wikidataID;
+
+    String wikidataID;
     String name;
+    List<String> hidden_tags;
     List<Integer> topics;
     List<Integer> posts;
     String created_at;
     String updated_at;
 
-    public Integer getWikidataID() {
+    public List<String> getHidden_tags() {
+        return hidden_tags;
+    }
+
+    public void setHidden_tags(List<String> hidden_tags) {
+        this.hidden_tags = hidden_tags;
+    }
+
+    public String getWikidataID() {
         return wikidataID;
     }
 
-    public void setWikidataID(Integer wikidataID) {
+    public void setWikidataID(String wikidataID) {
         this.wikidataID = wikidataID;
     }
 

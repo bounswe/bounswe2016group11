@@ -35,12 +35,12 @@ $(function(){
                   console.log("from: "+json_array[i]['topic_from']['name']);
 
                   var seed = Math.random();
+                  if(json_array[i]['topic_from']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
                   var green = Math.max(Math.round((1-seed)*50),0);
                   var blue = Math.round((1-seed)*255);
                   console.log("red: "+ red+"    , blue:"+blue);
-                  if(json_array[i]['topic_from']['id']==searchId) seed=0.9;
                   dict1.push({id: json_array[i]['topic_from']['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
                   label: json_array[i]['topic_from']['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
               }
@@ -50,12 +50,12 @@ $(function(){
                   console.log("from: "+json_array[i]['topic_to']['name']);
 
                   var seed = Math.random();
+                  if(json_array[i]['topic_to']['id']==searchId) seed=0.99;
                   console.log(seed);
                   var red = Math.round(seed*255);
                   var green = Math.max(Math.round((1-seed)*50),0);
                   var blue = Math.round((1-seed)*255);
                   console.log("red: "+ red+"    , blue:"+blue);
-                  if(json_array[i]['topic_to']['id']==searchId) seed=0.9;
                   dict1.push({id: json_array[i]['topic_to']['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
                   label: json_array[i]['topic_to']['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
               }
@@ -70,11 +70,11 @@ $(function(){
                         var json_array2 = data2;
                         console.log(data2);
                         var seed = Math.random();
+                        seed=0.99;
                         var red = Math.round(seed*255);
                         var green = Math.max(Math.round((1-seed)*50),0);
                         var blue = Math.round((1-seed)*255);
                         console.log("red: "+ red+"    , blue:"+blue);
-                        seed=0.9;
                         dict1.push({id: searchId, size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
                         label: json_array2['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
                         console.log("searchName:"+dict1[0]['label']);

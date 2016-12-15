@@ -12,6 +12,7 @@
         android:paddingTop="@dimen/activity_margin_16">
 
         <EditText
+            android:id="@+id/topicNameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/activity_margin_8"
@@ -63,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/activity_margin_8"
+            android:onClick="publishClick"
             android:background="@color/colorPrimary"
             android:text="Publish"
             android:textColor="@android:color/white" />

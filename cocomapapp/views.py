@@ -6,7 +6,7 @@ import json
 
 from cocomapapp.models import Tag, Topic, Post, Relation, Vote, Visit
 from django.contrib.auth.models import User
-from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, RelationSerializer, VoteSerializer, VisitSerializer
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, PostNestedSerializer, RelationSerializer, VoteSerializer, VisitSerializer
 from rest_framework import generics
 
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
@@ -29,6 +29,7 @@ from io import StringIO
 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
 
 
 class ReadNestedWriteFlatMixin(object):
@@ -44,6 +45,7 @@ class ReadNestedWriteFlatMixin(object):
             serializer_class.Meta.depth = 1
         return serializer_class
 
+
 class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicSerializer
@@ -55,12 +57,22 @@ class TopicRetrieve(ReadNestedWriteFlatMixin, generics.RetrieveAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicNestedSerializer
 
-class PostCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+class PostCreate(generics.CreateAPIView):
     serializer_class = PostSerializer
+    def post(self, request, format=None):
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            obj = serializer.save()
+            newSerializer = PostNestedSerializer(obj)
+            return Response(newSerializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    #queryset = Post.objects.all()
+    #serializer_class = PostSerializer
 
 class PostRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Post.objects.all()
-    serializer_class = PostSerializer
+    serializer_class = PostNestedSerializer
 
 class PostUpdate(ReadNestedWriteFlatMixin,generics.UpdateAPIView):
     queryset = Post.objects.all()
@@ -97,7 +109,7 @@ class RecommendedTopics(ReadNestedWriteFlatMixin,generics.ListAPIView):
         return queryset_list
 
 class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
-    serializer_class = PostSerializer
+    serializer_class = PostNestedSerializer
     def get_queryset(self, *args, **kwargs):
         query = self.request.GET.get("user_id")
         if query:
@@ -158,7 +170,7 @@ def post_vote(request):
         except Vote.DoesNotExist:
             newVote = Vote.objects.create(user=user, post=post, is_positive=is_positive)
 
-        serializer = PostSerializer(post)
+        serializer = PostNestedSerializer(post)
         serializer.Meta.depth = 1;
         return Response(serializer.data)
         #serializer = VoteSerializer(newVote)
@@ -358,11 +370,11 @@ def search_by_tags(request):
                     resultTopics.append(relation.topic_from)
 
         TopicSerializer.Meta.depth = 1
-        PostSerializer.Meta.depth = 1
+        PostNestedSerializer.Meta.depth = 1
 
         topicSerializer = TopicSerializer(resultTopics, many=True)
         #topicSerializer.Meta.depth = 1
-        postSerializer = PostSerializer(resultPosts, many=True)
+        postSerializer = PostNestedtSerializer(resultPosts, many=True)
         #postSerializer.Meta.depth = 1
 
         return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
@@ -431,6 +443,7 @@ def index(request):
 def show_topic(request, id):
     template = loader.get_template('topic.html')
     if request.method == "POST":
+        print("POSTING")
         try:
             user = User.objects.get(username=request.user)
         except ObjectDoesNotExist:
@@ -455,7 +468,9 @@ def show_topic(request, id):
                 postObject.tags.add(tagObject)
     try:
         topic = Topic.objects.get(id=id)
+        TopicNestedSerializer.Meta.depth = 1
         serialized_topic = TopicNestedSerializer(topic)
+        print(serialized_topic.data)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
