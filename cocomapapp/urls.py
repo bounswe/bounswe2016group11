@@ -25,6 +25,7 @@ from .views import (
 	post_vote,
 	listTopicRelevance,
 	getRecommendedTopics,
+	getRecommendedPosts,
 	relation_upvote,
 	relation_downvote,
 	wikidata_search,
@@ -69,6 +70,7 @@ urlpatterns = [
 	url(r'postVote/',  post_vote),
 	url(r'listTopicRelevance/', listTopicRelevance),
 	url(r'getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics),
+	url(r'getRecommendedPosts/(?P<limit>[0-9]+)/', getRecommendedPosts),
 
 	url(r'relationUpvote/(?P<pk>[0-9]+)/',  relation_upvote),
 	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),

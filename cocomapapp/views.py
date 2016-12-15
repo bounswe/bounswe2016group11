@@ -200,6 +200,25 @@ def getRecommendedTopics(request, limit):
         serializer = TopicNestedSerializer(recommended_topics, many=True);
         return Response(serializer.data)
 
+@api_view(['GET'])
+def getRecommendedPosts(request, limit):
+    if request.method == 'GET':
+        user = request.user;
+        scores = {};
+        for topic in Topic.objects.filter(visits__user=user).distinct():
+
+            last_visit = topic.visits.filter(user=user).order_by('-visit_date')[0].visit_date;
+
+            unread_posts = topic.posts.filter(created_at__gt=last_visit)
+            for post in unread_posts:
+                score = 10 * post.accuracy - (timezone.now()-last_visit).total_seconds()/3600
+                scores[post] = score;
+
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        recommended_posts = [key for key, value in sorted_scores]
+        serializer = PostNestedSerializer(recommended_posts, many=True);
+        return Response(serializer.data)
+
 
 @api_view(['GET'])
 def listTopicRelevance(request):
