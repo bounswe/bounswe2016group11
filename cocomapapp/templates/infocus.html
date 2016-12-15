@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+<script type="text/javascript">
+  var searchItem = window.location.pathname;
+  console.log(searchItem);
+  var theRegex = /([0-9])+/igm;
+  var searchId = theRegex.exec(searchItem)[0];
+  console.log("id: "+searchId);
+</script>
+
 {% if user.is_authenticated %}
   <script type="text/javascript">
-    var searchItem = window.location.pathname;
-    console.log(searchItem);
-    var theRegex = /([0-9])+/igm;
-    var searchId = theRegex.exec(searchItem)[0];
-    console.log("id: "+searchId);
     $(".navbarlist").append(
     '<li><a href="/cocomapapp/addRelation/'+searchId +'/">Add Relationship</a></li>'
     );
