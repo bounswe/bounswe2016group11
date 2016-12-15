@@ -38,10 +38,9 @@
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav">
+        <ul class="nav navbar-nav thenavbar">
 					{% if user.is_authenticated %}
-          <li><a href="/cocomapapp/topics/add">Create Topic</a></li>
-          <li><a href="/cocomapapp/addRelation/1/">Add Relationship</a></li> <!--/cocomapapp/addRelation/topic.id/ topic.id in focustaki topinten gelecek -->
+          <li><a href="/cocomapapp/topics/add">Create Topic</a></li> <!--/cocomapapp/addRelation/topic.id/ topic.id in focustaki topinten gelecek -->
 					{% endif %}
         </ul>
 		<div class="pull-right">
