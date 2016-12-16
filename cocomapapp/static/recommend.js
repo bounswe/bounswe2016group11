@@ -9,7 +9,13 @@ $(document).ready(function(){
 function get_recommended_topics(){
   var topics;
   $.ajax({
-    url: "/cocomapapp/recommendedTopics",
+    {% if user.is_authenticated %}
+
+      url: "/cocomapapp/getRecommendedTopics/5",
+    {% else %}
+      url: "/cocomapapp/recommendedTopics"
+    {% endif %}
+
     async: false,
     dataType:"json"
   }).done(function(data){
@@ -42,15 +48,15 @@ function recommendationRenderer(result){
     $.each(topics,function(i,topic){
       //console.log(topic);
       ref = "<a href='topics/"+topic.id +"'>"+topic.name+"</a>";
-      html = $("<li class=\"list-group-item\"></li>").html(ref);
+      html = $("<li class=\"list-group-item list-group-item-success\"></li>").html(ref);
 
       $("#recommendedTopics").append(html);
     });
 
     $.each(posts,function(i,value){
       //console.log(value.username);
-      ref = "<a href='topics/"+ value.topic.id+ "/'>"+value.user.username+" posted to "+ value.topic.name +" <span class=\"sr-only\">(current)</span></a><p>"+value.content+"</p>";
-      html = $("<li class=\"list-group-item\"></li>").html(ref);
+      ref = "<span><p style='color:#6E6E6E; display:inline; font-weight:bold; font-family: \"Russo One\", sans-serif;' >"+value.user.username +"</p> posted to "+"<a style='color:#29088A; display:inline; font-weight:bold; font-family: \"Sriracha\", cursive;' href='topics/"+ value.topic.id+ "/'>"+value.topic.name +" <span class=\"sr-only\">(current)</span></a></span></br></br><p align='center' style='color:#000000; font-weight:bold; font-family:\"Lobster\", cursive;'>\""+value.content+"\"</p>";
+      html = $("<li style='padding-top:13px;' class=\"list-group-item list-group-item-info\"></li>").html(ref);
 
       $("#recommendedposts").append(html);
     });
