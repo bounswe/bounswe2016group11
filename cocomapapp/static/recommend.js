@@ -9,13 +9,7 @@ $(document).ready(function(){
 function get_recommended_topics(){
   var topics;
   $.ajax({
-    {% if user.is_authenticated %}
-
-      url: "/cocomapapp/getRecommendedTopics/5",
-    {% else %}
-      url: "/cocomapapp/recommendedTopics"
-    {% endif %}
-
+    url: recommendedTopicURL,
     async: false,
     dataType:"json"
   }).done(function(data){

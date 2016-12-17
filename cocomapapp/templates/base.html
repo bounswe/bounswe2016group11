@@ -25,10 +25,16 @@
 		<title></title>
 </head>
 <body>
-	
+	{% if user.is_authenticated %}
 	<script type="text/javascript">
-
+		var recommendedTopicURL= "/cocomapapp/getRecommendedTopics/5";
 	</script>
+	{% else %}
+	<script type="text/javascript">
+		var recommendedTopicURL= "/cocomapapp/recommendedTopics";
+	</script>
+	{% endif %}
+
 	<div class="container-fluid">
 		<nav class="navbar navbar-inverse">
       <!-- Brand and toggle get grouped for better mobile display -->

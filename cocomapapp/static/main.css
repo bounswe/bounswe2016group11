@@ -8,6 +8,7 @@ html {
 
 body {
 	font-family: "ProximaNova-Light" !important;
+  background-color: #A9D0F5 !important;
 }
 
 .circle1 {
@@ -55,6 +56,7 @@ body {
     overflow-y: auto;
     background-color: #424242;
     border-right: 1px solid #eee;
+    margin-top: -20px;
 }
 
 .list-following-posts > .list-group-item {
