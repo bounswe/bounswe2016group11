@@ -10,8 +10,17 @@ public class TopicCreateRequest {
     String name;
     Integer user;
     List<Integer> relates_to;
-    List<Integer> tags;
+    List<TagModel> tags;
     List<Integer> posts;
+    List<Integer> visits;
+
+    public List<Integer> getVisits() {
+        return visits;
+    }
+
+    public void setVisits(List<Integer> visits) {
+        this.visits = visits;
+    }
 
     public String getName() {
         return name;
@@ -37,11 +46,11 @@ public class TopicCreateRequest {
         this.relates_to = relates_to;
     }
 
-    public List<Integer> getTags() {
+    public List<TagModel> getTags() {
         return tags;
     }
 
-    public void setTags(List<Integer> tags) {
+    public void setTags(List<TagModel> tags) {
         this.tags = tags;
     }
 

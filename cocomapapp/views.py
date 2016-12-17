@@ -83,6 +83,17 @@ class PostUpdate(ReadNestedWriteFlatMixin,generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+class PostDelete(ReadNestedWriteFlatMixin,generics.DestroyAPIView):
+    serializer_class = PostSerializer
+    def get_queryset(self, *args, **kwargs):
+        data = JSONParser().parse(self.request)
+        if data['user_id']:
+            user = User.objects.get(id = data['user_id'])
+        else: 
+            user = self.request.user
+        post = Post.objects.filter(id = self.kwargs['pk'], user = user)
+        return post
+
 class RelationRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
@@ -180,6 +191,7 @@ def post_vote(request):
         #serializer = VoteSerializer(newVote)
         #return Response(serializer.data)
 
+
 @api_view(['GET'])
 def getRecommendedTopics(request, limit):
     if request.method == 'GET':
@@ -204,6 +216,25 @@ def getRecommendedTopics(request, limit):
         recommended_topics = [key for key, value in sorted_scores]
         #print(recommended_topics)
         serializer = TopicNestedSerializer(recommended_topics, many=True);
+        return Response(serializer.data)
+
+@api_view(['GET'])
+def getRecommendedPosts(request, limit):
+    if request.method == 'GET':
+        user = request.user;
+        scores = {};
+        for topic in Topic.objects.filter(visits__user=user).distinct():
+
+            last_visit = topic.visits.filter(user=user).order_by('-visit_date')[0].visit_date;
+
+            unread_posts = topic.posts.filter(created_at__gt=last_visit)
+            for post in unread_posts:
+                score = 10 * post.accuracy - (timezone.now()-last_visit).total_seconds()/3600
+                scores[post] = score;
+
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        recommended_posts = [key for key, value in sorted_scores]
+        serializer = PostNestedSerializer(recommended_posts, many=True);
         return Response(serializer.data)
 
 
@@ -258,6 +289,44 @@ def listTopicRelevance(request):
 #        post.save()
 #        serializer = PostSerializer(post)
 #        return Response(serializer.data)
+
+@api_view(['PATCH'])
+def update_post(request, pk):
+    data = JSONParser().parse(request)
+
+    if request.method == 'PATCH':
+        if data['user_id']:
+            user = User.objects.get(id = data['user_id'])
+        else: 
+            user = request.user
+        try:
+            postObject = Post.objects.filter(id=pk, user = user).first()
+        except Post.DoesNotExist:
+            content = {'user forbidden': 'you should be user of the requested post.'}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+
+
+    postObject.content = data['content']
+    postObject.tags.clear()
+
+    for tag in data["tags"]:
+        if len(tag)>0:
+            if tag['label'] == '':
+                continue
+            try:
+                tagObject = Tag.objects.get(wikidataID=tag['id'])
+            except ObjectDoesNotExist:
+                tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+            except MultipleObjectsReturned:
+               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+
+            unique_hidden_tags = list(set(tag['hidden_tags']))
+            if unique_hidden_tags:
+                tagObject.hidden_tags = unique_hidden_tags
+
+            tagObject.save()
+            postObject.tags.add(tagObject)
+    postObject.save()
 
 @api_view(['PUT'])
 def relation_upvote(request, pk):

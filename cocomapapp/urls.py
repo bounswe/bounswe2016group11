@@ -14,6 +14,8 @@ from .views import (
 	PostCreate,
 	PostRetrieve,
 	PostUpdate,
+	update_post,
+	PostDelete,
 	RelationCreate,
 	RelationRetrieve,
 	RelationList,
@@ -25,6 +27,7 @@ from .views import (
 	post_vote,
 	listTopicRelevance,
 	getRecommendedTopics,
+	getRecommendedPosts,
 	relation_upvote,
 	relation_downvote,
 	wikidata_search,
@@ -35,7 +38,7 @@ from .views import (
 	RecommendedTopics,
 	RecommendedPosts,
 	add_relation,
-    infocus,
+    infocus
 )
 
 urlpatterns = [
@@ -52,7 +55,8 @@ urlpatterns = [
 
 	url(r'postCreate', PostCreate.as_view()),
 	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
-	url(r'postUpdate/(?P<pk>[0-9]+)/',  PostUpdate.as_view()),
+	url(r'postUpdate/(?P<pk>[0-9]+)/',  update_post),
+	url(r'postDelete/(?P<pk>[0-9]+)/',  PostDelete.as_view()),
 	url(r'recommendedPosts',  RecommendedPosts.as_view()),
 
 	url(r'relationCreate',  RelationCreate.as_view()),
@@ -69,6 +73,7 @@ urlpatterns = [
 	url(r'postVote/',  post_vote),
 	url(r'listTopicRelevance/', listTopicRelevance),
 	url(r'getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics),
+	url(r'getRecommendedPosts/(?P<limit>[0-9]+)/', getRecommendedPosts),
 
 	url(r'relationUpvote/(?P<pk>[0-9]+)/',  relation_upvote),
 	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),

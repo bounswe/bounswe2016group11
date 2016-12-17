@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.cocomap.coco.R;
+import com.cocomap.coco.pojo.TagModel;
 import com.cocomap.coco.pojo.TopicCreateRequest;
 import com.cocomap.coco.pojo.UserModel;
 import com.google.gson.Gson;
@@ -40,9 +41,10 @@ public class CreateTopicActivity extends AppCompatActivity {
         TopicCreateRequest topicCreateRequest = new TopicCreateRequest();
         topicCreateRequest.setName(topicName);
         topicCreateRequest.setUser(1);
-        topicCreateRequest.setTags(new ArrayList<Integer>());
+        topicCreateRequest.setTags(new ArrayList<TagModel>());
         topicCreateRequest.setPosts(new ArrayList<Integer>());
         topicCreateRequest.setRelates_to(new ArrayList<Integer>());
+        topicCreateRequest.setVisits(new ArrayList<Integer>());
 
         Gson gson = new Gson();
 
