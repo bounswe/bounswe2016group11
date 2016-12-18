@@ -49,9 +49,9 @@ urlpatterns = [
     url(r'topics/add', add_topic),
     url(r'topics/(?P<id>\d+)/postAdd', add_post),
 
-	url(r'topicList',  TopicList.as_view()),
-	url(r'topicCreate',  TopicCreate.as_view()),
-	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view()),
+	url(r'topicList',  TopicList.as_view(), name='topicList'),
+	url(r'topicCreate',  TopicCreate.as_view(), name='topicCreate'),
+	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'),
 	url(r'recommendedTopics',  RecommendedTopics.as_view()),
 
 	url(r'postCreate', PostCreate.as_view()),

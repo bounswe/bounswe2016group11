@@ -53,7 +53,7 @@ class ReadNestedWriteFlatMixin(object):
 
 class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
 
 class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
     serializer_class = TopicSerializer
@@ -720,7 +720,7 @@ def infocus(request, id):
     template = loader.get_template('infocus.html')
     try:
         topic = Topic.objects.get(id=id)
-        serialized_topic = TopicSerializer(topic)
+        serialized_topic = TopicNestedSerializer(topic)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
