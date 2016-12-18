@@ -28,10 +28,12 @@
 	{% if user.is_authenticated %}
 	<script type="text/javascript">
 		var recommendedTopicURL= "/cocomapapp/getRecommendedTopics/5";
+		var recommendedPostURL= "/cocomapapp/getRecentPosts/5";
 	</script>
 	{% else %}
 	<script type="text/javascript">
 		var recommendedTopicURL= "/cocomapapp/recommendedTopics";
+		var recommendedPostURL="/cocomapapp/recommendedPosts";
 	</script>
 	{% endif %}
 
@@ -63,8 +65,6 @@
                   <span class="caret"></span>
                 </button>
                 <ul style="z-index:1001;" class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                  <li><a href="#">Profile</a></li>
-                  <li role="separator" class="divider"></li>
                   <li><a href="/cocomapapp/accounts/logout/">Logout</a></li>
                 </ul>
               </li>

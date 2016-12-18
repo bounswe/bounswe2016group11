@@ -1,6 +1,5 @@
 $(document).ready(function(){
-  $.getJSON("/cocomapapp/recommendedPosts"
-  ).fail( function() {
+  $.getJSON(recommendedPostURL).fail( function() {
     console.log("error in recommendation");
   }).done( function(data) {
       recommendationRenderer(data);
@@ -41,8 +40,8 @@ function recommendationRenderer(result){
     //console.log(posts);
     $.each(topics,function(i,topic){
       //console.log(topic);
-      ref = "<a href='topics/"+topic.id +"'>"+topic.name+"</a>";
-      html = $("<li class=\"list-group-item list-group-item-success\"></li>").html(ref);
+      ref = "<div align='center' ><a  style='color:#FE2E64; font-size:150%; font-weight:bold; font-family: \"Sriracha\", cursive;' href='topics/"+topic.id +"'>"+topic.name+"</a></div>";
+      html = $("<li  class=\"list-group-item list-group-item-success\"></li>").html(ref);
 
       $("#recommendedTopics").append(html);
     });

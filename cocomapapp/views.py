@@ -110,7 +110,7 @@ class RelationList(ReadNestedWriteFlatMixin,generics.ListAPIView):
 
 #DEPRECATED
 class RecommendedTopics(ReadNestedWriteFlatMixin,generics.ListAPIView):
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
     def get_queryset(self, *args, **kwargs):
         query = self.request.GET.get("user_id")
         if query:
