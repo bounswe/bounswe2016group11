@@ -53,7 +53,7 @@ class ReadNestedWriteFlatMixin(object):
 
 class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
 
 class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
     serializer_class = TopicSerializer
