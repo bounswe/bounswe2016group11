@@ -28,12 +28,12 @@
 	{% if user.is_authenticated %}
 	<script type="text/javascript">
 		var recommendedTopicURL= "/cocomapapp/getRecommendedTopics/5";
-		var recommendedPostURL= "/cocomapapp/getRecentPosts/5";
+		var recommendedPostURL= "/cocomapapp/getRecommendedPosts/5";
 	</script>
 	{% else %}
 	<script type="text/javascript">
-		var recommendedTopicURL= "/cocomapapp/recommendedTopics";
-		var recommendedPostURL="/cocomapapp/recommendedPosts";
+		var recommendedTopicURL= "/cocomapapp/getHotTopics/5";
+		var recommendedPostURL="/cocomapapp/getRecentPosts/5";
 	</script>
 	{% endif %}
 
@@ -69,7 +69,7 @@
                 </ul>
               </li>
             {% else %}
-			  <li ><a style="color:#ffffff; " href="/cocomapapp/accounts/login/">Login</a></li>
+			  <li ><a style="color:#ffffff; " href="/cocomapapp/accounts/login/">Login/Signup</a></li>
 
             {% endif %}
 					</ul>

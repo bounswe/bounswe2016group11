@@ -40,8 +40,8 @@ function recommendationRenderer(result){
     //console.log(posts);
     $.each(topics,function(i,topic){
       //console.log(topic);
-      ref = "<div align='center' ><a  style='color:#FE2E64; font-size:150%; font-weight:bold; font-family: \"Sriracha\", cursive;' href='topics/"+topic.id +"'>"+topic.name+"</a></div>";
-      html = $("<li  class=\"list-group-item list-group-item-success\"></li>").html(ref);
+      ref = "<div align='center' ><a  style='color:#000000; font-size:140%; font-weight:bold; font-family: \"Sriracha\", cursive;' href='topics/"+topic.id +"'>"+topic.name+"</a></div>";
+      html = $("<li  class=\"list-group-item\"></li>").html(ref);
 
       $("#recommendedTopics").append(html);
     });
@@ -49,7 +49,7 @@ function recommendationRenderer(result){
     $.each(posts,function(i,value){
       //console.log(value.username);
       ref = "<span><p style='color:#6E6E6E; display:inline; font-weight:bold; font-family: \"Russo One\", sans-serif;' >"+value.user.username +"</p> posted to "+"<a style='color:#29088A; display:inline; font-weight:bold; font-family: \"Sriracha\", cursive;' href='topics/"+ value.topic.id+ "/'>"+value.topic.name +" <span class=\"sr-only\">(current)</span></a></span></br></br><p align='center' style='color:#000000; font-weight:bold; font-family:\"Lobster\", cursive;'>\""+value.content+"\"</p>";
-      html = $("<li style='padding-top:13px;' class=\"list-group-item list-group-item-info\"></li>").html(ref);
+      html = $("<li style='padding-top:13px;' class=\"list-group-item\"></li>").html(ref);
 
       $("#recommendedposts").append(html);
     });

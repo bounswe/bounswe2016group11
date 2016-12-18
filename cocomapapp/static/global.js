@@ -47,9 +47,9 @@ $(function(){
               var blue = Math.round((1-seed)*255);
               console.log("red: "+ red+"    , blue:"+blue);
               dict1.push({id: json_array[i]['id'] ,value:seed, font:{face:'Luckiest Guy',color:'rgb(255,255,255)'},
-              label: json_array[i]['name'],color:'rgb('+red+','+green+','+blue+')'});
+              label: json_array[i]['name'].split(" ").join("\n"),color:'rgb('+red+','+green+','+blue+')'});
             }
-            //.split(" ").join("\n")
+
             var nodes = new vis.DataSet(dict1);
 
             //////
