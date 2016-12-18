@@ -32,6 +32,7 @@ from .views import (
 	relation_downvote,
 	wikidata_search,
 	topic_get_hot,
+	post_get_recent,
     wikidata_query,
 	search_by_tags,
 	search,
@@ -79,9 +80,11 @@ urlpatterns = [
 	url(r'relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),
 
 	url(r'wikidataSearch/(?P<str>.+)/', wikidata_search),
-	url(r'getHotTopics/(?P<limit>[0-9]+)/', topic_get_hot),
     url(r'wikidataQuery/(?P<str>.+)/', wikidata_query),
 	url(r'searchByTags', search_by_tags),
+
+	url(r'getHotTopics/(?P<limit>[0-9]+)/', topic_get_hot),
+	url(r'getRecentPosts/(?P<limit>[0-9]+)/', post_get_recent),
 
 	url(r'search', search),
 	url(r'addRelation/(?P<id>[0-9]+)/', add_relation),
