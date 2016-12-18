@@ -1,3 +1,94 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 
-# Create your tests here.
+from cocomapapp.models import Tag, Topic, Post, Relation, Vote, Visit
+from cocomapapp.serializers import UserSerializer, TagSerializer, TopicSerializer, TopicNestedSerializer, HotTopicsSerializer, PostSerializer, PostNestedSerializer, RelationSerializer, VoteSerializer, VisitSerializer, RelationBulkSerializer
+import cocomapapp.views
+
+from django.contrib.auth.models import AnonymousUser, User
+from django.test.utils import setup_test_environment
+
+from rest_framework.test import APIRequestFactory
+from rest_framework.test import force_authenticate
+from django.urls import reverse
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+
+def userSetup():
+    return User.objects.create(username = "testUser", email = "test@user.com", password = "a1b2c3d4")
+
+class TopicCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+
+    def test_simple_create(self):
+        url = reverse('topicCreate')
+        data = {'name': 'testTopic', 'user': str(self.user.id), 'relates_to' : []}
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Topic.objects.count(), 1)
+        self.assertEqual(Topic.objects.get().name, 'testTopic')
+        self.assertEqual(Topic.objects.get().user, self.user)
+
+class TopicListTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+
+    def test_empty_list(self):
+        url = reverse('topicList')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_single_list(self):
+        createdTopic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+        url = reverse('topicList')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['name'], createdTopic1.name)
+
+    def test_three_list(self):
+        createdTopic1 = Topic.objects.create(name='testTopic1', user=self.user)
+        createdTopic2 = Topic.objects.create(name='testTopic2', user=self.user)
+        createdTopic3 = Topic.objects.create(name='testTopic3', user=self.user)
+
+        url = reverse('topicList')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['name'], createdTopic1.name)
+        self.assertEqual(response.data[1]['name'], createdTopic2.name)
+        self.assertEqual(response.data[2]['name'], createdTopic3.name)
+
+class TopicRetrieveTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+        self.topic2 = Topic.objects.create(name='testTopic2', user=self.user)
+
+    def test_first_topic(self):
+        url = reverse('topicRetrieve', kwargs={'pk': self.topic1.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], self.topic1.name)
+
+    def test_second_topic(self):
+        url = reverse('topicRetrieve', kwargs={'pk': self.topic2.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], self.topic2.name)
+
+    def test_nonexisting_topic(self):
+        topic_id = self.topic1.id + self.topic2.id + 1
+        url = reverse('topicRetrieve', kwargs={'pk': topic_id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

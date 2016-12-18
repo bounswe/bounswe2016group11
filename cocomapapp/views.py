@@ -53,7 +53,7 @@ class ReadNestedWriteFlatMixin(object):
 
 class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
 
 class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
     serializer_class = TopicSerializer
@@ -89,7 +89,7 @@ class PostDelete(ReadNestedWriteFlatMixin,generics.DestroyAPIView):
         data = JSONParser().parse(self.request)
         if data['user_id']:
             user = User.objects.get(id = data['user_id'])
-        else: 
+        else:
             user = self.request.user
         post = Post.objects.filter(id = self.kwargs['pk'], user = user)
         return post
@@ -108,6 +108,7 @@ class RelationList(ReadNestedWriteFlatMixin,generics.ListAPIView):
 
         return queryset_list
 
+#DEPRECATED
 class RecommendedTopics(ReadNestedWriteFlatMixin,generics.ListAPIView):
     serializer_class = TopicSerializer
     def get_queryset(self, *args, **kwargs):
@@ -124,6 +125,7 @@ class RecommendedTopics(ReadNestedWriteFlatMixin,generics.ListAPIView):
 
         return queryset_list
 
+#DEPRECATED
 class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
     serializer_class = PostNestedSerializer
     def get_queryset(self, *args, **kwargs):
@@ -297,7 +299,7 @@ def update_post(request, pk):
     if request.method == 'PATCH':
         if data['user_id']:
             user = User.objects.get(id = data['user_id'])
-        else: 
+        else:
             user = request.user
         try:
             postObject = Post.objects.filter(id=pk, user = user).first()
@@ -372,8 +374,17 @@ def topic_get_hot(request, limit):
         hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
 
         #hot_topics = Topic.objects.order_by('hotness')[:5]
-        serializer = TopicSerializer(hot_topics, many=True)
+        serializer = TopicNestedSerializer(hot_topics, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def post_get_recent(requst, limit):
+    if requst.method == 'GET':
+        recent_posts = Post.objects.order_by('-created_at')[:int(limit)]
+        serializer =  PostNestedSerializer(recent_posts, many=True)
+        return Response(serializer.data)
+
+
 
 @api_view(['GET'])
 def wikidata_query(request, str):
@@ -709,7 +720,7 @@ def infocus(request, id):
     template = loader.get_template('infocus.html')
     try:
         topic = Topic.objects.get(id=id)
-        serialized_topic = TopicSerializer(topic)
+        serialized_topic = TopicNestedSerializer(topic)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
