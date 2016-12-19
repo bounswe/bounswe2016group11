@@ -43,7 +43,7 @@ $(function(){
                   var blue = Math.round((1-seed)*255);
                   console.log("red: "+ red+"    , blue:"+blue);
                   dict1.push({id: json_array[i]['topic_from']['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
-                  label: json_array[i]['topic_from']['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+                  label: json_array[i]['topic_from']['name'].split(" ").join("\n"),color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
               }
 
               if(json_array[i]['topic_to']['id']!=searchId || i==0)
@@ -58,7 +58,7 @@ $(function(){
                   var blue = Math.round((1-seed)*255);
                   console.log("red: "+ red+"    , blue:"+blue);
                   dict1.push({id: json_array[i]['topic_to']['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
-                  label: json_array[i]['topic_to']['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+                  label: json_array[i]['topic_to']['name'].split(" ").join("\n"),color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
               }
 
             }
@@ -77,7 +77,7 @@ $(function(){
                         var blue = Math.round((1-seed)*255);
                         console.log("red: "+ red+"    , blue:"+blue);
                         dict1.push({id: searchId, size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
-                        label: json_array2['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+                        label: json_array2['name'].split(" ").join("\n"),color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
                         console.log("searchName:"+dict1[0]['label']);
                         var nodes = new vis.DataSet(dict1);
                         var edges = new vis.DataSet(dict2);
