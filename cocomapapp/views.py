@@ -458,7 +458,7 @@ def search_by_tags(request):
         TopicSerializer.Meta.depth = 1
         PostNestedSerializer.Meta.depth = 1
 
-        topicSerializer = TopicSerializer(resultTopics, many=True)
+        topicSerializer = TopicNestedSerializer(resultTopics, many=True)
         #topicSerializer.Meta.depth = 1
         postSerializer = PostNestedSerializer(resultPosts, many=True)
         #postSerializer.Meta.depth = 1
