@@ -408,7 +408,9 @@ def search_by_tags(request):
         search_query = data['query']
         data_tags = list(set(data['tags']))
         print(data_tags)
-        tagObjects = Tag.objects.filter(hidden_tags__overlap=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
+        tagObjects = []
+        if len(data_tags) > 0:
+            tagObjects = Tag.objects.filter(hidden_tags__overlap=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
         for tagObject in tagObjects:
                 print("LOL")
                 tag_topics = tagObject.topics.all()
