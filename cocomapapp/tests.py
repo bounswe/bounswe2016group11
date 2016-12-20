@@ -92,3 +92,21 @@ class TopicRetrieveTests(APITestCase):
         url = reverse('topicRetrieve', kwargs={'pk': topic_id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class PostCreateTest(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+    def test_create_one_post(self):
+        url = reverse('postCreate')
+        data = {'content': 'post for test', 'user': str(self.user.id), 'topic' : topic1, 'tags' : [] }
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Post.objects.get().content, 'post for test')
+        self.assertEqual(Post.objects.get().user, self.user)
+        self.assertEqual(Post.objects.get().topic, topic1)
