@@ -561,7 +561,7 @@ def show_topic(request, id):
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")
     hot_topics = Topic.objects.order_by('-updated_at')[:5]
-    serialized_hot_topics = HotTopicsSerializer(hot_topics, many=True)
+    serialized_hot_topics = TopicNestedSerializer(hot_topics, many=True)
     hot_topics_json = JSONRenderer().render(serialized_hot_topics.data)
     context = {
         'topic': topic_json,
