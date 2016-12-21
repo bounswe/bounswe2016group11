@@ -37,6 +37,11 @@
             android:label="Login">
 
         </activity>
+        <activity
+            android:name=".activity.SearchTopicActivity"
+            android:label="Search">
+
+        </activity>
     </application>
 
 </manifest>

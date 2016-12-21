@@ -109,4 +109,11 @@ public class GlobalViewActivity extends AppCompatActivity {
         startActivity(intent);
 
     }
+
+    public void onClickSearchTopic(View view) {
+
+        Intent intent = new Intent(this, SearchTopicActivity.class);
+
+        startActivity(intent);
+    }
 }

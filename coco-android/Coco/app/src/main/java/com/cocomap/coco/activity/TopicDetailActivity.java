@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.cocomap.coco.R;
@@ -48,12 +49,16 @@ public class TopicDetailActivity extends BaseActivity {
 
     ArrayList<PostModel> posts;
 
+    TextView tags_text;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_detail);
 
         final MyReceyclerAdapter myAdapter = new MyReceyclerAdapter(this);
+
+        tags_text = (TextView) findViewById(R.id.text_tag);
 
         postEditText = (EditText) findViewById(R.id.postEditText);
         recyclerView = (RecyclerView) findViewById(R.id.recycler);
@@ -99,7 +104,18 @@ public class TopicDetailActivity extends BaseActivity {
                     @Override
                     public void run() {
                         myAdapter.setList(retrieved_post.getPosts());
+
+                        ArrayList<TagModel> tags = (ArrayList<TagModel>) retrieved_post.getTags();
+                        String tag_string ="";
+
+                        for (TagModel tag: tags
+                             ) {
+
+                            tag_string +=" #" + tag.getName();
+
+                        }
                         getSupportActionBar().setTitle(retrieved_post.getName());
+                        tags_text.setText(tag_string);
                     }
                 });
 

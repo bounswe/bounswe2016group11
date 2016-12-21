@@ -5,7 +5,7 @@ $(function(){
    retrieved from the server.
    */
     $.ajax({
-        url: 'topicList',
+        url: 'getHotTopics/0',
         type: 'GET',
         dataType: 'json',
         success: function (data) {
@@ -25,7 +25,7 @@ $(function(){
             for(var i = 0; i < json_array.length; i++){
               var topicHot = json_array[i].hotness;//scale the hotness
               var seed = (topicHot-minHot)/range;//find a seed using the hotness
-              console.log("seed: "+seed);
+
 
               //generate colors using the seed
               var red = Math.round(seed*255);
@@ -36,23 +36,22 @@ $(function(){
               dict1.push({id: json_array[i]['id'] ,value:seed, font:{face:'Luckiest Guy',color:'rgb(255,255,255)'},
               label: json_array[i]['name'].split(" ").join("\n"),color:'rgb('+red+','+green+','+blue+')'});
             }
-
+            console.log(dict1);
             var nodes = new vis.DataSet(dict1);
 
             // create an array with edges
             var dict2 = [];
             for(var i = 0; i < json_array.length; i++){
               // this code will be replaced ..............
-              console.log("topicc "+json_array[i].name);
+
               for(var j = 0; j < json_array[i]['relates_to'].length; j++){
 
                 var topicHot = json_array[i].hotness;
 
-
-
-                relatedTopicId = json_array[i]['relates_to'][j]['topic_to'];
+                var relatedTopicId = json_array[i]['relates_to'][j]['topic_to'].id;
 
                   //related topic in hotness ını alıyor(json_arrayinin içinden bu topic için search)
+                  /*
                   for(var k = 0; k < json_array.length; k++){
                     if(relatedTopicId == json_array[k].id){
                       //console.log("related topic   "+json_array[k].name);
@@ -62,16 +61,13 @@ $(function(){
                       break;
                     }
                   }
-
+                  */
                   var seed = (topicHot-minHot)/range;
                   //length of arrow
+                  var arrow_length = Math.round((1-seed)*80+250);
                   console.log(seed);
-                  var arrow_length = Math.round((1-seed)*300+200);
-
-                  console.log(arrow_length);
-
                   //add edges to the dictionary
-                  dict2.push({ from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length ,value:seed});
+                  dict2.push({ from: json_array[i].id, to: json_array[i]['relates_to'][j]['topic_to'].id, arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length,width:(seed*seed*7)});
                   //dict2.push({from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label']  });
 
               }
@@ -91,11 +87,11 @@ $(function(){
               nodes:{
                 shape:"circle",
                 scaling:{
-                  label:{min:15,max:50},//maximum
-                  min:0,
-                  max:1
+                  label:{min:10,max:25},//maximum
+                  min:0,max:1
                 }
               }
+
             };
             var network = new vis.Network(container, data, options);
 

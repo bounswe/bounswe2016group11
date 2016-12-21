@@ -93,6 +93,7 @@ class TopicRetrieveTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
 class RelationRetrieveTests(APITestCase):
    def setUp(self):
        self.user = userSetup()
@@ -132,3 +133,137 @@ class RelationListTests(APITestCase):
 
        self.assertEqual(response.status_code, status.HTTP_200_OK)
        self.assertEqual(len(response.data), 2)
+
+class PostCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+
+    def test_simple_create(self):
+        url = reverse('postCreate')
+        data = {'user': str(self.user.id), 'content' : 'Post Create Content'}
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Post.objects.get().content, 'Post Create Content')
+        self.assertEqual(Post.objects.get().user, self.user)
+
+class PostRetrieveTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content= 'Post 1')
+        self.post2 = Post.objects.create(user=self.user, content= 'Post 2')
+
+    def test_first_post(self):
+        url = reverse('postRetrieve', kwargs={'pk': self.post1.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], self.post1.content)
+
+    def test_second_post(self):
+        url = reverse('postRetrieve', kwargs={'pk': self.post2.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], self.post2.content)
+
+class VisitCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+    def test_first_topic(self):
+        url = reverse('visitCreate')
+        data = {'user': str(self.user.id), 'topic': self.topic1.id}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['topic'], self.topic1.id)
+        self.assertEqual(response.data['user'], self.user.id)
+
+
+
+class PostDeleteTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_delete(self):
+        url = reverse('postDelete', kwargs={'pk': self.post1.id})
+        data = {'user_id': str(self.user.id)}
+        response = self.client.delete(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+class GetRecommendedPostsTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_recommended_posts(self):
+        url = reverse('getRecommendedPosts', kwargs={'limit': '5'})
+        data = {'user': str(self.user.id)}
+        response = self.client.get(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class PostVoteTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        # self.topic = Topic.objects.create(name='testTopic1', user=self.user)
+        self.post = Post.objects.create(user=self.user, content= 'Post 2')
+
+    def test_simple_vote(self):
+        url = reverse('postVote')
+        response = self.client.post(url, {'post_id': str(self.post.id), 'is_positive': 'True'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.post.id)
+        self.assertEqual(response.data['positive_reaction_count'], 1)
+class PostUpdateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_update(self):
+        url = reverse('postUpdate', kwargs={'pk': self.post1.id})
+        data = {'user_id': str(self.user.id), 'content' : 'Post Update Content', 'tags':[]}
+        response = self.client.patch(url, data, format='json')        print(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetRecommendedTopicsTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+    def test_simple_recommended_topics(self):
+        url = reverse('getRecommendedTopics', kwargs={'limit': '3'})
+        data = {'user': str(self.user.id)}
+        response = self.client.get(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["user"]["id"], self.user.id)
+        self.assertEqual(response.data[0]["name"], self.topic1.name)
+
+class RelationCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topicFrom = Topic.objects.create(name='testTopic1', user=self.user)
+        self.topicTo = Topic.objects.create(name='testTopic2', user=self.user)
+
+    def test_simple_create(self):
+        url = reverse('relationCreate')
+        data = {'topic_from': str(self.topicFrom.id), 'topic_to': str(self.topicTo.id), 'label': 'Relation'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Relation.objects.count(), 1)
+        self.assertEqual(Relation.objects.get().topic_from, self.topicFrom)
+        self.assertEqual(Relation.objects.get().topic_to, self.topicTo)
+        self.assertEqual(Relation.objects.get().label, 'Relation')
