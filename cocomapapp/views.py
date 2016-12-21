@@ -80,6 +80,7 @@ class PostCreate(generics.CreateAPIView):
     """
 
     serializer_class = PostSerializer
+    serializer_class.Meta.depth = 0
     def post(self, request, format=None):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
@@ -391,12 +392,12 @@ def update_post(request, pk):
 
         for tag in data["tags"]:
             if len(tag)>0:
-                if tag['label'] == '':
+                if tag['name'] == '':
                     continue
                 try:
-                    tagObject = Tag.objects.get(wikidataID=tag['id'])
+                    tagObject = Tag.objects.get(wikidataID=tag['wikidataID'])
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                    tagObject = Tag.objects.create(wikidataID=tag['wikidataID'], name=tag['name'])
                 except MultipleObjectsReturned:
                    return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
 
@@ -407,6 +408,7 @@ def update_post(request, pk):
                 tagObject.save()
                 postObject.tags.add(tagObject)
         postObject.save()
+        return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 def relation_upvote(request, pk):
