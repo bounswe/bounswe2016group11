@@ -306,8 +306,14 @@ def getRecommendedPosts(request, limit):
                 score = 10 * post.accuracy - (timezone.now()-last_visit).total_seconds()/3600
                 scores[post] = score;
 
-        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        extraPosts = Post.objects.exclude(topic__visits__user=user).order_by('-created_at')
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
         recommended_posts = [key for key, value in sorted_scores]
+        recommended_posts += extraPosts
+        recommended_posts = recommended_posts[:int(limit)]
+
+        TopicNestedSerializer.Meta.depth = 1
+        PostNestedSerializer.Meta.depth = 1
         serializer = PostNestedSerializer(recommended_posts, many=True);
         return Response(serializer.data)
 
@@ -469,6 +475,8 @@ def topic_get_hot(request, limit):
         else:
             hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
         #hot_topics = Topic.objects.order_by('hotness')[:5]
+        TopicNestedSerializer.Meta.depth = 2
+        RelationSerializer.Meta.depth = 1
         serializer = TopicNestedSerializer(hot_topics, many=True)
         return Response(serializer.data)
 
@@ -479,6 +487,8 @@ def post_get_recent(requst, limit):
     """
     if requst.method == 'GET':
         recent_posts = Post.objects.order_by('-created_at')[:int(limit)]
+        TopicNestedSerializer.Meta.depth = 1
+        PostNestedSerializer.Meta.depth = 1
         serializer =  PostNestedSerializer(recent_posts, many=True)
         return Response(serializer.data)
 
@@ -570,6 +580,9 @@ def search_by_tags(request):
         return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
 
 def index(request):
+    """
+    Main page of cocomapapp which includes hot_topics and a random_topic .
+    """
     template = loader.get_template('global.html')
     hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
     random_topic = serializers.serialize("json", Topic.objects.order_by('?')[:1])
@@ -631,6 +644,10 @@ def index(request):
 
 @csrf_exempt
 def show_topic(request, id):
+    """
+    A view that shows the a topic's page. It includes all post written
+    in that topic.
+    """
     template = loader.get_template('topic.html')
     if request.method == "POST":
         print("POSTING")
@@ -676,6 +693,9 @@ def show_topic(request, id):
 
 @csrf_exempt
 def add_topic(request):
+    """
+    A view that helps user to add new topics.
+    """
     template = loader.get_template('topicAdd.html')
     try:
         topic = serializers.serialize("json", Topic.objects.filter())
@@ -726,7 +746,6 @@ def add_topic(request):
                 topicObject.tags.add(tagObject)
                 context = {
                 }
-            # end of add topic to database.
 
             # Add relationship to database.
             relates_to = data["relates_to"]
@@ -743,16 +762,32 @@ def add_topic(request):
                 except MultipleObjectsReturned:
                     print("error")
                     return HttpResponse("This topic exists")
-            # End of add relationship to database.
+        # End of add relationship to database.
 
 
-            # Adding a post to new created topic
+        # Adding a post to new created topic
 
             if data["postAdd"] == True:
-                postObject = data["post"]
-                content = postObject["the_text"]
-                user = User.objects.first() # user
-                Post.objects.create(content=content, user=user, topic=topicObject)
+                postStuff = data["post"]
+                content = postStuff["post_content"]
+                postObject = Post.objects.create(content=content, user=user, topic=topicObject)
+                for tag in postStuff["post_tags"]:
+                    if len(tag)>0:
+                        if tag['label'] == '':
+                            continue
+                        try:
+                            tagObject = Tag.objects.get(wikidataID=tag['id'])
+                        except ObjectDoesNotExist:
+                            tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                        except MultipleObjectsReturned:
+                           return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+
+                        unique_hidden_tags = list(set(tag['hidden_tags']))
+                        if unique_hidden_tags:
+                            tagObject.hidden_tags = unique_hidden_tags
+
+                        tagObject.save()
+                        postObject.tags.add(tagObject)
             # End of adding a post to new created topic
 
         return HttpResponse(template.render(context, request))
@@ -760,6 +795,9 @@ def add_topic(request):
 
 @csrf_exempt
 def add_post(request, id):
+    """
+    A view that adds a post to a topic.
+    """
     template = loader.get_template('topic.html')
     if request.method == "POST":
         data = JSONParser().parse(request)
@@ -804,6 +842,9 @@ def add_post(request, id):
 
 @csrf_exempt
 def search(request):
+    """
+    A view that helps user to search something.
+    """
     template = loader.get_template('searchresult.html')
 
     context = {
@@ -813,6 +854,9 @@ def search(request):
 
 @csrf_exempt
 def add_relation(request,id):
+    """
+    A view that adds relation between to topics.
+    """
     template = loader.get_template('addRelation.html')
     requested_topic = Topic.objects.get(id=id)
 
@@ -823,6 +867,9 @@ def add_relation(request,id):
 
 @csrf_exempt
 def infocus(request, id):
+    """
+    A view that moves the clicked topic to center of the screen.
+    """
     template = loader.get_template('infocus.html')
     try:
         topic = Topic.objects.get(id=id)

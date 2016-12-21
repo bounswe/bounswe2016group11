@@ -59,7 +59,7 @@ function get_tags(wikiId,theTags){
 $(document).ready(function(){
   $(".sidebar").remove();
   var theTags=[];
-  $("#submit").click( function() {
+  $("#formsubmit").click( function() {
       // console.log("asfdlkjsafdjkladfjs");
       if($("#name").val()== ""){
         $("#name").shake();
@@ -79,13 +79,32 @@ $(document).ready(function(){
       $.each(resultTagIds,function(i,value){
         resultTags.push(get_tags(value,theTags));
       });
-        console.log(resultTags);
+      var resultTagIds2 = $('#tags2').val();
+      var resultTags2 =[];
+      console.log("asdasd");
+      console.log($("#postCheckbox").prop("checked"));
+      if($("#postCheckbox").prop("checked")){
+
+        if(resultTagIds2 != ""){
+          resultTagIds2 = resultTagIds2.split(",");
+        }
+        else{
+          resultTagIds2 = [];
+        }
+
+        console.log(resultTags2);
+        console.log(resultTagIds2);
+        $.each(resultTagIds2,function(i,value){
+          resultTags2.push(get_tags(value,theTags));
+        });
+      }
+      console.log(resultTags2);
         var topic = {
             name: $('#name').val(),
             relates_to: [{topic_id : $('#relates_to').val(), rel_name : $('#relationships-name').val()}],
             tags: resultTags,
             postAdd: $("#postCheckbox").prop("checked"),
-            post: {the_text: $("#postText").val(), tags:$('#tags2').val()}
+            post: {post_content: $("#postText").val(), post_tags:resultTags2}
             // relationships_name: $('#relationships-name').val()
         };
         if($('#relates_to2').val()){
@@ -221,8 +240,8 @@ $(document).ready(function(){
   $('#tags2').selectize({
     maxOptions: 6,
     valueField: 'id',
-    labelField: 'name',
-    searchField: ['name'],
+    labelField: 'description',
+    searchField: ['description'],
     plugins: ['remove_button'],
     options: [],
     create: false,
@@ -235,10 +254,11 @@ $(document).ready(function(){
           console.log("error in wikidata");
         }).done( function(data) {
             $.each(data,function(i,value){
-                theTags.push({
-                  id : value.id,
-                  name : (value.label +" "+ value.description)
-                });
+              theTags.push({
+                id : value.id,
+                name : value.label,
+                description: (value.label +" "+ value.description)
+              });
                 console.log("my values are: "+i+" "+value.label+" "+value.description);
             });
             callback(theTags);

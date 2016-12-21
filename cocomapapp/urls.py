@@ -53,7 +53,7 @@ api_urls = [
 	url(r'topicCreate',  TopicCreate.as_view(), name='topicCreate'),					   #
 	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'), #
 	url(r'recommendedTopics',  RecommendedTopics.as_view()),
-	
+
 	url(r'postCreate', PostCreate.as_view(), name='postCreate'),							#
 	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view(), name='postRetrieve'),		#
 	url(r'postUpdate/(?P<pk>[0-9]+)/',  update_post, name='postUpdate'),
@@ -82,8 +82,8 @@ api_urls = [
     url(r'^wikidataQuery/(?P<str>.+)/', wikidata_query),
 	url(r'^searchByTags', search_by_tags),
 
-	url(r'^getHotTopics/(?P<limit>-?[0-9]+)/', topic_get_hot),
-	url(r'^getRecentPosts/(?P<limit>[0-9]+)/', post_get_recent),
+	url(r'^getHotTopics/(?P<limit>-?[0-9]+)/', topic_get_hot, name="listHotTopics"),
+	url(r'^getRecentPosts/(?P<limit>[0-9]+)/', post_get_recent, name="listRecentPosts"),
 
 	url(r'^search', search),
 	url(r'^addRelation/(?P<id>[0-9]+)/', add_relation),
