@@ -676,6 +676,12 @@ def show_topic(request, id):
 
 @csrf_exempt
 def add_topic(request):
+    """
+        A view to creata a new topic with its relations.
+        User can add relation while adding topic.
+        User can add initial post to the topic.
+        It redirects user to global page after the topic is created.
+    """
     template = loader.get_template('topicAdd.html')
     try:
         topic = serializers.serialize("json", Topic.objects.filter())
@@ -760,6 +766,12 @@ def add_topic(request):
 
 @csrf_exempt
 def add_post(request, id):
+    """
+        A view to create a new post in current topic.
+        If user writes something to add tag, the text is automatically searched in wikidata and return related result.
+        If user clicks one of the returning result from wikidata, the tag is added to the post.
+        If the user clicks to post button, it redirects to the current topic's page.
+    """
     template = loader.get_template('topic.html')
     if request.method == "POST":
         data = JSONParser().parse(request)
