@@ -92,3 +92,95 @@ class TopicRetrieveTests(APITestCase):
         url = reverse('topicRetrieve', kwargs={'pk': topic_id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class PostCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+
+    def test_simple_create(self):
+        url = reverse('postCreate')
+        data = {'user': str(self.user.id), 'content' : 'Post Create Content'}
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Post.objects.get().content, 'Post Create Content')
+        self.assertEqual(Post.objects.get().user, self.user)
+
+class PostRetrieveTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content= 'Post 1')
+        self.post2 = Post.objects.create(user=self.user, content= 'Post 2')
+
+    def test_first_post(self):
+        url = reverse('postRetrieve', kwargs={'pk': self.post1.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], self.post1.content)
+
+    def test_second_post(self):
+        url = reverse('postRetrieve', kwargs={'pk': self.post2.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], self.post2.content)
+
+class VisitCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+    def test_first_topic(self):
+        url = reverse('visitCreate')
+        data = {'user': str(self.user.id), 'topic': self.topic1.id}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['topic'], self.topic1.id)
+        self.assertEqual(response.data['user'], self.user.id)
+
+
+
+class PostDeleteTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_delete(self):
+        url = reverse('postDelete', kwargs={'pk': self.post1.id})
+        data = {'user_id': str(self.user.id)}
+        response = self.client.delete(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+class GetRecommendedPostsTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_recommended_posts(self):
+        url = reverse('getRecommendedPosts', kwargs={'limit': '5'})
+        data = {'user': str(self.user.id)}
+        response = self.client.get(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetRecommendedTopicsTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+    def test_simple_recommended_topics(self):
+        url = reverse('getRecommendedTopics', kwargs={'limit': '3'})
+        data = {'user': str(self.user.id)}
+        response = self.client.get(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["user"]["id"], self.user.id)
+        self.assertEqual(response.data[0]["name"], self.topic1.name)
