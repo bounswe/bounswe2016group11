@@ -92,3 +92,37 @@ class TopicRetrieveTests(APITestCase):
         url = reverse('topicRetrieve', kwargs={'pk': topic_id})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class PostCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+
+    def test_simple_create(self):
+        url = reverse('postCreate')
+        data = {'user': str(self.user.id), 'content' : 'Post Create Content'}
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Post.objects.count(), 1)
+        self.assertEqual(Post.objects.get().content, 'Post Create Content')
+        self.assertEqual(Post.objects.get().user, self.user)
+
+class PostRetrieveTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content= 'Post 1')
+        self.post2 = Post.objects.create(user=self.user, content= 'Post 2')
+
+    def test_first_post(self):
+        url = reverse('postRetrieve', kwargs={'pk': self.post1.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], self.post1.content)
+
+    def test_second_post(self):
+        url = reverse('postRetrieve', kwargs={'pk': self.post2.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['content'], self.post2.content)

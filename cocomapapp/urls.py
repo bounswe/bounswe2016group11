@@ -49,13 +49,13 @@ urlpatterns = [
     url(r'topics/add', add_topic),
     url(r'topics/(?P<id>\d+)/postAdd', add_post),
 
-	url(r'topicList',  TopicList.as_view(), name='topicList'),
-	url(r'topicCreate',  TopicCreate.as_view(), name='topicCreate'),
-	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'),
+	url(r'topicList',  TopicList.as_view(), name='topicList'),		 					   #
+	url(r'topicCreate',  TopicCreate.as_view(), name='topicCreate'),					   #
+	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'), #
 	url(r'recommendedTopics',  RecommendedTopics.as_view()),
 
-	url(r'postCreate', PostCreate.as_view()),
-	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
+	url(r'postCreate', PostCreate.as_view(), name='postCreate'),							#
+	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view(), name='postRetrieve'),		#
 	url(r'postUpdate/(?P<pk>[0-9]+)/',  update_post),
 	url(r'postDelete/(?P<pk>[0-9]+)/',  PostDelete.as_view()),
 	url(r'recommendedPosts',  RecommendedPosts.as_view()),
