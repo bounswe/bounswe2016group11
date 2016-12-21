@@ -12,11 +12,11 @@ $(function(){
             var json_array = data;
             console.log(data)
             // create an array with nodes
-            var range = json_array[0].hotness-json_array[json_array.length-1].hotness;
+
 
             var maxHot = json_array[0].hotness;// the first element is the topic with maximum hotness
             var minHot = json_array[json_array.length-1].hotness;//the last element is the least hot topic
-
+            var range = maxHot- minHot;
             var dict1 = [];
 
             /*
@@ -43,31 +43,27 @@ $(function(){
             var dict2 = [];
             for(var i = 0; i < json_array.length; i++){
               // this code will be replaced ..............
-              var maxHot = json_array[i].hotness;
               console.log("topicc "+json_array[i].name);
               for(var j = 0; j < json_array[i]['relates_to'].length; j++){
 
                 var topicHot = json_array[i].hotness;
-                var seed = (topicHot-minHot)/range;
+
 
 
                 relatedTopicId = json_array[i]['relates_to'][j]['topic_to'];
-
-                if(relatedTopicId == json_array[i].id)
-                  relatedTopicId = json_array[i]['relates_to'][j]['topic_from'];
-
 
                   //related topic in hotness ını alıyor(json_arrayinin içinden bu topic için search)
                   for(var k = 0; k < json_array.length; k++){
                     if(relatedTopicId == json_array[k].id){
                       //console.log("related topic   "+json_array[k].name);
-                      if(json_array[k].hotness > maxHot){
-                        maxHot = json_array[k].hotness;
+                      if(json_array[k].hotness > topicHot){
+                        topicHot = json_array[k].hotness;
                       }
+                      break;
                     }
                   }
 
-                  seed = (maxHot-minHot)/range;
+                  var seed = (topicHot-minHot)/range;
                   //length of arrow
                   console.log(seed);
                   var arrow_length = Math.round((1-seed)*300+200);
@@ -95,7 +91,7 @@ $(function(){
               nodes:{
                 shape:"circle",
                 scaling:{
-                  label:{min:15,max:50},//maximum 
+                  label:{min:15,max:50},//maximum
                   min:0,
                   max:1
                 }
