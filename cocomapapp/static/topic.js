@@ -1,4 +1,7 @@
 
+/*
+get the cookie information
+*/
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -27,12 +30,23 @@ $.ajaxSetup({
         }
     }
 });
+
+
+/*
+used to collect all the information when sending a tag, the get_hidden_tags
+method is used to get the hidden_tags of an entity.
+
+*/
 function get_tags(wikiId,theTags){
   var waitNum;
   var resultTag;
   var hidden_tags=[];
   var props=["P31","P610","P37","P36", "P30","P190","P17","P190",
-  "P27", "P425","P279"];
+  "P27", "P425","P279"];// the properties of an entity to store in our system as hidden tags
+  /*
+  get the tags of each tag, wikidata entity added.
+  then get its hidden tags using get hidden tags and adds its
+  */
   $.ajax({
     url : "/cocomapapp/wikidataQuery/" +wikiId + "/" ,
     async:false,
@@ -65,6 +79,10 @@ function get_tags(wikiId,theTags){
   return resultTag;
 }
 
+/*
+  from the given wikidata entity json(the_json), the specified
+  properties(in props variable) are extracted and returned.
+*/
 function get_hidden_tags(props,the_json){
   var hidden_tags=[];
   var sem_att_list=props;
@@ -133,28 +151,6 @@ function vote(currUser, post_id, is_positive){  //For upvoting
     }
   });
 }
-/*
-function downVote(id){   //For downvoting
-  //console.log("downVote deyim");
-  $.ajax({
-    url: '/cocomapapp/postDownvote/'+id+'/',
-    type: 'PUT',
-    //data:JSON.stringify(post),
-    contentType: "application/json;charset=utf-8",
-    success: function (data) {
-      //console.log('success: ', data);
-      $('#d'+id).hide();
-      $('#-'+id).after('<span id="d'+id+'" style="color:red;">'+ data.negative_reaction_count +'</span>');
-      var accuracy = (data.positive_reaction_count/(data.positive_reaction_count+data.negative_reaction_count))*100;
-
-      $('#a'+id).replaceWith('<span id="a'+id+'">'+accuracy.toFixed(2)+'% </span>');
-    },
-    error: function (x, y, z) {
-        console.log("error");
-    }
-  });
-}
-*/
 $(document).ready(function(){
   var currUser = document.getElementById("userId").value;
   var url = document.baseURI.split('/');
