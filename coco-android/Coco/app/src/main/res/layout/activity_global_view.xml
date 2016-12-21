@@ -21,6 +21,16 @@
             android:layout_centerVertical="true"
             android:padding="@dimen/activity_margin_16"
             android:onClick="onClickCreateTopic"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search Topic"
+            android:textColor="#fff"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/activity_margin_16"
+            android:onClick="onClickSearchTopic"/>
     </RelativeLayout>
     <RelativeLayout
        android:layout_width="match_parent"
