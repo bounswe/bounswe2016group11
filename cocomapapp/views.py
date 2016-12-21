@@ -52,17 +52,33 @@ class ReadNestedWriteFlatMixin(object):
 
 
 class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
+    """
+    A view that lists all topics.
+    """
+
     queryset = Topic.objects.all()
     serializer_class = TopicNestedSerializer
 
 class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
+    """
+    A view that allows users to create topics.
+    """
+
     serializer_class = TopicSerializer
 
 class TopicRetrieve(ReadNestedWriteFlatMixin, generics.RetrieveAPIView):
+    """
+    A view that retrieves details of a topic given its id.
+    """
+
     queryset = Topic.objects.all()
     serializer_class = TopicNestedSerializer
 
 class PostCreate(generics.CreateAPIView):
+    """
+    A view that allows users to create a post to a topic.
+    """
+
     serializer_class = PostSerializer
     def post(self, request, format=None):
         serializer = PostSerializer(data=request.data)
@@ -76,14 +92,26 @@ class PostCreate(generics.CreateAPIView):
     #serializer_class = PostSerializer
 
 class PostRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
+    """
+    A view that retrieves details of a post given its id.
+    """
+
     queryset = Post.objects.all()
     serializer_class = PostNestedSerializer
 
 class PostUpdate(ReadNestedWriteFlatMixin,generics.UpdateAPIView):
+    """
+    A view that updates details of a post.
+    """
+
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
 class PostDelete(ReadNestedWriteFlatMixin,generics.DestroyAPIView):
+    """
+    A view that deletes a post.
+    """
+
     serializer_class = PostSerializer
     def get_queryset(self, *args, **kwargs):
         data = JSONParser().parse(self.request)
@@ -95,10 +123,18 @@ class PostDelete(ReadNestedWriteFlatMixin,generics.DestroyAPIView):
         return post
 
 class RelationRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
+    """
+    A view that retrieves details of a relation given its id.
+    """
+
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
 
 class RelationList(ReadNestedWriteFlatMixin,generics.ListAPIView):
+    """
+    A view that lists all relations.
+    """
+
     serializer_class = RelationSerializer
     def get_queryset(self, *args, **kwargs):
         queryset_list = Relation.objects.all()
@@ -149,22 +185,44 @@ class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
         return queryset_list
 
 class RelationCreate(ListBulkCreateUpdateDestroyAPIView):
+    """
+    A view to create a relation between two topics.
+    """
+
     queryset = Relation.objects.all()
     serializer_class = RelationBulkSerializer
 
 class TagCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+    """
+    A view to create a tag.
+    """
+
     serializer_class = TagSerializer
 
 class TagRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
+    """
+    A view to retrieve details of a tag.
+    """
+
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
 
 class VisitCreate(ReadNestedWriteFlatMixin,generics.CreateAPIView):
+    """
+    A view that allows visit events to be created when a user enters a topic page.
+    """
+
     serializer_class = VisitSerializer
 
 #@csrf_exempt
 @api_view(['POST'])
 def post_vote(request):
+    """
+    A view to create (or update) authenticated user's vote on a post.
+    If that user does not have a previous vote on that post, create it.
+    If that user's existing vote is different from the one being created, update it.
+    Otherwise, reset that user's vote.
+    """
     if request.method == 'POST':
         user = request.user
         post_id = request.data['post_id']
@@ -196,6 +254,12 @@ def post_vote(request):
 
 @api_view(['GET'])
 def getRecommendedTopics(request, limit):
+    """
+    A view to recommend <limit> amount of topics to the authenticated user.
+    The formula depends on the hotness of the topic as well as the number of times and the
+    most recent time the user has visited any topic related to the topic to be recommended.
+    Each post is sorted by that formula, and the top <limit> are returned.
+    """
     if request.method == 'GET':
         user = request.user;
         scores = {};
@@ -222,6 +286,13 @@ def getRecommendedTopics(request, limit):
 
 @api_view(['GET'])
 def getRecommendedPosts(request, limit):
+    """
+    A view to recommend <limit> amount of posts to the authenticated user.
+    Posts created after the user has visited a topic are considered only.
+    Those posts are sorted by a formula related to the latest time the user has
+    visited the post's topic, and the accuracy of the post.
+    The top <limit> posts are returned.
+    """
     if request.method == 'GET':
         user = request.user;
         scores = {};
@@ -242,6 +313,9 @@ def getRecommendedPosts(request, limit):
 
 @api_view(['GET'])
 def listTopicRelevance(request):
+    """
+    An unused API to return statistics related to the authenticated user and all topics.
+    """
     if request.method == 'GET':
         user = request.user;
         data = [];
@@ -294,6 +368,10 @@ def listTopicRelevance(request):
 
 @api_view(['PATCH'])
 def update_post(request, pk):
+    """
+    A view to update a post given its id.
+    The authenticated user must be the post's owner.
+    """
     data = JSONParser().parse(request)
 
     if request.method == 'PATCH':
@@ -308,30 +386,33 @@ def update_post(request, pk):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
 
 
-    postObject.content = data['content']
-    postObject.tags.clear()
+        postObject.content = data['content']
+        postObject.tags.clear()
 
-    for tag in data["tags"]:
-        if len(tag)>0:
-            if tag['label'] == '':
-                continue
-            try:
-                tagObject = Tag.objects.get(wikidataID=tag['id'])
-            except ObjectDoesNotExist:
-                tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
-            except MultipleObjectsReturned:
-               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+        for tag in data["tags"]:
+            if len(tag)>0:
+                if tag['label'] == '':
+                    continue
+                try:
+                    tagObject = Tag.objects.get(wikidataID=tag['id'])
+                except ObjectDoesNotExist:
+                    tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                except MultipleObjectsReturned:
+                   return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
 
-            unique_hidden_tags = list(set(tag['hidden_tags']))
-            if unique_hidden_tags:
-                tagObject.hidden_tags = unique_hidden_tags
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
 
-            tagObject.save()
-            postObject.tags.add(tagObject)
-    postObject.save()
+                tagObject.save()
+                postObject.tags.add(tagObject)
+        postObject.save()
 
 @api_view(['PUT'])
 def relation_upvote(request, pk):
+    """
+    A view to upvote a relation.
+    """
     try:
         relation = Relation.objects.get(pk=pk)
     except Relation.DoesNotExist:
@@ -343,9 +424,11 @@ def relation_upvote(request, pk):
         serializer = RelationSerializer(relation)
         return Response(serializer.data)
 
-
 @api_view(['PUT'])
 def relation_downvote(request, pk):
+    """
+    A view to downvote a relation.
+    """
     try:
         relation = Relation.objects.get(pk=pk)
     except Relation.DoesNotExist:
@@ -359,6 +442,9 @@ def relation_downvote(request, pk):
 
 @api_view(['GET'])
 def wikidata_search(request, str):
+    """
+    A view to search a string in wikidata.
+    """
     url_head = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&search='
     url_tail = '&language=en&format=json'
     if request.method == 'GET':
@@ -368,17 +454,27 @@ def wikidata_search(request, str):
 
 @api_view(['GET'])
 def topic_get_hot(request, limit):
+    """
+    A view to get the top <limit> hottest topics.
+    The hotness depends on the time the topic is created,
+    the number of posts, views and likes of the topic.
+    """
     if request.method == 'GET':
         all_topics = Topic.objects.all()
 
-        hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
-
+        if int(limit) == 0:
+            hot_topics = sorted(all_topics, key=lambda t: -t.hotness)
+        else:
+            hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
         #hot_topics = Topic.objects.order_by('hotness')[:5]
         serializer = TopicNestedSerializer(hot_topics, many=True)
         return Response(serializer.data)
 
 @api_view(['GET'])
 def post_get_recent(requst, limit):
+    """
+    A view to get the top <limit> most recent posts.
+    """
     if requst.method == 'GET':
         recent_posts = Post.objects.order_by('-created_at')[:int(limit)]
         serializer =  PostNestedSerializer(recent_posts, many=True)
@@ -388,6 +484,9 @@ def post_get_recent(requst, limit):
 
 @api_view(['GET'])
 def wikidata_query(request, str):
+    """
+    A view to get the wikidata relations of a tag.
+    """
     url_head = 'https://query.wikidata.org/sparql?query=PREFIX%20entity:%20<http://www.wikidata.org/entity/>%20SELECT%20?propUrl%20?propLabel%20?valUrl%20?valLabel%20?picture%20WHERE%20{%20hint:Query%20hint:optimizer%20%27None%27%20.%20{%20BIND(entity:';
     url_second = '%20AS%20?valUrl)%20.%20BIND("N/A"%20AS%20?propUrl%20)%20.%20BIND("identity"@en%20AS%20?propLabel%20)%20.%20}%20UNION%20{%20entity:';
     url_tail = '%20?propUrl%20?valUrl%20.%20?property%20?ref%20?propUrl%20.%20?property%20a%20wikibase:Property%20.%20?property%20rdfs:label%20?propLabel%20}%20?valUrl%20rdfs:label%20?valLabel%20FILTER%20(LANG(?valLabel)%20=%20%27en%27)%20.%20OPTIONAL{%20?valUrl%20wdt:P18%20?picture%20.}%20FILTER%20(lang(?propLabel)%20=%20%27en%27%20)%20}&format=json'
@@ -400,6 +499,9 @@ def wikidata_query(request, str):
 
 @api_view(['POST'])
 def search_by_tags(request):
+    """
+    A view to get the search the posts and topics by wikidata tags.
+    """
     resultTopics = []
     resultPosts = []
     if request.method == 'POST':
