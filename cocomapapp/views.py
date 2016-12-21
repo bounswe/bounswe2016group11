@@ -462,8 +462,10 @@ def topic_get_hot(request, limit):
     if request.method == 'GET':
         all_topics = Topic.objects.all()
 
-        hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
-
+        if int(limit) == 0:
+            hot_topics = sorted(all_topics, key=lambda t: -t.hotness)
+        else:
+            hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
         #hot_topics = Topic.objects.order_by('hotness')[:5]
         serializer = TopicNestedSerializer(hot_topics, many=True)
         return Response(serializer.data)
