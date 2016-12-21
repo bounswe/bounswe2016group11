@@ -50,10 +50,16 @@ $(function(){
     return markup;
   }
 
-  
+
   function formatWikiSelection(wikiItem){
     return wikiItem.text;
   }
+
+  /*
+    the select2 javascript framework is used to show the search results better
+    in our UI. this searches for the query each time a input entered, in wikidata,
+    then shows the results as suggested queries in the screen.
+  */
   $("#search_field").select2({
 
     placeholder: "Search...",
@@ -91,6 +97,10 @@ $(function(){
 
   });
 
+  /*
+    when an option is selected in the search field, then the resulting wikidata
+    id and label is sent to the search link of our application
+  */
   $("#search_field").on("select2:select",function(e){
     console.log(e.params);
     //return;

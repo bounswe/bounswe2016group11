@@ -36,7 +36,7 @@ $(function(){
               dict1.push({id: json_array[i]['id'] ,value:seed, font:{face:'Luckiest Guy',color:'rgb(255,255,255)'},
               label: json_array[i]['name'].split(" ").join("\n"),color:'rgb('+red+','+green+','+blue+')'});
             }
-
+            console.log(dict1);
             var nodes = new vis.DataSet(dict1);
 
             // create an array with edges
