@@ -8,6 +8,7 @@ html {
 
 body {
 	font-family: "ProximaNova-Light" !important;
+  background-color: #CEECF5 !important;
 }
 
 .circle1 {
@@ -49,13 +50,13 @@ body {
 .sidebar {
     bottom: 0;
     left: 0;
-    z-index: 1000;
     display: block;
     padding: 20px;
     overflow-x: hidden;
     overflow-y: auto;
-    background-color: #f5f5f5;
+    background-color: #424242;
     border-right: 1px solid #eee;
+    margin-top: -20px;
 }
 
 .list-following-posts > .list-group-item {

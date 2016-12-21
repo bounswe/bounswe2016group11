@@ -53,7 +53,7 @@ class ReadNestedWriteFlatMixin(object):
 
 class TopicList(ReadNestedWriteFlatMixin, generics.ListAPIView):
     queryset = Topic.objects.all()
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
 
 class TopicCreate(ReadNestedWriteFlatMixin, generics.CreateAPIView):
     serializer_class = TopicSerializer
@@ -83,6 +83,17 @@ class PostUpdate(ReadNestedWriteFlatMixin,generics.UpdateAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+class PostDelete(ReadNestedWriteFlatMixin,generics.DestroyAPIView):
+    serializer_class = PostSerializer
+    def get_queryset(self, *args, **kwargs):
+        data = JSONParser().parse(self.request)
+        if data['user_id']:
+            user = User.objects.get(id = data['user_id'])
+        else:
+            user = self.request.user
+        post = Post.objects.filter(id = self.kwargs['pk'], user = user)
+        return post
+
 class RelationRetrieve(ReadNestedWriteFlatMixin,generics.RetrieveAPIView):
     queryset = Relation.objects.all()
     serializer_class = RelationSerializer
@@ -97,8 +108,9 @@ class RelationList(ReadNestedWriteFlatMixin,generics.ListAPIView):
 
         return queryset_list
 
+#DEPRECATED
 class RecommendedTopics(ReadNestedWriteFlatMixin,generics.ListAPIView):
-    serializer_class = TopicSerializer
+    serializer_class = TopicNestedSerializer
     def get_queryset(self, *args, **kwargs):
         query = self.request.GET.get("user_id")
         if query:
@@ -113,6 +125,7 @@ class RecommendedTopics(ReadNestedWriteFlatMixin,generics.ListAPIView):
 
         return queryset_list
 
+#DEPRECATED
 class RecommendedPosts(ReadNestedWriteFlatMixin,generics.ListAPIView):
     serializer_class = PostNestedSerializer
     def get_queryset(self, *args, **kwargs):
@@ -179,6 +192,7 @@ def post_vote(request):
         return Response(serializer.data)
         #serializer = VoteSerializer(newVote)
         #return Response(serializer.data)
+
 
 @api_view(['GET'])
 def getRecommendedTopics(request, limit):
@@ -278,6 +292,44 @@ def listTopicRelevance(request):
 #        serializer = PostSerializer(post)
 #        return Response(serializer.data)
 
+@api_view(['PATCH'])
+def update_post(request, pk):
+    data = JSONParser().parse(request)
+
+    if request.method == 'PATCH':
+        if data['user_id']:
+            user = User.objects.get(id = data['user_id'])
+        else:
+            user = request.user
+        try:
+            postObject = Post.objects.filter(id=pk, user = user).first()
+        except Post.DoesNotExist:
+            content = {'user forbidden': 'you should be user of the requested post.'}
+            return Response(content, status=status.HTTP_403_FORBIDDEN)
+
+
+    postObject.content = data['content']
+    postObject.tags.clear()
+
+    for tag in data["tags"]:
+        if len(tag)>0:
+            if tag['label'] == '':
+                continue
+            try:
+                tagObject = Tag.objects.get(wikidataID=tag['id'])
+            except ObjectDoesNotExist:
+                tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+            except MultipleObjectsReturned:
+               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+
+            unique_hidden_tags = list(set(tag['hidden_tags']))
+            if unique_hidden_tags:
+                tagObject.hidden_tags = unique_hidden_tags
+
+            tagObject.save()
+            postObject.tags.add(tagObject)
+    postObject.save()
+
 @api_view(['PUT'])
 def relation_upvote(request, pk):
     try:
@@ -322,8 +374,17 @@ def topic_get_hot(request, limit):
         hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
 
         #hot_topics = Topic.objects.order_by('hotness')[:5]
-        serializer = TopicSerializer(hot_topics, many=True)
+        serializer = TopicNestedSerializer(hot_topics, many=True)
         return Response(serializer.data)
+
+@api_view(['GET'])
+def post_get_recent(requst, limit):
+    if requst.method == 'GET':
+        recent_posts = Post.objects.order_by('-created_at')[:int(limit)]
+        serializer =  PostNestedSerializer(recent_posts, many=True)
+        return Response(serializer.data)
+
+
 
 @api_view(['GET'])
 def wikidata_query(request, str):
@@ -347,7 +408,9 @@ def search_by_tags(request):
         search_query = data['query']
         data_tags = list(set(data['tags']))
         print(data_tags)
-        tagObjects = Tag.objects.filter(hidden_tags__overlap=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
+        tagObjects = []
+        if len(data_tags) > 0:
+            tagObjects = Tag.objects.filter(hidden_tags__overlap=data_tags) | Tag.objects.filter(reduce(operator.and_, (Q(wikidataID=tag_id) for tag_id in data_tags)))
         for tagObject in tagObjects:
                 print("LOL")
                 tag_topics = tagObject.topics.all()
@@ -395,7 +458,7 @@ def search_by_tags(request):
         TopicSerializer.Meta.depth = 1
         PostNestedSerializer.Meta.depth = 1
 
-        topicSerializer = TopicSerializer(resultTopics, many=True)
+        topicSerializer = TopicNestedSerializer(resultTopics, many=True)
         #topicSerializer.Meta.depth = 1
         postSerializer = PostNestedSerializer(resultPosts, many=True)
         #postSerializer.Meta.depth = 1
@@ -659,7 +722,7 @@ def infocus(request, id):
     template = loader.get_template('infocus.html')
     try:
         topic = Topic.objects.get(id=id)
-        serialized_topic = TopicSerializer(topic)
+        serialized_topic = TopicNestedSerializer(topic)
         topic_json = JSONRenderer().render(serialized_topic.data)
     except ObjectDoesNotExist:
         return HttpResponse("This topic doesn't exists!")

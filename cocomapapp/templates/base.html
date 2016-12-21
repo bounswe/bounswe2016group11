@@ -14,6 +14,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" type="text/css" href="/static/style.css" />
     <link rel="stylesheet" type="text/css" href="/static/main.css" />
+		<link href="https://fonts.googleapis.com/css?family=Sriracha|Baloo+Thambi|Russo+One|Lobster" rel="stylesheet">
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <!-- Optional theme -->
@@ -24,8 +25,20 @@
 		<title></title>
 </head>
 <body>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
+	{% if user.is_authenticated %}
+	<script type="text/javascript">
+		var recommendedTopicURL= "/cocomapapp/getRecommendedTopics/5";
+		var recommendedPostURL= "/cocomapapp/getRecommendedPosts/5";
+	</script>
+	{% else %}
+	<script type="text/javascript">
+		var recommendedTopicURL= "/cocomapapp/getHotTopics/5";
+		var recommendedPostURL="/cocomapapp/getRecentPosts/5";
+	</script>
+	{% endif %}
+
+	<div class="container-fluid">
+		<nav class="navbar navbar-inverse">
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
@@ -34,95 +47,58 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/cocomapapp">CoCoMAP</a>
+        <a  style="color:#ffffff; "class="navbar-brand" href="/cocomapapp">CoCoMAP</a>
       </div>
       <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" >
         <ul class="nav navbar-nav navbarlist">
 					{% if user.is_authenticated %}
-          <li><a href="/cocomapapp/topics/add">Create Topic</a></li>
+          <li><a style="color:#ffffff; " href="/cocomapapp/topics/add">Create Topic</a></li>
 					{% endif %}
         </ul>
-		<div class="pull-right">
-          <ul class="nav navbar-nav pull-right">
+
+          <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}
-              <li class="pull-right">
-                <div class="dropdown">
-                  <button class="btn btn-info dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    {{user.username}}
-                    <span class="caret"></span>
-                  </button>
-                  <ul style="z-index:1001;" class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li><a href="#">Profile</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="/cocomapapp/accounts/logout/">Logout</a></li>
-                  </ul>
-                </div>
+              <li class="dropdown">
+                <button class="btn btn-info dropdown-toggle" style="margin-top:7px; margin-right:7px;" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                  {{user.username}}
+                  <span class="caret"></span>
+                </button>
+                <ul style="z-index:1001;" class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                  <li><a href="/cocomapapp/accounts/logout/">Logout</a></li>
+                </ul>
               </li>
             {% else %}
-			  <li><a href="/cocomapapp/accounts/login/">Login</a></li>
+			  <li ><a style="color:#ffffff; " href="/cocomapapp/accounts/login/">Login/Signup</a></li>
 
             {% endif %}
 					</ul>
-				</div>
-			</nav>
-    </div><!-- /.navbar-collapse -->
+
+
+    </nav><!-- /.navbar-collapse -->
 
   {% block content %}
   {% endblock %}
   <div class="col-sm-3 col-md-3 sidebar">
-		<div class="text-center">RECOMMENDED POSTS</div>
+		<div style="font-size:150%; color:#f0f0f0; font-family:'Baloo Thambi', cursive;"class="text-center">RECOMMENDED TOPICS</div>
 		</br>
-		<ul class="nav nav-sidebar list-group list-following-posts" id="recommendedposts">
-			<!--<li class="list-group-item">
-      	<a href="#">Ozgur posted to Security in Ce... <span class="sr-only">(current)</span></a>
-      	<p>Threatpost, is an independent news site which is a leading source of information about IT ...</p>
-      </li>
-			<li class="list-group-item">
-      	<a href="#">Dogukan posted to White House state dinner <span class="sr-only">(current)</span></a>
-      	<p>President Barack Obama's final State Dinner Tuesday was a swirl of dolce vita diplomacy, </p>
-      </li>
-			<li class="list-group-item">
-      	<a href="#">Kaan posted to Saudi Arabia executes ...</a>
-      	<p>Saudi Arabia has taken the rare step of executing a member of its royal family after he was found guilty </p>
-      </li>
-			<li class="list-group-item">
-      	<a href="#">Mehmet posted to European giants forcing ...</a>
-      	<p>That's because UEFA announced in August that the top four clubs from the top four leagues</p>
-      </li>
-      <li class="list-group-item">
-      	<a href="#">Emrah posted to Champions League</a>
-      	<p>Thanks for joining today, the live blog will return tomorrow morning. Head over to the UEFA</p>
-      </li> -->
-    </ul>
-    </br>
-    </br>
-    <div class="text-center">RECOMMENDED TOPICS</div>
-		</br>
-    <div class="panel panel-default">
+    <div class="panel panel-danger">
 	    <ul class="nav nav-sidebar" id="recommendedTopics">
-	    <!--  <li class="">
-	      	<a href="#">First Flight in Turkey <span class="sr-only">(current)</span></a>
-	      </li>
-	      <li class="">
-	      	<a href="#">Sivil War in Mozambique</a>
-	      </li>
-	      <li class="">
-	      	<a href="#">Inferno</a>
-	      </li>
-	      <li class="">
-	      	<a href="#">Debate2016</a>
-	      </li>-->
 	    </ul>
 		</div>
+		<br>
+		<br>
+		<div style="font-size:150%; color:#f0f0f0; font-family:'Baloo Thambi', cursive;" class="text-center">RECOMMENDED POSTS</div>
+		</br>
+		<ul class="nav nav-sidebar list-group list-following-posts" id="recommendedposts">
+    </ul>
   </div>
 
-	<div class="row col-sm-9 sticky-footer" style="bottom:0; position:fixed;">
+	<div class="row col-sm-9 col-md-9 col-lg-9" style="bottom:0; position:fixed; z-index:1001;">
 	  <div class="input-group">
       <select id="search_field" class="form-control"></select>
       <span class="input-group-btn">
         <button id="search_btn" class="btn btn-success" type="button">Search</button>
-        <button style="margin-left: 20px;" class="btn btn-warning" type="button">Advanced Search</button>
       </span>
     </div><!-- /input-group -->
   </div><!-- /.col-lg-6 -->

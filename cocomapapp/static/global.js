@@ -46,9 +46,10 @@ $(function(){
               var green = Math.max(Math.round((1-seed)*50),0);
               var blue = Math.round((1-seed)*255);
               console.log("red: "+ red+"    , blue:"+blue);
-              dict1.push({id: json_array[i]['id'], size:(20*seed)+20 , font:{size:(25*seed)+10 ,face:'Luckiest Guy',color:'rgb(255,255,255)'},
-              label: json_array[i]['name'],color:'rgb('+red+','+green+','+blue+')' , shape:'circle' });
+              dict1.push({id: json_array[i]['id'] ,value:seed, font:{face:'Luckiest Guy',color:'rgb(255,255,255)'},
+              label: json_array[i]['name'].split(" ").join("\n"),color:'rgb('+red+','+green+','+blue+')'});
             }
+
             var nodes = new vis.DataSet(dict1);
 
             //////
@@ -67,7 +68,7 @@ $(function(){
                 var topicHot = json_array[i].hotness;
                 var seed = (topicHot-minHot)/range;
 
-                console.log(json_array[i]['relates_to']);  //relation
+                //console.log(json_array[i]['relates_to']);  //relation
                 relatedTopicId = json_array[i]['relates_to'][j]['topic_to'];
 
                 if(relatedTopicId == json_array[i].id)
@@ -87,7 +88,7 @@ $(function(){
                   seed = (maxHot-minHot)/range;
                   //length of arrow
                   console.log(seed);
-                  var arrow_length = Math.round((1-seed)*100+300);
+                  var arrow_length = Math.round((1-seed)*100+500);
                   console.log(arrow_length);
 
 
@@ -105,9 +106,17 @@ $(function(){
               nodes: nodes,
               edges: edges
             };
-            var options = {autoResize: true,
+            var options = {
               height: '100%',
-              width: '100%'
+              width: '100%',
+              nodes:{
+                shape:"circle",
+                scaling:{
+                  label:{min:10,max:60},
+                  min:0,
+                  max:1
+                }
+              }
             };
             var network = new vis.Network(container, data, options);
 
