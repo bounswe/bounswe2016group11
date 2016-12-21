@@ -93,6 +93,47 @@ class TopicRetrieveTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
+class RelationRetrieveTests(APITestCase):
+   def setUp(self):
+       self.user = userSetup()
+       self.client.force_authenticate(user=self.user)
+       self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+       self.topic2 = Topic.objects.create(name='testTopic2', user=self.user)
+       self.relation = Relation.objects.create(topic_from=self.topic1, topic_to=self.topic2, label='Relation')
+
+   def test_simple_retrieve(self):
+       url = reverse('relationRetrieve', kwargs={'pk': self.relation.id})
+       response = self.client.get(url)
+       self.assertEqual(response.status_code, status.HTTP_200_OK)
+       self.assertEqual(response.data['topic_from']['name'], self.topic1.name)
+       self.assertEqual(response.data['topic_to']['name'], self.topic2.name)
+       self.assertEqual(response.data['label'], 'Relation')
+
+class RelationListTests(APITestCase):
+   def setUp(self):
+       self.user = userSetup()
+       self.client.force_authenticate(user=self.user)
+
+   def test_empty_list(self):
+       url = reverse('relationList')
+       response = self.client.get(url)
+
+       self.assertEqual(response.status_code, status.HTTP_200_OK)
+       self.assertEqual(len(response.data), 0)
+
+   def test_two_list(self):
+       topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+       topic2 = Topic.objects.create(name='testTopic2', user=self.user)
+       self.relation = Relation.objects.create(topic_from=topic1, topic_to=topic2, label='Relation 1')
+       self.relation = Relation.objects.create(topic_from=topic2, topic_to=topic1, label='Relation 2')
+
+       url = reverse('relationList')
+       response = self.client.get(url)
+
+       self.assertEqual(response.status_code, status.HTTP_200_OK)
+       self.assertEqual(len(response.data), 2)
+
 class PostCreateTests(APITestCase):
     def setUp(self):
         self.user = userSetup()
