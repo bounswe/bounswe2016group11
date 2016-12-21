@@ -1,9 +1,5 @@
 $(document).ready(function(){
-  $.getJSON(recommendedPostURL).fail( function() {
-    console.log("error in recommendation");
-  }).done( function(data) {
-      recommendationRenderer(data);
-  });
+    recommendationRenderer();
 });
 function get_recommended_topics(){
   var topics;
@@ -21,7 +17,7 @@ function get_recommended_topics(){
 function get_recommended_posts(){
   var posts;
   $.ajax({
-    url: "/cocomapapp/recommendedPosts",
+    url: recommendedPostURL,
     async: false,
     dataType:"json"
   }).done(function(data){
@@ -32,7 +28,7 @@ function get_recommended_posts(){
   return posts;
 }
 
-function recommendationRenderer(result){
+function recommendationRenderer(){
 
     var topics = get_recommended_topics();
     var posts = get_recommended_posts();
