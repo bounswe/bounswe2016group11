@@ -15,6 +15,7 @@ import com.cocomap.coco.pojo.PostRetrieveResponse;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.Random;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -35,7 +36,10 @@ public class GlobalViewActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_global_view);
-        request(3);
+
+        Random r = new Random();
+        int top = r.nextInt(10)+1;
+        request(top);
 
 
         focus = (TextView) findViewById(R.id.focusTopicTextView);
@@ -47,7 +51,7 @@ public class GlobalViewActivity extends AppCompatActivity {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                request(adapter.getRelatedTopics().get(position).getTopic_to());
+                request(adapter.getRelatedTopics().get(position).getTopic_to().getId());
             }
         });
     }
