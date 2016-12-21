@@ -700,6 +700,9 @@ def add_post(request, id):
 
 @csrf_exempt
 def search(request):
+    """
+        A view that renders search results.
+    """
     template = loader.get_template('searchresult.html')
 
     context = {
@@ -709,6 +712,11 @@ def search(request):
 
 @csrf_exempt
 def add_relation(request,id):
+    """
+        A view that renders adding relation page.
+        User can create relation between topics.
+        User can create at most 3 relations at one attempt.
+    """
     template = loader.get_template('addRelation.html')
     requested_topic = Topic.objects.get(id=id)
 
@@ -719,6 +727,11 @@ def add_relation(request,id):
 
 @csrf_exempt
 def infocus(request, id):
+    """
+        A view to illustrate clicked topic with its relations.
+        If the user clicks to the same topic again, it redirects to that topic's page.
+        If the user clicks to another topic, it redirects to infocus again with that topic
+    """
     template = loader.get_template('infocus.html')
     try:
         topic = Topic.objects.get(id=id)
