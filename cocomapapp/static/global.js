@@ -5,7 +5,7 @@ $(function(){
    retrieved from the server.
    */
     $.ajax({
-        url: 'topicList',
+        url: 'getHotTopics/-1',
         type: 'GET',
         dataType: 'json',
         success: function (data) {
