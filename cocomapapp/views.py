@@ -306,8 +306,11 @@ def getRecommendedPosts(request, limit):
                 score = 10 * post.accuracy - (timezone.now()-last_visit).total_seconds()/3600
                 scores[post] = score;
 
-        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        extraPosts = Post.objects.exclude(topic__visits__user=user).order_by('-created_at')
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
         recommended_posts = [key for key, value in sorted_scores]
+        recommended_posts += extraPosts
+        recommended_posts = recommended_posts[:int(limit)]
         serializer = PostNestedSerializer(recommended_posts, many=True);
         return Response(serializer.data)
 
