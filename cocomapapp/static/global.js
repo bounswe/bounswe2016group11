@@ -25,7 +25,7 @@ $(function(){
             for(var i = 0; i < json_array.length; i++){
               var topicHot = json_array[i].hotness;//scale the hotness
               var seed = (topicHot-minHot)/range;//find a seed using the hotness
-              console.log("seed: "+seed);
+
 
               //generate colors using the seed
               var red = Math.round(seed*255);
@@ -43,14 +43,12 @@ $(function(){
             var dict2 = [];
             for(var i = 0; i < json_array.length; i++){
               // this code will be replaced ..............
-              console.log("topicc "+json_array[i].name);
+
               for(var j = 0; j < json_array[i]['relates_to'].length; j++){
 
                 var topicHot = json_array[i].hotness;
 
-
-
-                relatedTopicId = json_array[i]['relates_to'][j]['topic_to'];
+                var relatedTopicId = json_array[i]['relates_to'][j];
 
                   //related topic in hotness ını alıyor(json_arrayinin içinden bu topic için search)
                   for(var k = 0; k < json_array.length; k++){
@@ -65,13 +63,10 @@ $(function(){
 
                   var seed = (topicHot-minHot)/range;
                   //length of arrow
-                  console.log(seed);
                   var arrow_length = Math.round((1-seed)*300+200);
-
-                  console.log(arrow_length);
-
+                  console.log(seed);
                   //add edges to the dictionary
-                  dict2.push({ from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length ,value:seed});
+                  dict2.push({ from: json_array[i].id, to: json_array[i]['relates_to'][j], arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length ,value:seed});
                   //dict2.push({from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label']  });
 
               }
