@@ -82,8 +82,8 @@ api_urls = [
     url(r'^wikidataQuery/(?P<str>.+)/', wikidata_query),
 	url(r'^searchByTags', search_by_tags),
 
-	url(r'^getHotTopics/(?P<limit>-?[0-9]+)/', topic_get_hot),
-	url(r'^getRecentPosts/(?P<limit>[0-9]+)/', post_get_recent),
+	url(r'^getHotTopics/(?P<limit>-?[0-9]+)/', topic_get_hot, name="listHotTopics"),
+	url(r'^getRecentPosts/(?P<limit>[0-9]+)/', post_get_recent, name="listRecentPosts"),
 
 	url(r'^search', search),
 	url(r'^addRelation/(?P<id>[0-9]+)/', add_relation),

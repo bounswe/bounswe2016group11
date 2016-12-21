@@ -12,7 +12,7 @@ from rest_framework.test import force_authenticate
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-
+import time
 
 def userSetup():
     return User.objects.create(username = "testUser", email = "test@user.com", password = "a1b2c3d4")
@@ -191,7 +191,7 @@ class PostUpdateTests(APITestCase):
     def test_simple_update(self):
         url = reverse('postUpdate', kwargs={'pk': self.post1.id})
         data = {'user_id': str(self.user.id), 'content' : 'Post Update Content', 'tags':[]}
-        response = self.client.patch(url, data, format='json')        print(response.content)
+        response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -226,3 +226,86 @@ class RelationCreateTests(APITestCase):
         self.assertEqual(Relation.objects.get().topic_from, self.topicFrom)
         self.assertEqual(Relation.objects.get().topic_to, self.topicTo)
         self.assertEqual(Relation.objects.get().label, 'Relation')
+
+class GetHotTopicsTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.limit = 5
+    def test_empty_list(self):
+        url = reverse('listHotTopics', kwargs={'limit': self.limit})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_three_list(self):
+        createdTopic1 = Topic.objects.create(name='topic_1', user=self.user)
+        createdTopic2 = Topic.objects.create(name='topic_2', user=self.user)
+        createdTopic3 = Topic.objects.create(name='topic_3', user=self.user)
+
+        url = reverse('listHotTopics', kwargs={'limit': self.limit})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data[0]['name'], createdTopic1.name)
+        self.assertEqual(response.data[1]['name'], createdTopic2.name)
+        self.assertEqual(response.data[2]['name'], createdTopic3.name)
+
+    def test_four_list_with_limit_2(self):
+        createdTopic1 = Topic.objects.create(name='topic_1', user=self.user)
+        time.sleep(1)
+        createdTopic2 = Topic.objects.create(name='topic_2', user=self.user)
+        time.sleep(1)
+        createdTopic3 = Topic.objects.create(name='topic_3', user=self.user)
+        time.sleep(1)
+        createdTopic4 = Topic.objects.create(name='topic_4', user=self.user)
+
+        url = reverse('listHotTopics', kwargs={'limit': 2})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['name'], createdTopic4.name)
+        self.assertEqual(response.data[1]['name'], createdTopic3.name)
+
+class ListRecentPosts(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.limit = 4
+            
+    def test_empty_list(self):
+        url = reverse('listRecentPosts', kwargs={'limit': self.limit})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
+    def test_single_list(self):
+        createdTopic1 = Topic.objects.create(name='testTopic1', user=self.user)
+        createdPost1 = Post.objects.create(topic= createdTopic1, content='created post 1', user=self.user)
+
+        url = reverse('listRecentPosts', kwargs={'limit': self.limit})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['id'], createdPost1.id)
+
+    def test_three_list_with_limit_2(self):
+        createdTopic1 = Topic.objects.create(name='testTopic1', user=self.user)
+        createdTopic2 = Topic.objects.create(name='testTopic2', user=self.user)
+        createdTopic3 = Topic.objects.create(name='testTopic3', user=self.user)
+        createdPost1 = Post.objects.create(topic= createdTopic1, content='created post 1', user=self.user)
+        time.sleep(1)
+        createdPost2 = Post.objects.create(topic= createdTopic2, content='created post 2', user=self.user)
+        time.sleep(1)
+        createdPost3 = Post.objects.create(topic= createdTopic3, content='created post 3', user=self.user)
+        
+        url = reverse('listRecentPosts', kwargs={'limit': 2})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['id'], createdPost3.id)
+        self.assertEqual(response.data[1]['id'], createdPost2.id)
