@@ -54,24 +54,24 @@ urlpatterns = [
 	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'), #
 	url(r'recommendedTopics',  RecommendedTopics.as_view()),
 
-	url(r'postCreate', PostCreate.as_view(), name='postCreate'),							#
-	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view(), name='postRetrieve'),		#
-	url(r'postUpdate/(?P<pk>[0-9]+)/',  update_post),
-	url(r'postDelete/(?P<pk>[0-9]+)/',  PostDelete.as_view()),
+	url(r'postCreate', PostCreate.as_view(), name='postCreate'),							#M
+	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view(), name='postRetrieve'),		#M
+	url(r'postUpdate/(?P<pk>[0-9]+)/',  update_post),		#
+	url(r'postDelete/(?P<pk>[0-9]+)/',  PostDelete.as_view()),#
 	url(r'recommendedPosts',  RecommendedPosts.as_view()),
 
-	url(r'relationCreate',  RelationCreate.as_view()),
-	url(r'relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view()),
-	url(r'relationList',  RelationList.as_view()),
+	url(r'relationCreate',  RelationCreate.as_view(), name='relationCreate'),				#M
+	url(r'relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view(), name='relationRetrieve'),					#O
+	url(r'relationList',  RelationList.as_view(), name='relationList'),											#O
 
 	url(r'tagCreate',  TagCreate.as_view()),
 	url(r'tagRetrieve/(?P<pk>Q[0-9]+)/',  TagRetrieve.as_view()),
 
-	url(r'visitCreate/',  VisitCreate.as_view()),
+	url(r'visitCreate/',  VisitCreate.as_view()),#
 
 	#url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	#url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
-	url(r'postVote/',  post_vote),
+	url(r'postVote/',  post_vote, name='postVote'),									#
 	url(r'listTopicRelevance/', listTopicRelevance),
 	url(r'getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics),
 	url(r'getRecommendedPosts/(?P<limit>[0-9]+)/', getRecommendedPosts),
