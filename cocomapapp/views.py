@@ -386,27 +386,27 @@ def update_post(request, pk):
             return Response(content, status=status.HTTP_403_FORBIDDEN)
 
 
-    postObject.content = data['content']
-    postObject.tags.clear()
+        postObject.content = data['content']
+        postObject.tags.clear()
 
-    for tag in data["tags"]:
-        if len(tag)>0:
-            if tag['label'] == '':
-                continue
-            try:
-                tagObject = Tag.objects.get(wikidataID=tag['id'])
-            except ObjectDoesNotExist:
-                tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
-            except MultipleObjectsReturned:
-               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+        for tag in data["tags"]:
+            if len(tag)>0:
+                if tag['label'] == '':
+                    continue
+                try:
+                    tagObject = Tag.objects.get(wikidataID=tag['id'])
+                except ObjectDoesNotExist:
+                    tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                except MultipleObjectsReturned:
+                   return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
 
-            unique_hidden_tags = list(set(tag['hidden_tags']))
-            if unique_hidden_tags:
-                tagObject.hidden_tags = unique_hidden_tags
+                unique_hidden_tags = list(set(tag['hidden_tags']))
+                if unique_hidden_tags:
+                    tagObject.hidden_tags = unique_hidden_tags
 
-            tagObject.save()
-            postObject.tags.add(tagObject)
-    postObject.save()
+                tagObject.save()
+                postObject.tags.add(tagObject)
+        postObject.save()
 
 @api_view(['PUT'])
 def relation_upvote(request, pk):
