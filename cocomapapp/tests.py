@@ -126,3 +126,61 @@ class PostRetrieveTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['content'], self.post2.content)
+
+class VisitCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+    def test_first_topic(self):
+        url = reverse('visitCreate')
+        data = {'user': str(self.user.id), 'topic': self.topic1.id}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['topic'], self.topic1.id)
+        self.assertEqual(response.data['user'], self.user.id)
+
+
+
+class PostDeleteTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_delete(self):
+        url = reverse('postDelete', kwargs={'pk': self.post1.id})
+        data = {'user_id': str(self.user.id)}
+        response = self.client.delete(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+class GetRecommendedPostsTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_recommended_posts(self):
+        url = reverse('getRecommendedPosts', kwargs={'limit': '5'})
+        data = {'user': str(self.user.id)}
+        response = self.client.get(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class GetRecommendedTopicsTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topic1 = Topic.objects.create(name='testTopic1', user=self.user)
+
+    def test_simple_recommended_topics(self):
+        url = reverse('getRecommendedTopics', kwargs={'limit': '3'})
+        data = {'user': str(self.user.id)}
+        response = self.client.get(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data[0]["user"]["id"], self.user.id)
+        self.assertEqual(response.data[0]["name"], self.topic1.name)
