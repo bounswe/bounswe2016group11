@@ -57,7 +57,7 @@ api_urls = [
 
 	url(r'^postCreate', PostCreate.as_view()),
 	url(r'^postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
-	url(r'^postUpdate/(?P<pk>[0-9]+)/',  update_post),
+	url(r'^postUpdate/(?P<pk>[0-9]+)/',  update_post , name='postUpdate'),
 	url(r'^postDelete/(?P<pk>[0-9]+)/',  PostDelete.as_view()),
 	url(r'^recommendedPosts',  RecommendedPosts.as_view()),
 
@@ -72,7 +72,7 @@ api_urls = [
 
 	#url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	#url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
-	url(r'^postVote/',  post_vote),
+	url(r'^postVote/',  post_vote, name='postVote'),
 	url(r'^listTopicRelevance/', listTopicRelevance),
 	url(r'^getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics),
 	url(r'^getRecommendedPosts/(?P<limit>[0-9]+)/', getRecommendedPosts),
