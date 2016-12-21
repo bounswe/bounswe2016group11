@@ -184,3 +184,20 @@ class GetRecommendedTopicsTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data[0]["user"]["id"], self.user.id)
         self.assertEqual(response.data[0]["name"], self.topic1.name)
+
+class RelationCreateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.topicFrom = Topic.objects.create(name='testTopic1', user=self.user)
+        self.topicTo = Topic.objects.create(name='testTopic2', user=self.user)
+
+    def test_simple_create(self):
+        url = reverse('relationCreate')
+        data = {'topic_from': str(self.topicFrom.id), 'topic_to': str(self.topicTo.id), 'label': 'Relation'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Relation.objects.count(), 1)
+        self.assertEqual(Relation.objects.get().topic_from, self.topicFrom)
+        self.assertEqual(Relation.objects.get().topic_to, self.topicTo)
+        self.assertEqual(Relation.objects.get().label, 'Relation')
