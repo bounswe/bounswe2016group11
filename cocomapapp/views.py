@@ -306,8 +306,11 @@ def getRecommendedPosts(request, limit):
                 score = 10 * post.accuracy - (timezone.now()-last_visit).total_seconds()/3600
                 scores[post] = score;
 
-        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)[:int(limit)]
+        extraPosts = Post.objects.exclude(topic__visits__user=user).order_by('-created_at')
+        sorted_scores = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)
         recommended_posts = [key for key, value in sorted_scores]
+        recommended_posts += extraPosts
+        recommended_posts = recommended_posts[:int(limit)]
         serializer = PostNestedSerializer(recommended_posts, many=True);
         return Response(serializer.data)
 
@@ -469,6 +472,8 @@ def topic_get_hot(request, limit):
         else:
             hot_topics = sorted(all_topics, key=lambda t: -t.hotness)[:int(limit)]
         #hot_topics = Topic.objects.order_by('hotness')[:5]
+        TopicNestedSerializer.Meta.depth = 2
+        RelationSerializer.Meta.depth = 1
         serializer = TopicNestedSerializer(hot_topics, many=True)
         return Response(serializer.data)
 
@@ -736,7 +741,6 @@ def add_topic(request):
                 topicObject.tags.add(tagObject)
                 context = {
                 }
-            # end of add topic to database.
 
             # Add relationship to database.
             relates_to = data["relates_to"]
@@ -753,16 +757,32 @@ def add_topic(request):
                 except MultipleObjectsReturned:
                     print("error")
                     return HttpResponse("This topic exists")
-            # End of add relationship to database.
+        # End of add relationship to database.
 
 
-            # Adding a post to new created topic
+        # Adding a post to new created topic
 
             if data["postAdd"] == True:
-                postObject = data["post"]
-                content = postObject["the_text"]
-                user = User.objects.first() # user
-                Post.objects.create(content=content, user=user, topic=topicObject)
+                postStuff = data["post"]
+                content = postStuff["post_content"]
+                postObject = Post.objects.create(content=content, user=user, topic=topicObject)
+                for tag in postStuff["post_tags"]:
+                    if len(tag)>0:
+                        if tag['label'] == '':
+                            continue
+                        try:
+                            tagObject = Tag.objects.get(wikidataID=tag['id'])
+                        except ObjectDoesNotExist:
+                            tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                        except MultipleObjectsReturned:
+                           return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+
+                        unique_hidden_tags = list(set(tag['hidden_tags']))
+                        if unique_hidden_tags:
+                            tagObject.hidden_tags = unique_hidden_tags
+
+                        tagObject.save()
+                        postObject.tags.add(tagObject)
             # End of adding a post to new created topic
 
         return HttpResponse(template.render(context, request))
