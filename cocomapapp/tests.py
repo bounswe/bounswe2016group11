@@ -169,6 +169,31 @@ class GetRecommendedPostsTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+class PostVoteTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        # self.topic = Topic.objects.create(name='testTopic1', user=self.user)
+        self.post = Post.objects.create(user=self.user, content= 'Post 2')
+
+    def test_simple_vote(self):
+        url = reverse('postVote')
+        response = self.client.post(url, {'post_id': str(self.post.id), 'is_positive': 'True'})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['id'], self.post.id)
+        self.assertEqual(response.data['positive_reaction_count'], 1)
+class PostUpdateTests(APITestCase):
+    def setUp(self):
+        self.user = userSetup()
+        self.client.force_authenticate(user=self.user)
+        self.post1 = Post.objects.create(user=self.user, content='Post 1')
+
+    def test_simple_update(self):
+        url = reverse('postUpdate', kwargs={'pk': self.post1.id})
+        data = {'user_id': str(self.user.id), 'content' : 'Post Update Content', 'tags':[]}
+        response = self.client.patch(url, data, format='json')        print(response.content)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
 class GetRecommendedTopicsTests(APITestCase):
     def setUp(self):

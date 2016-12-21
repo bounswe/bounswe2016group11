@@ -53,7 +53,7 @@ api_urls = [
 	url(r'topicCreate',  TopicCreate.as_view(), name='topicCreate'),					   #
 	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'), #
 	url(r'recommendedTopics',  RecommendedTopics.as_view()),
-	
+
 	url(r'postCreate', PostCreate.as_view(), name='postCreate'),							#
 	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view(), name='postRetrieve'),		#
 	url(r'postUpdate/(?P<pk>[0-9]+)/',  update_post, name='postUpdate'),

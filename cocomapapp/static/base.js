@@ -2,6 +2,11 @@ $(function(){
   var searchId = window.location.pathname;
   console.log(searchId);
   var searchId="";
+
+  /*
+  When a key written in search area, this funciton is triggered.
+
+  */
   $("#search_field1").on("keyup",function(event){
 
     var searchInput = $("#search_field").val();
@@ -34,14 +39,27 @@ $(function(){
 
   });
 
+  /*
+  to show the recommended tags better in the search area, this function is used.
+  for ll items in select2 in the base.js the recommendation is shown with this
+  template.
+  */
   function formatWiki(wikiItem){
 
     var markup = "<div><p>" + wikiItem.text+" "+ wikiItem.desc + "</p></div>";
     return markup;
   }
+
+
   function formatWikiSelection(wikiItem){
     return wikiItem.text;
   }
+
+  /*
+    the select2 javascript framework is used to show the search results better
+    in our UI. this searches for the query each time a input entered, in wikidata,
+    then shows the results as suggested queries in the screen.
+  */
   $("#search_field").select2({
 
     placeholder: "Search...",
@@ -79,6 +97,10 @@ $(function(){
 
   });
 
+  /*
+    when an option is selected in the search field, then the resulting wikidata
+    id and label is sent to the search link of our application
+  */
   $("#search_field").on("select2:select",function(e){
     console.log(e.params);
     //return;
