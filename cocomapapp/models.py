@@ -95,8 +95,6 @@ class Post(models.Model):
   user = models.ForeignKey(User, on_delete=models.CASCADE)
   topic = models.ForeignKey(Topic, related_name ='posts', null=True, blank=True)
   tags = models.ManyToManyField(Tag,related_name = 'posts', null=True, blank=True)
-  #positive_reaction_count = models.PositiveIntegerField(default=0)
-  #negative_reaction_count = models.PositiveIntegerField(default=0)
 
   @property
   def positive_reaction_count(self):
@@ -124,6 +122,9 @@ class Post(models.Model):
 
   def __str__(self):
     return (str(self.id) + ' ' + self.content)
+
+  class Meta:
+    ordering = ['created_at']
 
 @python_2_unicode_compatible
 class Vote(models.Model):
