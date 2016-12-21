@@ -29,11 +29,13 @@
 	<script type="text/javascript">
 		var recommendedTopicURL= "/cocomapapp/getRecommendedTopics/5";
 		var recommendedPostURL= "/cocomapapp/getRecommendedPosts/5";
+		console.log("auth ");
 	</script>
 	{% else %}
 	<script type="text/javascript">
 		var recommendedTopicURL= "/cocomapapp/getHotTopics/5";
 		var recommendedPostURL="/cocomapapp/getRecentPosts/5";
+
 	</script>
 	{% endif %}
 
