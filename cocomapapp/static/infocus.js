@@ -1,5 +1,6 @@
-
-
+/*
+  the data of the relation with id=pk is loaded.
+*/
 function GetArrow(pk) {
     jQuery.support.cors = true;
     $.ajax({
@@ -17,6 +18,11 @@ function GetArrow(pk) {
 }
 
 $(function(){
+
+   /*
+      the list of relationships to in focus topic from other topics is loaded.
+      The width and length of the arrows is arranged according to the hotness values of the topics
+   */
     $.ajax({
         url: '/cocomapapp/relationList?topic_id='+searchId,
         type: 'GET',
@@ -28,9 +34,7 @@ $(function(){
             var dict1 = [];
 
             for(var i = 0; i < json_array.length; i++){
-              //console.log({id: i+1, label: json_array[i]['name'] })
-              //Math.random should be replaced
-              //Future FIX
+
               if(json_array[i]['topic_from']['id']!=searchId || i==0)
               {
                   console.log("from: "+json_array[i]['topic_from']['name']);
@@ -63,6 +67,7 @@ $(function(){
 
             }
             if(json_array.length==0){
+
                 $.ajax({
                     url:'/cocomapapp/topicRetrieve/'+searchId,
                     type: 'GET',

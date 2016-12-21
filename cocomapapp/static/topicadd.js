@@ -17,7 +17,9 @@ jQuery.fn.shake = function() {
     });
     return this;
 }
-
+/*
+   According to specified properties, it returns a result.
+*/
 function get_tags(wikiId,theTags){
   var waitNum;
   var resultTag;
@@ -60,7 +62,7 @@ $(document).ready(function(){
   $(".sidebar").remove();
   var theTags=[];
   $("#submit").click( function() {
-      // console.log("asfdlkjsafdjkladfjs");
+    
       if($("#name").val()== ""){
         $("#name").shake();
         return;
@@ -74,12 +76,11 @@ $(document).ready(function(){
         resultTagIds = [];
       }
       var resultTags =[];
-      console.log(resultTags);
-      console.log(resultTagIds);
+
       $.each(resultTagIds,function(i,value){
         resultTags.push(get_tags(value,theTags));
       });
-        console.log(resultTags);
+
         var topic = {
             name: $('#name').val(),
             relates_to: [{topic_id : $('#relates_to').val(), rel_name : $('#relationships-name').val()}],
@@ -274,6 +275,6 @@ function get_hidden_tags(props,the_json){
       hidden_tags.push(fetchedWikiId);
     }
   });
-  //console.log(hidden_tags);
+
   return hidden_tags;
 }

@@ -1,3 +1,6 @@
+/*
+    This function gets the cookie value
+*/
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -28,20 +31,20 @@ $.ajaxSetup({
 
 var searchItem = window.location.pathname;
 console.log(searchItem);
-//var theRegex = /.*\/(.+?)\/$/im ;
-//var searchId = theRegex.exec(searchItem)[1];
+
 var theRegex1 = /\+\+([a-zA-Z0-9_.%]*)/igm;
 var theRegex2 = /Q([0-9])*/igm;
 
 var searchText = theRegex1.exec(searchItem)[0];
 var searchId = theRegex2.exec(searchItem)[0];
 
-//console.log(searchId);
-//console.log(searchText);
 var theRegex3 = /([a-zA-Z0-9_.%]+)/igm;
 searchText = theRegex3.exec(searchText)[0];
 fixedText=decodeURIComponent(searchText);
 
+/*
+  gets the result coming from Wikidata in json format and sends to searchRenderer function.
+*/
 $.getJSON("/cocomapapp/wikidataQuery/" +searchId + "/"
 ).fail( function() {
   console.log("error in wikidata");
@@ -74,6 +77,9 @@ $.getJSON("/cocomapapp/wikidataQuery/" +searchId + "/"
   }
 );
 
+/*
+    This function prepares the search page view fed with result variable.
+*/
 function searchRenderer(result){
 
     var topics = result.topics;
