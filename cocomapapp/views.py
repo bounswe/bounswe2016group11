@@ -728,46 +728,46 @@ def add_topic(request):
                 }
 
             # Add relationship to database.
-                relates_to = data["relates_to"]
-                for relation in data["relates_to"]:
-                    if relation['topic_id'] == '':
-                        continue
-                    try:
-                        relatedTopicObject = Topic.objects.get(pk=relation['topic_id'])
-                        label = relation['rel_name']
-                        relationObject = Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
-                    except ObjectDoesNotExist:
-                        print("error")
-                        return HttpResponse("Related topic does not exist");
-                    except MultipleObjectsReturned:
-                        print("error")
-                        return HttpResponse("This topic exists")
-            # End of add relationship to database.
+            relates_to = data["relates_to"]
+            for relation in data["relates_to"]:
+                if relation['topic_id'] == '':
+                    continue
+                try:
+                    relatedTopicObject = Topic.objects.get(pk=relation['topic_id'])
+                    label = relation['rel_name']
+                    relationObject = Relation.objects.create(topic_from=topicObject, topic_to=relatedTopicObject, label=label)
+                except ObjectDoesNotExist:
+                    print("error")
+                    return HttpResponse("Related topic does not exist");
+                except MultipleObjectsReturned:
+                    print("error")
+                    return HttpResponse("This topic exists")
+        # End of add relationship to database.
 
 
-            # Adding a post to new created topic
+        # Adding a post to new created topic
 
-                if data["postAdd"] == True:
-                    postStuff = data["post"]
-                    content = postStuff["post_content"]
-                    postObject = Post.objects.create(content=content, user=user, topic=topicObject)
-                    for tag in postStuff["post_tags"]:
-                        if len(tag)>0:
-                            if tag['label'] == '':
-                                continue
-                            try:
-                                tagObject = Tag.objects.get(wikidataID=tag['id'])
-                            except ObjectDoesNotExist:
-                                tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
-                            except MultipleObjectsReturned:
-                               return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
+            if data["postAdd"] == True:
+                postStuff = data["post"]
+                content = postStuff["post_content"]
+                postObject = Post.objects.create(content=content, user=user, topic=topicObject)
+                for tag in postStuff["post_tags"]:
+                    if len(tag)>0:
+                        if tag['label'] == '':
+                            continue
+                        try:
+                            tagObject = Tag.objects.get(wikidataID=tag['id'])
+                        except ObjectDoesNotExist:
+                            tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                        except MultipleObjectsReturned:
+                           return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
 
-                            unique_hidden_tags = list(set(tag['hidden_tags']))
-                            if unique_hidden_tags:
-                                tagObject.hidden_tags = unique_hidden_tags
+                        unique_hidden_tags = list(set(tag['hidden_tags']))
+                        if unique_hidden_tags:
+                            tagObject.hidden_tags = unique_hidden_tags
 
-                            tagObject.save()
-                            postObject.tags.add(tagObject)
+                        tagObject.save()
+                        postObject.tags.add(tagObject)
             # End of adding a post to new created topic
 
         return HttpResponse(template.render(context, request))
