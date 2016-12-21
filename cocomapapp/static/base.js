@@ -2,6 +2,11 @@ $(function(){
   var searchId = window.location.pathname;
   console.log(searchId);
   var searchId="";
+
+  /*
+  When a key written in search area, this funciton is triggered.
+
+  */
   $("#search_field1").on("keyup",function(event){
 
     var searchInput = $("#search_field").val();
@@ -34,11 +39,18 @@ $(function(){
 
   });
 
+  /*
+  to show the recommended tags better in the search area, this function is used.
+  for ll items in select2 in the base.js the recommendation is shown with this
+  template.
+  */
   function formatWiki(wikiItem){
 
     var markup = "<div><p>" + wikiItem.text+" "+ wikiItem.desc + "</p></div>";
     return markup;
   }
+
+  
   function formatWikiSelection(wikiItem){
     return wikiItem.text;
   }

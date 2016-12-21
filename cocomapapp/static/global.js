@@ -48,7 +48,7 @@ $(function(){
 
                 var topicHot = json_array[i].hotness;
 
-                var relatedTopicId = json_array[i]['relates_to'][j];
+                var relatedTopicId = json_array[i]['relates_to'][j]['topic_to'];
 
                   //related topic in hotness ını alıyor(json_arrayinin içinden bu topic için search)
                   for(var k = 0; k < json_array.length; k++){
@@ -66,7 +66,7 @@ $(function(){
                   var arrow_length = Math.round((1-seed)*300+200);
                   console.log(seed);
                   //add edges to the dictionary
-                  dict2.push({ from: json_array[i].id, to: json_array[i]['relates_to'][j], arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length ,value:seed});
+                  dict2.push({ from: json_array[i].id, to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label'],length: arrow_length ,value:seed});
                   //dict2.push({from: json_array[i]['relates_to'][j]['topic_from'], to: json_array[i]['relates_to'][j]['topic_to'], arrows:'to',label:json_array[i]['relates_to'][j]['label']  });
 
               }
