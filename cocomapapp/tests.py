@@ -93,7 +93,6 @@ class TopicRetrieveTests(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-<<<<<<< b3d56404fa63ae0a4882a15fb2502520c727f070
 class PostCreateTests(APITestCase):
     def setUp(self):
         self.user = userSetup()
@@ -192,7 +191,7 @@ class PostUpdateTests(APITestCase):
     def test_simple_update(self):
         url = reverse('postUpdate', kwargs={'pk': self.post1.id})
         data = {'user_id': str(self.user.id), 'content' : 'Post Update Content', 'tags':[]}
-        response = self.client.patch(url, data, format='json')        print(response.content)
+        response = self.client.patch(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -227,7 +226,6 @@ class RelationCreateTests(APITestCase):
         self.assertEqual(Relation.objects.get().topic_from, self.topicFrom)
         self.assertEqual(Relation.objects.get().topic_to, self.topicTo)
         self.assertEqual(Relation.objects.get().label, 'Relation')
-=======
 
 class GetHotTopicsTests(APITestCase):
     def setUp(self):
@@ -311,4 +309,3 @@ class ListRecentPosts(APITestCase):
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['id'], createdPost3.id)
         self.assertEqual(response.data[1]['id'], createdPost2.id)
->>>>>>> tests added
