@@ -311,6 +311,9 @@ def getRecommendedPosts(request, limit):
         recommended_posts = [key for key, value in sorted_scores]
         recommended_posts += extraPosts
         recommended_posts = recommended_posts[:int(limit)]
+
+        TopicNestedSerializer.Meta.depth = 1
+        PostNestedSerializer.Meta.depth = 1
         serializer = PostNestedSerializer(recommended_posts, many=True);
         return Response(serializer.data)
 
@@ -484,6 +487,8 @@ def post_get_recent(requst, limit):
     """
     if requst.method == 'GET':
         recent_posts = Post.objects.order_by('-created_at')[:int(limit)]
+        TopicNestedSerializer.Meta.depth = 1
+        PostNestedSerializer.Meta.depth = 1
         serializer =  PostNestedSerializer(recent_posts, many=True)
         return Response(serializer.data)
 
