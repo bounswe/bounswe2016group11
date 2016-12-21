@@ -49,33 +49,31 @@ api_urls = [
     url(r'^topics/(?P<id>\d+)/$', show_topic),
     url(r'^topics/add', add_topic),
     url(r'^topics/(?P<id>\d+)/postAdd', add_post),
+	url(r'topicList',  TopicList.as_view(), name='topicList'),		 					   #
+	url(r'topicCreate',  TopicCreate.as_view(), name='topicCreate'),					   #
+	url(r'topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'), #
+	url(r'recommendedTopics',  RecommendedTopics.as_view()),
 
-	url(r'^topicList',  TopicList.as_view(), name='topicList'),
-	url(r'^topicCreate',  TopicCreate.as_view(), name='topicCreate'),
-	url(r'^topicRetrieve/(?P<pk>[0-9]+)/',  TopicRetrieve.as_view(), name='topicRetrieve'),
-	url(r'^recommendedTopics',  RecommendedTopics.as_view()),
+	url(r'postCreate', PostCreate.as_view(), name='postCreate'),							#
+	url(r'postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view(), name='postRetrieve'),		#
+	url(r'postUpdate/(?P<pk>[0-9]+)/',  update_post, name='postUpdate'),
+	url(r'postDelete/(?P<pk>[0-9]+)/',  PostDelete.as_view(), name='postDelete'),			#
+	url(r'recommendedPosts',  RecommendedPosts.as_view()),
 
-	url(r'^postCreate', PostCreate.as_view()),
-	url(r'^postRetrieve/(?P<pk>[0-9]+)/',  PostRetrieve.as_view()),
-	url(r'^postUpdate/(?P<pk>[0-9]+)/',  update_post , name='postUpdate'),
-	url(r'^postDelete/(?P<pk>[0-9]+)/',  PostDelete.as_view()),
-	url(r'^recommendedPosts',  RecommendedPosts.as_view()),
-
-	url(r'^relationCreate',  RelationCreate.as_view()),
-	url(r'^relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view()),
-	url(r'^relationList',  RelationList.as_view()),
+	url(r'relationCreate',  RelationCreate.as_view(), name='relationCreate'),				#M
+	url(r'relationRetrieve/(?P<pk>[0-9]+)/',  RelationRetrieve.as_view(), name='relationRetrieve'),					#O
+	url(r'relationList',  RelationList.as_view(), name='relationList'),											#
 
 	url(r'^tagCreate',  TagCreate.as_view()),
 	url(r'^tagRetrieve/(?P<pk>Q[0-9]+)/',  TagRetrieve.as_view()),
-
-	url(r'^visitCreate/',  VisitCreate.as_view()),
+	url(r'visitCreate/',  VisitCreate.as_view(), name= 'visitCreate'),						#
 
 	#url(r'postUpvote/(?P<pk>[0-9]+)/',  post_upvote),
 	#url(r'postDownvote/(?P<pk>[0-9]+)/',  post_downvote),
-	url(r'^postVote/',  post_vote, name='postVote'),
-	url(r'^listTopicRelevance/', listTopicRelevance),
-	url(r'^getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics),
-	url(r'^getRecommendedPosts/(?P<limit>[0-9]+)/', getRecommendedPosts),
+	url(r'postVote/',  post_vote, name='postVote'),									#
+	url(r'listTopicRelevance/', listTopicRelevance),
+	url(r'getRecommendedTopics/(?P<limit>[0-9]+)/', getRecommendedTopics, name='getRecommendedTopics'),
+	url(r'getRecommendedPosts/(?P<limit>[0-9]+)/', getRecommendedPosts, name='getRecommendedPosts'),
 
 	url(r'^relationUpvote/(?P<pk>[0-9]+)/',  relation_upvote),
 	url(r'^relationDownvote/(?P<pk>[0-9]+)/',  relation_downvote),
@@ -84,8 +82,8 @@ api_urls = [
     url(r'^wikidataQuery/(?P<str>.+)/', wikidata_query),
 	url(r'^searchByTags', search_by_tags),
 
-	url(r'^getHotTopics/(?P<limit>-?[0-9]+)/', topic_get_hot),
-	url(r'^getRecentPosts/(?P<limit>[0-9]+)/', post_get_recent),
+	url(r'^getHotTopics/(?P<limit>-?[0-9]+)/', topic_get_hot, name="listHotTopics"),
+	url(r'^getRecentPosts/(?P<limit>[0-9]+)/', post_get_recent, name="listRecentPosts"),
 
 	url(r'^search', search),
 	url(r'^addRelation/(?P<id>[0-9]+)/', add_relation),

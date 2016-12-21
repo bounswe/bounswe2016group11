@@ -80,6 +80,7 @@ class PostCreate(generics.CreateAPIView):
     """
 
     serializer_class = PostSerializer
+    serializer_class.Meta.depth = 0
     def post(self, request, format=None):
         serializer = PostSerializer(data=request.data)
         if serializer.is_valid():
@@ -391,12 +392,12 @@ def update_post(request, pk):
 
         for tag in data["tags"]:
             if len(tag)>0:
-                if tag['label'] == '':
+                if tag['name'] == '':
                     continue
                 try:
-                    tagObject = Tag.objects.get(wikidataID=tag['id'])
+                    tagObject = Tag.objects.get(wikidataID=tag['wikidataID'])
                 except ObjectDoesNotExist:
-                    tagObject = Tag.objects.create(wikidataID=tag['id'], name=tag['label'])
+                    tagObject = Tag.objects.create(wikidataID=tag['wikidataID'], name=tag['name'])
                 except MultipleObjectsReturned:
                    return HttpResponse("Multiple tags exist for." + tag + " Invalid State.")
 
@@ -407,6 +408,7 @@ def update_post(request, pk):
                 tagObject.save()
                 postObject.tags.add(tagObject)
         postObject.save()
+        return Response(status=status.HTTP_200_OK)
 
 @api_view(['PUT'])
 def relation_upvote(request, pk):
@@ -568,6 +570,9 @@ def search_by_tags(request):
         return Response({'topics':topicSerializer.data, 'posts':postSerializer.data})
 
 def index(request):
+    """
+    Main page of cocomapapp which includes hot_topics and a random_topic .
+    """
     template = loader.get_template('global.html')
     hot_topics = serializers.serialize("json", Topic.objects.order_by('-updated_at')[:5])
     random_topic = serializers.serialize("json", Topic.objects.order_by('?')[:1])
@@ -629,6 +634,10 @@ def index(request):
 
 @csrf_exempt
 def show_topic(request, id):
+    """
+    A view that shows the a topic's page. It includes all post written
+    in that topic.
+    """
     template = loader.get_template('topic.html')
     if request.method == "POST":
         print("POSTING")
@@ -674,6 +683,9 @@ def show_topic(request, id):
 
 @csrf_exempt
 def add_topic(request):
+    """
+    A view that helps user to add new topics.
+    """
     template = loader.get_template('topicAdd.html')
     try:
         topic = serializers.serialize("json", Topic.objects.filter())
@@ -758,6 +770,9 @@ def add_topic(request):
 
 @csrf_exempt
 def add_post(request, id):
+    """
+    A view that adds a post to a topic.
+    """
     template = loader.get_template('topic.html')
     if request.method == "POST":
         data = JSONParser().parse(request)
@@ -802,6 +817,9 @@ def add_post(request, id):
 
 @csrf_exempt
 def search(request):
+    """
+    A view that helps user to search something.
+    """
     template = loader.get_template('searchresult.html')
 
     context = {
@@ -811,6 +829,9 @@ def search(request):
 
 @csrf_exempt
 def add_relation(request,id):
+    """
+    A view that adds relation between to topics.
+    """
     template = loader.get_template('addRelation.html')
     requested_topic = Topic.objects.get(id=id)
 
@@ -821,6 +842,9 @@ def add_relation(request,id):
 
 @csrf_exempt
 def infocus(request, id):
+    """
+    A view that moves the clicked topic to center of the screen.
+    """
     template = loader.get_template('infocus.html')
     try:
         topic = Topic.objects.get(id=id)

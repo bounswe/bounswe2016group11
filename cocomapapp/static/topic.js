@@ -188,121 +188,172 @@ $(document).ready(function(){
     );
   });
   $.each(posts, function(i, obj) {
-        console.log(obj);
-        var text = obj.content;
-        //var post_tags = obj.tags;
-        var post_tags = obj.tags;
-        var user = obj.user;
-        //for accuracy first positive then negative
+    var text = obj.content;
+    //var post_tags = obj.tags;
+    var post_tags = obj.tags;
+    var user = obj.user;
+    //for accuracy first positive then negative
 
-        var accuracy = obj.accuracy;//(obj.positive_reaction_count+obj.negative_reaction_count)>0?(obj.positive_reaction_count/(obj.positive_reaction_count+obj.negative_reaction_count))*100:0;
-        var tagsAsStr="";
+    var accuracy = obj.accuracy;//(obj.positive_reaction_count+obj.negative_reaction_count)>0?(obj.positive_reaction_count/(obj.positive_reaction_count+obj.negative_reaction_count))*100:0;
+    var tagsAsStr="";
 
-        var upColor = "grey";
-        var downColor = "grey";
-        $.each(obj.votes, function(j, obj2){
-            var vote_user = obj2.user;
-            //console.log(user.id+" "+vote_user)
-            if (currUser == vote_user){
-                if (obj2.is_positive){
-                    upColor = "blue";
-                }
-                else{
-                    downColor = "blue"
-                }
+    var upColor = "grey";
+    var downColor = "grey";
+    $.each(obj.votes, function(j, obj2){
+        var vote_user = obj2.user;
+        //console.log(user.id+" "+vote_user)
+        if (currUser == vote_user){
+            if (obj2.is_positive){
+                upColor = "blue";
             }
-        });
+            else{
+                downColor = "blue"
+            }
+        }
+    });
 
-        $.each(post_tags, function(i,val){
-            tagsAsStr +="<span style='display: inline-block;' class='label "+option_labels[i%option_labels.length] +"'>" +val.name +"</span>";
-        });
-        $(".panelContainer").append(
-
-          '<div class="panel panel-default panel-margined">'
-            +'<div class="panel-body">'
-              +'<p><a href="#">'+ user.username+': </a><br />'+text+'</p>'
-            +'</div>'
-            +'<div class="panel-footer">'
-              <!-- Tags -->
-              +tagsAsStr
-              <!-- Thumbs up, down -->
-              +'<div class="pull-right">'
-              //+'<span><div align="right">'
-                +'<a href="#" id="'+ obj.id +'" onclick="vote('+currUser+','+ obj.id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
-                +'<a href="#" id="-'+ obj.id +'" onclick="vote('+currUser+','+ obj.id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
-                +'  Accuracy: '
-                +'<span id="a'+obj.id+'">'+accuracy.toFixed(2)+'% </span>'
-              //+'</div></span>'
-                +'</div><div class="clearfix"></div>'
-              +'</div>'
-            +'</div>'
+    $.each(post_tags, function(i,val){
+        tagsAsStr +="<span style='display: inline-block;' class='label "+option_labels[i%option_labels.length] +"'>" +val.name +"</span>";
+    });
+    var updateDeleteSpan = ""
+    if (user.id == currUser) {
+      var updateDeleteSpan = "<span data-toggle='modal' data-target='.bs-example-modal-sm' data-id='"+obj.id+"' title='Add this item' class='updatePost btn btn-sm btn-warning' href='#addBookDialog'>Update</span><span data-toggle='modal' data-target='.bs-example-modal-sm2' data-id='"+obj.id+"' title='Add this item' class='deletePost btn btn-sm btn-danger' href='#addBookDialog'>Delete</span>"
+    }
+    $(".panelContainer").append(
+      '<div class="panel panel-default panel-margined">'
+        +'<div class="panel-body">'
+          +'<p><a href="#">'+ user.username+': </a><br />'+text+'</p>'
+        +'</div>'
+        +'<div class="panel-footer">'
+          <!-- Tags -->
+          +tagsAsStr
+          <!-- Thumbs up, down -->
+          +'<div class="pull-right">'
+          //+'<span><div align="right">'
+            +'<a href="#" id="'+ obj.id +'" onclick="vote('+currUser+','+ obj.id+ ',true);"><span class="glyphicon glyphicon-thumbs-up" style="color:'+upColor+'"></span></a><span id="t'+obj.id+'"style="color:green;">'+obj.positive_reaction_count+' </span>'
+            +'<a href="#" id="-'+ obj.id +'" onclick="vote('+currUser+','+ obj.id+ ',false);"><span class="glyphicon glyphicon-thumbs-down" style="color:'+downColor+'"></span></a><span id="d'+obj.id+'" style="color:red;">'+obj.negative_reaction_count+' </span>'
+            +'  Accuracy: '
+            +'<span id="a'+obj.id+'">'+accuracy.toFixed(2)+'% </span>'
+            // (currUser == user.id) ? + ('<span class="btn btn-sm btn-danger" id="a'+obj.id+'">Delete</span>') : +''
+            + updateDeleteSpan
+            +'</div><div class="clearfix"></div>'
           +'</div>'
-
-        );
-
-      });
-      var theTags=[];
-      $('#tags').selectize({
-          maxOptions: 6,
-          valueField: 'id',
-          labelField: 'description',
-          searchField: ['description'],
-          plugins: ['remove_button'],
-          options: [],
-          create: false,
-          load: function(query, callback) {
-              if(query.length <2 ){
-                return [];
-              }
-              $.getJSON("/cocomapapp/wikidataSearch/" +query+ "/"
-              ).fail( function() {
-                console.log("error in wikidata");
-              }).done( function(data) {
-                  $.each(data,function(i,value){
-                      theTags.push({
-                        id : value.id,
-                        name : value.label,
-                        description: (value.label +" "+ value.description)
-                      });
-                      console.log("my values are: "+i+" "+value.label+" "+value.description);
-                  });
-                  callback(theTags);
+        +'</div>'
+      +'</div>'
+    );
+  });
+  var theTags=[];
+  $('#tags').selectize({
+    maxOptions: 6,
+    valueField: 'id',
+    labelField: 'description',
+    searchField: ['description'],
+    plugins: ['remove_button'],
+    options: [],
+    create: false,
+    load: function(query, callback) {
+      if(query.length <2 ){
+        return [];
+      }
+      $.getJSON("/cocomapapp/wikidataSearch/" +query+ "/"
+      ).fail( function() {
+        console.log("error in wikidata");
+      }).done( function(data) {
+          $.each(data,function(i,value){
+              theTags.push({
+                id : value.id,
+                name : value.label,
+                description: (value.label +" "+ value.description)
               });
-
-            }
+              console.log("my values are: "+i+" "+value.label+" "+value.description);
+          });
+          callback(theTags);
       });
-      $("#submit").click(function(){
-        var post={};
-        post.content=$("#content").val();
-        post.topic_id=topic.id;
+    }
+  });
+  $("#submit").click(function(){
+    var post={};
+    post.content=$("#content").val();
+    post.topic_id=topic.id;
 
-        var resultTagIds = $("#tags").val();
-        if(resultTagIds != ""){
-          resultTagIds = resultTagIds.split(",");
-        }
-        else{
-          resultTagIds = [];
-        }
-        var resultTags = [];
-        $.each(resultTagIds,function(i,value){
-          resultTags.push(get_tags(value,theTags));
-        });
+    var resultTagIds = $("#tags").val();
+    if(resultTagIds != ""){
+      resultTagIds = resultTagIds.split(",");
+    }
+    else{
+      resultTagIds = [];
+    }
+    var resultTags = [];
+    $.each(resultTagIds,function(i,value){
+      resultTags.push(get_tags(value,theTags));
+    });
 
-        post.tags=resultTags;
-        console.log(post);
-        $.ajax({
-          url: 'postAdd/',
-          type: 'POST',
-          contentType: "application/json;charset=utf-8",
-          data: JSON.stringify(post),
-          success: function (data) {
-            $("#content").val("");
-            $("#tags").val("");
-            location.reload();
-          },
-          error: function (x, y, z) {
-              console.log("error");
-          }
-        });
-      });
+    post.tags=resultTags;
+    console.log(post);
+    $.ajax({
+      url: 'postAdd/',
+      type: 'POST',
+      contentType: "application/json;charset=utf-8",
+      data: JSON.stringify(post),
+      success: function (data) {
+        $("#content").val("");
+        $("#tags").val("");
+        location.reload();
+      },
+      error: function (x, y, z) {
+          console.log("error");
+      }
+    });
+  });
+  $('.js-delete-post').click(function(e) {
+    var post_id = $(".js-delete-post").data('postUpdate');
+    console.log(post_id)
+    $.ajax({
+      url: '/cocomapapp/postDelete/'+post_id,
+      type: 'DELETE',
+      contentType: "application/json;charset=utf-8",
+      data: JSON.stringify({"user_id" : currUser}),
+      success: function (data) {
+        location.reload();
+      },
+      error: function (x, y, z) {
+          console.log("error");
+      }
+    });
+  });
+
+  $('.js-update-post-content').click(function(e) {
+    var post_id = $(".js-update-post-content").data('postUpdate');
+    var post_content = $(".js-post-content").val()
+    var post_tags = []
+    topic.posts.forEach(function(data) {
+      if (data.id == post_id) {
+        post_tags = data.tags
+      }
+    });
+    var data = {
+      "topic_id" : topic.id,
+      "user_id" : currUser,
+      "tags" : post_tags,
+      "content" : post_content,
+    }
+    $.ajax({
+      url: '/cocomapapp/postUpdate/'+post_id+'/',
+      type: 'PATCH',
+      contentType: "application/json;charset=utf-8",
+      data: JSON.stringify(data),
+      success: function (data) {
+        location.reload();
+      },
+      error: function (x, y, z) {
+          console.log("error");
+      }
+    });
+  });
+  $(document).on("click", ".updatePost", function () {
+    $(".js-update-post-content").data('postUpdate', $(this).data('id'));
+  });
+  $(document).on("click", ".deletePost", function () {
+    $(".js-delete-post").data('postUpdate', $(this).data('id'));
+  });
 });
